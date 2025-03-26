@@ -84,7 +84,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
 class TCGSimulatorOptions(PerGameCommonOptions):
     goal: Goal
     shop_expansion_goal: ShopExpansionGoal
-    levelgoal: LevelGoal
+    level_goal: LevelGoal
     card_sanity: CardSanity
     decoration_sanity: DecorationSanity
     trap_fill: TrapFill

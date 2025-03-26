@@ -281,3 +281,5 @@ expA = ItemData(0x1F2800C0, "Progressive Shop Expansion A", ItemClassification.u
 expB = ItemData(0x1F2800c1, "Progressive Shop Expansion B", ItemClassification.useful,14)
 
 full_item_list: List[ItemData] = [*itemList, *progressivelist, *junklist, *traplist, *ghostlist,expA, expB]
+
+license_item_list: List[ItemData] = [*itemList, *progressivelist,expA, expB]

@@ -13,6 +13,7 @@ from .options import *
 from .regions import *
 from .locations import *
 from .items import *
+from .rules import *
 
 class TCGSimulatorWeb(WebWorld):
     theme = "partyTime"
@@ -59,14 +60,15 @@ class TCGSimulatorWorld(World):
         create_items(self)
     
     def set_rules(self):
-        self.multiworld.completion_condition[self.player] = lambda state: state.can_reach_location("Level 20", self.player)
+        set_rules(self)
+
     
     def fill_slot_data(self) -> id:
          return {
             "ModVersion": "0.0.1",
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value, 
-            "LevelGoal": self.options.levelgoal.value,
+            "LevelGoal": self.options.level_goal.value,
             "CardSanity": self.options.card_sanity.value,
             "DecorationSanity": self.options.decoration_sanity.value,
             "TrapFill": self.options.trap_fill.value,
