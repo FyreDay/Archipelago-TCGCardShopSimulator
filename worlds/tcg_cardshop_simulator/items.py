@@ -11,12 +11,9 @@ class ItemData(NamedTuple):
     code: int
     itemName: str
     classification: ItemClassification
+    amount: Optional[int] = 1
 
-class ItemDataProgressive(NamedTuple):
-    code: int
-    itemName: str
-    classification: ItemClassification
-    amount: int
+
 
 def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
     for i in range(amount):
@@ -31,18 +28,18 @@ def create_items(world):
     for item in progressivelist:
         create_item(world, item.itemName, item.classification, item.amount)
 
-    create_item(world, "Progressive Shop Expansion B", ItemClassification.useful, 14)
+    create_item(world, expB.itemName, expB.classification, expB.amount)
     if (world.options.goal.value == 2):
         for item in ghostlist:
             create_item(world, item.itemName, item.classification)
 
     if (world.options.goal.value == 0):
-        create_item(world, "Progressive Shop Expansion A", ItemClassification.progression,30)
+        create_item(world, expA.itemName, ItemClassification.progression,expA.amount)
     else:
-        create_item(world, "Progressive Shop Expansion A", ItemClassification.useful,30)
+        create_item(world, expA.itemName, ItemClassification.useful,expA.amount)
 
-    remaining_locations = total_location_count - len(itemList) - len(progressivelist) - 14 - 30 - 0 if world.options.goal.value != 2 else 80
-    #print(f"Remaining items here: {remaining_locations}")
+    remaining_locations = total_location_count - len(itemList) - (len(progressivelist) + 37) - 14 - 30 - (0 if world.options.goal.value != 2 else 80)
+    print(f"Remaining items here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
     junk_count = remaining_locations - trap_count
 
@@ -163,7 +160,7 @@ itemList: List[ItemData] = [
     ItemData(0x1F280061, "Collectors Album", ItemClassification.useful),
 ]
 
-progressivelist: List[ItemDataProgressive] = [
+progressivelist: List[ItemData] = [
     ItemData(0x1F280001, "Progressive Basic Card Pack", ItemClassification.useful, 4),
     ItemData(0x1F280002, "Progressive Rare Card Pack", ItemClassification.useful, 4),
     ItemData(0x1F280003, "Progressive Epic Card Pack", ItemClassification.useful, 4),
@@ -280,17 +277,7 @@ ghostlist: List[ItemData] = [
     ItemData(0x1F2800B0, "Foil Ghost Katengu (white)", ItemClassification.progression),
     ItemData(0x1F2800B1, "Foil Ghost Katengu (Black)", ItemClassification.progression),
 ]
+expA = ItemData(0x1F2800C0, "Progressive Shop Expansion A", ItemClassification.useful,30)
+expB = ItemData(0x1F2800c1, "Progressive Shop Expansion B", ItemClassification.useful,14)
 
-
-junk_weights = {
-    "Extra Life": 160,
-    "5 Rings": 120,
-    "10 Rings": 80,
-    "20 Rings": 40,
-    "Shield": 160,
-    #"Invincibility": 160,
-    "Speed Level Up": 72,
-    "Power Level Up": 72,
-    "Flying Level Up": 72,
-    "Team Level Up": 24,
-}
+full_item_list: List[ItemData] = [*itemList, *progressivelist, *junklist, *traplist, *ghostlist,expA, expB]

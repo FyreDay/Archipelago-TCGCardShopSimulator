@@ -43,6 +43,7 @@ def generate_locations(world):
                         expansion = card_expansion[1]  # Destiny
                         hex_id = 0x1F290000 | (1 << 12) | (border << 8) | (foil << 7) | monster_id
                         location_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = hex_id
+
     return location_dict
 
 def create_locations(world, region):
@@ -50,9 +51,7 @@ def create_locations(world, region):
 
 def create_locations_from_dict(world, loc_dict, region):
     for (key, data) in loc_dict.items():
-        if data.region != region.name:
-            continue
-        create_location(world, region, key, data.code)
+        create_location(world, region, key, data)
 
 def create_location(world, region, name: str, code: int):
     location = Location(world.player, name, code, region)

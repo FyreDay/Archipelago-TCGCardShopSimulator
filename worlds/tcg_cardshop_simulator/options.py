@@ -35,19 +35,18 @@ class LevelGoal(Range):
 
 class CardSanity(Choice):
     """
-    Enables new Cards from that rareity and below to be checks
+    Enables new Cards from that rarity and below to be checks
     """
-
     display_name = "CardSanity"
-    disabled = 0
-    basic = 1
-    rare = 2
-    epic = 3
-    legendary = 4
-    destiny_basic = 5
-    destiny_rare = 6
-    destiny_epic = 7
-    destiny_legendary = 8
+    option_disabled = 0
+    option_basic = 1
+    option_rare = 2
+    option_epic = 3
+    option_legendary = 4
+    option_destiny_basic = 5
+    option_destiny_rare = 6
+    option_destiny_epic = 7
+    option_destiny_legendary = 8
     default = 0
 
 class DecorationSanity(Toggle):

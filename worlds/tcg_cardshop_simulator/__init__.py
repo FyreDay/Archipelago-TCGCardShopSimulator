@@ -4,6 +4,7 @@ import string
 from typing import ClassVar, Dict, List, Set, TextIO
 import math
 import dataclasses
+from Options import OptionError
 #SonicHeroesItem, item_name_to_id, create_items, junk_weights
 from worlds.AutoWorld import WebWorld, World
 
@@ -26,8 +27,6 @@ class TCGSimulatorWeb(WebWorld):
     )
 
     tutorials = [setup_en]
-    option_groups = tcg_cardshop_simulator_option_groups
-
 
 class TCGSimulatorWorld(World):
 
@@ -36,7 +35,9 @@ class TCGSimulatorWorld(World):
     options_dataclass = TCGSimulatorOptions
     options: TCGSimulatorOptions
 
-    item_name_to_id: ClassVar[Dict[str, int]] = {item.itemName: item.code for item in itemList}
+    option_groups = tcg_cardshop_simulator_option_groups
+
+    item_name_to_id: ClassVar[Dict[str, int]] = {item.itemName: item.code for item in full_item_list}
     location_name_to_id: ClassVar[Dict[str, int]] = full_location_dict
 
 
@@ -44,24 +45,21 @@ class TCGSimulatorWorld(World):
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        print("start generation")
+        generate_locations(self)
 
     def create_regions(self):
-
         create_regions(self)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
             return TCGSimulatorItem(item, ItemClassification.filler, self.item_name_to_id[item], self.player)
-
-
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
     
     def create_items(self):
         create_items(self)
     
     def set_rules(self):
-        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+        self.multiworld.completion_condition[self.player] = lambda state: state.can_reach_location("Level 20", self.player)
     
     def fill_slot_data(self) -> id:
          return {
