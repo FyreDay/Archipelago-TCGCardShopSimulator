@@ -1,6 +1,6 @@
 import json
 
-strings = {
+strings = [
     "Basic Card Pack (32)",
     "Basic Card Pack (64)",
     "Basic Card Box (4)",
@@ -135,18 +135,14 @@ strings = {
     "Playmat YellowPocket Pages",
     "Card Holder",
     "Collectors Album",
-}
+]
 
-rules = {
-    "locations": {s: (lambda s: lambda state: state.has(s, world.player))(s) for s in strings},
-    "items": set()
-}
 
-# Save rules to a Python file for manual editing
-with open("rulesOutput.py", "w") as f:
-    f.write("rules = " + str({
-        "locations": set(rules["locations"].keys()),
-        "items": set(rules["items"])
-    }))
+# Save rules to a text file for manual editing
+with open("rules.txt", "w") as f:
+    for s in strings:
+        f.write(f'"{s}":\n')
+        f.write(f'    lambda state:\n')
+        f.write(f'        state.has("{s}", world.player),\n')
 
-print("Rules saved to rules.py")
+print("Rules saved to rules.txt")

@@ -131,7 +131,8 @@ locs= {
     "Playmat Gray",
     "Playmat Green",
     "Playmat Purple",
-    "Playmat YellowPocket Pages",
+    "Playmat Yellow"
+    "Pocket Pages",
     "Card Holder",
     "Collectors Album",
 }

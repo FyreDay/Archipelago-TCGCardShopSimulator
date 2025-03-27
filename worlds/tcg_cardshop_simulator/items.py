@@ -36,9 +36,9 @@ def create_items(world):
     if (world.options.goal.value == 0):
         create_item(world, expA.itemName, ItemClassification.progression,expA.amount)
     else:
-        create_item(world, expA.itemName, ItemClassification.useful,expA.amount)
+        create_item(world, expA.itemName, ItemClassification.progression,expA.amount)
 
-    remaining_locations = total_location_count - len(itemList) - (len(progressivelist) + 37) - 14 - 30 - (0 if world.options.goal.value != 2 else 80)
+    remaining_locations = total_location_count - len(itemList) - (len(progressivelist) + 36) - 14 - 30 - (0 if world.options.goal.value != 2 else 80)
     print(f"Remaining items here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
     junk_count = remaining_locations - trap_count
@@ -155,18 +155,27 @@ itemList: List[ItemData] = [
     ItemData(0x1F28005C, "Playmat Gray", ItemClassification.useful),
     ItemData(0x1F28005D, "Playmat Green", ItemClassification.useful),
     ItemData(0x1F28005E, "Playmat Purple", ItemClassification.useful),
-    ItemData(0x1F28005F, "Playmat YellowPocket Pages", ItemClassification.useful),
-    ItemData(0x1F280060, "Card Holder", ItemClassification.useful),
-    ItemData(0x1F280061, "Collectors Album", ItemClassification.useful),
+    ItemData(0x1F28005F, "Playmat Yellow", ItemClassification.useful),
+    ItemData(0x1F280060, "Pocket Pages", ItemClassification.useful),
+    ItemData(0x1F280061, "Card Holder", ItemClassification.useful),
+    ItemData(0x1F2800B5, "Collectors Album", ItemClassification.useful),
+    ItemData(0x1F2800B6, "Worker - Zachery", ItemClassification.useful),
+    ItemData(0x1F2800B7, "Worker - Terence", ItemClassification.useful),
+    ItemData(0x1F2800B8, "Worker - Dennis", ItemClassification.useful),
+    ItemData(0x1F2800B9, "Worker - Clark", ItemClassification.useful),
+    ItemData(0x1F2800BA, "Worker - Angus", ItemClassification.useful),
+    ItemData(0x1F2800BB, "Worker - Benji", ItemClassification.useful),
+    ItemData(0x1F2800BC, "Worker - Lauren", ItemClassification.useful),
+    ItemData(0x1F2800BD, "Worker - Axel", ItemClassification.useful),
 ]
 
 progressivelist: List[ItemData] = [
-    ItemData(0x1F280001, "Progressive Basic Card Pack", ItemClassification.useful, 4),
-    ItemData(0x1F280002, "Progressive Rare Card Pack", ItemClassification.useful, 4),
-    ItemData(0x1F280003, "Progressive Epic Card Pack", ItemClassification.useful, 4),
-    ItemData(0x1F280004, "Progressive Legendary Card Pack", ItemClassification.useful, 4),
-    ItemData(0x1F280009, "Progressive Basic Destiny Pack", ItemClassification.useful, 4),
-    ItemData(0x1F28000A, "Progressive Rare Destiny Pack", ItemClassification.useful, 4),
+    ItemData(0x1F280001, "Progressive Basic Card Pack", ItemClassification.progression, 3),
+    ItemData(0x1F280002, "Progressive Rare Card Pack", ItemClassification.progression, 4),
+    ItemData(0x1F280003, "Progressive Epic Card Pack", ItemClassification.progression, 4),
+    ItemData(0x1F280004, "Progressive Legendary Card Pack", ItemClassification.progression, 4),
+    ItemData(0x1F280009, "Progressive Basic Destiny Pack", ItemClassification.progression, 4),
+    ItemData(0x1F28000A, "Progressive Rare Destiny Pack", ItemClassification.progression, 4),
     ItemData(0x1F28000B, "Progressive Epic Destiny Pack", ItemClassification.useful, 4),
     ItemData(0x1F28000C, "Progressive Legendary Destiny Pack", ItemClassification.useful, 4),
     ItemData(0x1F280011, "Progressive Cleanser", ItemClassification.useful, 2),
@@ -192,7 +201,7 @@ junk_weights = {
 }
 
 traplist: List[ItemData] = [
-    ItemData(0x1F2800B4, "Stink Trap", ItemClassification.trap),
+    ItemData(0x1F2800B4, "Stink Trap", ItemClassification.trap),#be
 ]
 
 ghostlist: List[ItemData] = [
@@ -277,8 +286,8 @@ ghostlist: List[ItemData] = [
     ItemData(0x1F2800B0, "Foil Ghost Katengu (white)", ItemClassification.progression),
     ItemData(0x1F2800B1, "Foil Ghost Katengu (Black)", ItemClassification.progression),
 ]
-expA = ItemData(0x1F2800C0, "Progressive Shop Expansion A", ItemClassification.useful,30)
-expB = ItemData(0x1F2800c1, "Progressive Shop Expansion B", ItemClassification.useful,14)
+expA = ItemData(0x1F2800C0, "Progressive Shop Expansion A", ItemClassification.progression,30)
+expB = ItemData(0x1F2800C1, "Progressive Shop Expansion B", ItemClassification.useful,14)
 
 full_item_list: List[ItemData] = [*itemList, *progressivelist, *junklist, *traplist, *ghostlist,expA, expB]
 
