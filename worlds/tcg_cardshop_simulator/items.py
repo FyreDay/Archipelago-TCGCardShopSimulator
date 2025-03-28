@@ -167,6 +167,23 @@ itemList: List[ItemData] = [
     ItemData(0x1F2800BB, "Worker - Benji", ItemClassification.useful),
     ItemData(0x1F2800BC, "Worker - Lauren", ItemClassification.useful),
     ItemData(0x1F2800BD, "Worker - Axel", ItemClassification.useful),
+    ItemData(0x1F2800BE, "Playmat (Dracunix)", ItemClassification.useful),
+    ItemData(0x1F2800BF, "Playmat (GigatronX)", ItemClassification.useful),
+    ItemData(0x1F2800C2, "Playmat (Katengu Black)", ItemClassification.useful),
+    ItemData(0x1F2800C3, "Playmat (Katengu White)", ItemClassification.useful),
+    ItemData(0x1F2800C4, "Manga 1", ItemClassification.useful),
+    ItemData(0x1F2800C5, "Manga 2", ItemClassification.useful),
+    ItemData(0x1F2800C6, "Manga 3", ItemClassification.useful),
+    ItemData(0x1F2800C7, "Manga 4", ItemClassification.useful),
+    ItemData(0x1F2800C8, "Manga 5", ItemClassification.useful),
+    ItemData(0x1F2800C9, "Manga 6", ItemClassification.useful),
+    ItemData(0x1F2800CA, "Manga 7", ItemClassification.useful),
+    ItemData(0x1F2800CB, "Manga 8", ItemClassification.useful),
+    ItemData(0x1F2800CC, "Manga 9", ItemClassification.useful),
+    ItemData(0x1F2800CD, "Manga 10", ItemClassification.useful),
+    ItemData(0x1F2800CE, "Manga 11", ItemClassification.useful),
+    ItemData(0x1F2800CF, "Manga 12", ItemClassification.useful),
+
 ]
 
 progressivelist: List[ItemData] = [
@@ -191,12 +208,12 @@ progressivelist: List[ItemData] = [
 ]
 
 junklist: List[ItemData] = [
-    ItemData(0x1F2800B2, "500 Xp", ItemClassification.filler),
+    ItemData(0x1F2800B2, "Small Xp", ItemClassification.filler),
     ItemData(0x1F2800B3, "$1000", ItemClassification.filler),
 ]
 
 junk_weights = {
-    "500 Xp": 50,
+    "Small Xp": 50,
     "$1000": 50,
 }
 

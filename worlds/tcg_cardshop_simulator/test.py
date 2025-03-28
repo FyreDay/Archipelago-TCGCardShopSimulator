@@ -150,9 +150,21 @@ def format_text_file(input_file, output_file, start_id=0x1F2800F0):
             locs_amount = index
         
         for i in range(114):
-            formatted_location = f"\"Level {i+2}\": 0x{start_id +locs_amount+ 1+i:X},\n"
+            locs_amount = locs_amount + 1
+            formatted_location = f"\"Level {i+2}\": 0x{start_id +locs_amount:X},\n"
             outfile.write(formatted_location)
-        
+
+        for i in range(30):
+            locs_amount = locs_amount + 1
+            formatted_location = f"\"Shop A Expansion {i + 1}\": 0x{start_id + locs_amount  :X},\n"
+            outfile.write(formatted_location)
+
+        for i in range(14):
+            locs_amount = locs_amount + 1
+            formatted_location = f"\"Shop B Expansion {i + 1}\": 0x{start_id + locs_amount  :X},\n"
+            outfile.write(formatted_location)
+
+
         unique_id = start_id + len(lines)
         for expansion in card_expansion:
             for border in card_border:

@@ -472,6 +472,8 @@ def set_rules(world):
             closest_multiple_of_5 = (-1+i+j*5) // 5 * 5
             world.get_location(f"Level {i+j*5}").access_rule = lambda state: state.can_reach_location(f"Level {closest_multiple_of_5}", world.player)
 
+    for i in range(51,116):
+        world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
 
     rules_lookup = get_rules(world)
     for location_name, rule in rules_lookup["locations"].items():
@@ -479,6 +481,10 @@ def set_rules(world):
             world.get_location(location_name).access_rule = rule
         except KeyError:
             pass
+
+    if world.options.card_sanity.value > 0:
+        for location_name, rule in rarity_rule_dict.items():
+            world.multiworld.get_location(location_name, world.player).access_rule = rule
 
     if world.options.goal.value == 0:
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Shop Expansion A", world.player, world.options.shop_expansion_goal.value)
