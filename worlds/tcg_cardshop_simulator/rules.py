@@ -482,9 +482,10 @@ def set_rules(world):
         except KeyError:
             pass
 
+
     if world.options.card_sanity.value > 0:
-        for location_name, rule in rarity_rule_dict.items():
-            world.multiworld.get_location(location_name, world.player).access_rule = rule
+        for location_name, item_name in rarity_item_dict.items():
+            world.multiworld.get_location(location_name, world.player).access_rule = lambda state: state.has(item_name, world.player)
 
     if world.options.goal.value == 0:
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Shop Expansion A", world.player, world.options.shop_expansion_goal.value)

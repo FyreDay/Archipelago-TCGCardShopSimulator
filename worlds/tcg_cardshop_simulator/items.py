@@ -209,12 +209,22 @@ progressivelist: List[ItemData] = [
 
 junklist: List[ItemData] = [
     ItemData(0x1F2800B2, "Small Xp", ItemClassification.filler),
-    ItemData(0x1F2800B3, "$1000", ItemClassification.filler),
+    ItemData(0x1F2800B3, "Small Money", ItemClassification.filler),
+    ItemData(0x1F2800D0, "Medium Xp", ItemClassification.filler),
+    ItemData(0x1F2800D1, "Medium Money", ItemClassification.filler),
+    ItemData(0x1F2800D2, "Large Xp", ItemClassification.filler),
+    ItemData(0x1F2800D3, "Large Money", ItemClassification.filler),
+    ItemData(0x1F2800D4, "Random Card", ItemClassification.filler),
 ]
 
 junk_weights = {
     "Small Xp": 50,
-    "$1000": 50,
+    "Small Money": 50,
+    "Medium Money": 25,
+    "Medium Xp": 25,
+    "Large Money": 10,
+    "Large Xp": 10,
+    "Random Card": 50
 }
 
 traplist: List[ItemData] = [

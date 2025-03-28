@@ -9,7 +9,7 @@ class TCGSimulatorLocation(Location):
 
 LocData = namedtuple('LocData', ['code', 'region'])
 
-rarity_rule_dict = {}
+rarity_item_dict = {}
 
 location_dict = {}
 
@@ -39,8 +39,11 @@ def generate_locations(world):
         if i == 13:
             start_id = start_id + i + 1
 
-    progressives = ["Progressive Basic Card Pack","Progressive Rare Card Pack","Progressive Epic Card Pack","Progressive Legendary Card Pack",
-                    "Progressive Basic Destiny Pack","Progressive Rare Destiny Pack","Progressive Epic Destiny Pack","Progressive Legendary Destiny Pack"]
+    progressives = ["Progressive Basic Card Pack", "Progressive Rare Card Pack", "Progressive Epic Card Pack",
+                    "Progressive Legendary Card Pack",
+                    "Progressive Basic Destiny Pack", "Progressive Rare Destiny Pack", "Progressive Epic Destiny Pack",
+                    "Progressive Legendary Destiny Pack"]
+
     for monster_id, (name, packlevels) in monster_type.items():
         first, second = packlevels  # Unpack the tuple of packlevels
         
@@ -55,13 +58,13 @@ def generate_locations(world):
                     hex_id = 0x1F290000 | (0 << 12) | (border << 8) | (foil << 7) | monster_id
                     location_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = hex_id
                     if first != 1:
-                        rarity_rule_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = lambda state: state.has(progressives[first - 1], world.player)
+                        rarity_item_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = first
 
                 if world.options.card_sanity.value >= second:
                     expansion = card_expansion[1]  # Destiny
                     hex_id = 0x1F290000 | (1 << 12) | (border << 8) | (foil << 7) | monster_id
                     location_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = hex_id
-                    rarity_rule_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = lambda state: state.has(progressives[second-1], world.player)
+                    rarity_item_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = second
     return location_dict
 
 def create_locations(world, region):
