@@ -70,6 +70,6 @@ class TCGSimulatorWorld(World):
             "ShopExpansionGoal": self.options.shop_expansion_goal.value, 
             "LevelGoal": self.options.level_goal.value,
             "CardSanity": self.options.card_sanity.value,
-            "DecorationSanity": self.options.decoration_sanity.value,
+            "GhostGoalAmount": self.options.ghost_goal_amount.value,
             "TrapFill": self.options.trap_fill.value,
         }

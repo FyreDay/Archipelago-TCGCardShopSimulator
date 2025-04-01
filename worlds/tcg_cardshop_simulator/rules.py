@@ -465,7 +465,7 @@ def set_rules(world):
     world.get_location(f"Level {100}").access_rule = lambda state: state.can_reach_location(f"Level {95}", world.player)and state.has("Progressive Shop Expansion A", world.player, 10)
     world.get_location(f"Level {105}").access_rule = lambda state: state.can_reach_location(f"Level {100}", world.player)and state.has(f"Progressive {card_types[5]} Pack",world.player,2)
     world.get_location(f"Level {110}").access_rule = lambda state: state.can_reach_location(f"Level {105}", world.player)and state.has("Progressive Shop Expansion A", world.player, 11)
-    world.get_location(f"Level {115}").access_rule = lambda state: state.can_reach_location(f"Level {110}", world.player)and state.has(f"Progressive {card_types[6]} Pack",world.player,1)
+    world.get_location(f"Level {115}").access_rule = lambda state: state.can_reach_location(f"Level {110}", world.player)
 
     for j in range(1,23):
         for i in range(1,5):

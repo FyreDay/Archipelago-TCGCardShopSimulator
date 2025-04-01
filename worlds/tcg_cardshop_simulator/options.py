@@ -33,6 +33,16 @@ class LevelGoal(Range):
     range_end = 100
     default = 20
 
+class GhostGoalAmount(Range):
+    """
+    If on Level Goal, What level are you working to?
+    """
+
+    display_name = "GhostGoalAmount"
+    range_start = 1
+    range_end = 80
+    default = 40
+
 class CardSanity(Choice):
     """
     Enables new Cards from that rarity and below to be checks
@@ -49,13 +59,6 @@ class CardSanity(Choice):
     option_destiny_legendary = 8
     default = 0
 
-class DecorationSanity(Toggle):
-    """
-    Enables decoration unlocks to be checks
-    """
-
-    display_name = "DecorationSanity"
-
 class TrapFill(Range):
     """
     Determines the percentage of the junk fill which is filled with traps.
@@ -65,16 +68,18 @@ class TrapFill(Range):
     range_end = 80
     default = 0
 
+
+
 @dataclass
 class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("Goal Options", [
         Goal,
         ShopExpansionGoal,
-        LevelGoal
+        LevelGoal,
+        GhostGoalAmount
     ]),
     OptionGroup("Sanity", [
-        CardSanity,
-        DecorationSanity
+        CardSanity
     ]),
     OptionGroup("Traps", [
         TrapFill
@@ -85,6 +90,6 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     goal: Goal
     shop_expansion_goal: ShopExpansionGoal
     level_goal: LevelGoal
+    ghost_goal_amount: GhostGoalAmount
     card_sanity: CardSanity
-    decoration_sanity: DecorationSanity
     trap_fill: TrapFill

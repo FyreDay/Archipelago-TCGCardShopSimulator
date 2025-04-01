@@ -104,7 +104,7 @@ itemList: List[ItemData] = [
     ItemData(0x1F280025, "Playmat (Lunight)", ItemClassification.useful),
     ItemData(0x1F280026, "Playmat (Kyrone)", ItemClassification.useful),
     ItemData(0x1F280027, "Playmat (Duel)", ItemClassification.useful),
-    ItemData(0x1F280028, "Playmat (Dracunix)", ItemClassification.useful),
+    ItemData(0x1F280028, "Playmat (Dracunix1)", ItemClassification.useful),
     ItemData(0x1F280029, "Playmat (The Four Dragons)", ItemClassification.useful),
     ItemData(0x1F28002A, "Playmat (Drakon)", ItemClassification.useful),
     ItemData(0x1F28002B, "Playmat (GigatronX Evo)", ItemClassification.useful),
@@ -132,7 +132,7 @@ itemList: List[ItemData] = [
     ItemData(0x1F280041, "Bonfiox Plushie (8)", ItemClassification.useful),
     ItemData(0x1F280042, "Drilceros Action Figure (4)", ItemClassification.useful),
     ItemData(0x1F280043, "ToonZ Plushie (6)", ItemClassification.useful),
-    ItemData(0x1F280044, "Small Cabinet", ItemClassification.useful),
+    # ItemData(0x1F280044, "Small Cabinet", ItemClassification.useful),
     ItemData(0x1F280045, "Small Metal Rack", ItemClassification.useful),
     ItemData(0x1F280046, "Single Sided Shelf", ItemClassification.useful),
     ItemData(0x1F280047, "Double Sided Shelf", ItemClassification.useful),
@@ -167,7 +167,7 @@ itemList: List[ItemData] = [
     ItemData(0x1F2800BB, "Worker - Benji", ItemClassification.useful),
     ItemData(0x1F2800BC, "Worker - Lauren", ItemClassification.useful),
     ItemData(0x1F2800BD, "Worker - Axel", ItemClassification.useful),
-    ItemData(0x1F2800BE, "Playmat (Dracunix)", ItemClassification.useful),
+    ItemData(0x1F2800BE, "Playmat (Dracunix2)", ItemClassification.useful),
     ItemData(0x1F2800BF, "Playmat (GigatronX)", ItemClassification.useful),
     ItemData(0x1F2800C2, "Playmat (Katengu Black)", ItemClassification.useful),
     ItemData(0x1F2800C3, "Playmat (Katengu White)", ItemClassification.useful),
@@ -215,6 +215,7 @@ junklist: List[ItemData] = [
     ItemData(0x1F2800D2, "Large Xp", ItemClassification.filler),
     ItemData(0x1F2800D3, "Large Money", ItemClassification.filler),
     ItemData(0x1F2800D4, "Random Card", ItemClassification.filler),
+    ItemData(0x1F2800D5, "Random New Card", ItemClassification.filler),
 ]
 
 junk_weights = {
@@ -229,6 +230,7 @@ junk_weights = {
 
 traplist: List[ItemData] = [
     ItemData(0x1F2800B4, "Stink Trap", ItemClassification.trap),#be
+    ItemData(0x1F2800D6, "Stink Trap", ItemClassification.trap),#be
 ]
 
 ghostlist: List[ItemData] = [
