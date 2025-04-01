@@ -35,7 +35,7 @@ class LevelGoal(Range):
 
 class GhostGoalAmount(Range):
     """
-    If on Level Goal, What level are you working to?
+    If on Ghost cards Goal, How many do you need to find?
     """
 
     display_name = "GhostGoalAmount"
@@ -43,11 +43,17 @@ class GhostGoalAmount(Range):
     range_end = 80
     default = 40
 
+class BetterTrades(DefaultOnToggle):
+    """
+    Makes Customers always have New cards. If card sanity is on, the cards will always be Checks
+    """
+    display_name = "Better Trades"
+
 class CardSanity(Choice):
     """
     Enables new Cards from that rarity and below to be checks
     """
-    display_name = "CardSanity"
+    display_name = "Card Sanity"
     option_disabled = 0
     option_basic = 1
     option_rare = 2
@@ -59,6 +65,43 @@ class CardSanity(Choice):
     option_destiny_legendary = 8
     default = 0
 
+class MoneyBags(Range):
+    """
+    Determines the percentage of Filler contain money
+    """
+    display_name = "Money Filler"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class XpBoosts(Range):
+    """
+    Determines the percentage of Filler contain Shop Xp
+    """
+    display_name = "XP Filler"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class RandomCard(Range):
+    """
+    Determines the percentage of Filler are random cards. Watch out for repeats!
+    """
+    display_name = "Random Card"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class RandomNewCard(Range):
+    """
+    Determines the percentage of Filler are random cards that will always be new
+    if card sanity is checked, these cards will always be a check
+    """
+    display_name = "New Card"
+    range_start = 0
+    range_end = 100
+    default = 50
+
 class TrapFill(Range):
     """
     Determines the percentage of the junk fill which is filled with traps.
@@ -68,6 +111,27 @@ class TrapFill(Range):
     range_end = 80
     default = 0
 
+class StinkTrap(Range):
+    """
+    You know what this does. Stinky.
+    Determines the percentage of Traps are Stink Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Stink Trap"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class PoltergeistTrap(Range):
+    """
+    Something is messing with the lights
+    Determines the percentage of Traps are Poltergeist Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Poltergeist Trap"
+    range_start = 0
+    range_end = 100
+    default = 50
 
 
 @dataclass
@@ -78,11 +142,20 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         LevelGoal,
         GhostGoalAmount
     ]),
+    OptionGroup("General", [
+        BetterTrades
+    ]),
     OptionGroup("Sanity", [
         CardSanity
     ]),
-    OptionGroup("Traps", [
-        TrapFill
+    OptionGroup("Filler and Traps", [
+        MoneyBags,
+        XpBoosts,
+        RandomCard,
+        RandomNewCard,
+        TrapFill,
+        StinkTrap,
+        PoltergeistTrap
     ])
     
 @dataclass
@@ -91,5 +164,12 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     shop_expansion_goal: ShopExpansionGoal
     level_goal: LevelGoal
     ghost_goal_amount: GhostGoalAmount
+    better_trades: BetterTrades
     card_sanity: CardSanity
+    money_bags: MoneyBags
+    xp_boosts: XpBoosts
+    random_card: RandomCard
+    random_new_card: RandomNewCard
     trap_fill: TrapFill
+    stink_trap: StinkTrap
+    poltergeist_trap: PoltergeistTrap

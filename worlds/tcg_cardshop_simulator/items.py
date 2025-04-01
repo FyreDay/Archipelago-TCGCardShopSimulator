@@ -44,9 +44,18 @@ def create_items(world):
     junk_count = remaining_locations - trap_count
 
     trap_weights = {
-        "Stink Trap": 10,
+        "Stink Trap": world.options.stink_trap,
+        "Poltergeist Trap": world.options.poltergeist_trap
     }
 
+    junk_weights["Small Xp"] = world.options.xp_boosts * 0.5
+    junk_weights["Medium Xp"] = world.options.xp_boosts * 0.3
+    junk_weights["Large Xp"] = world.options.xp_boosts * 0.2
+    junk_weights["Small Money"] = world.options.money_bags * 0.5
+    junk_weights["Medium Money"] = world.options.money_bags * 0.3
+    junk_weights["Large Money"] = world.options.money_bags * 0.2
+    junk_weights["Random Card"] = world.options.random_card
+    junk_weights["Random New Card"] = world.options.random_new_card
 
     junk = get_junk_item_names(world.multiworld.random, junk_count)
     for name in junk:
@@ -219,18 +228,19 @@ junklist: List[ItemData] = [
 ]
 
 junk_weights = {
-    "Small Xp": 50,
-    "Small Money": 50,
-    "Medium Money": 25,
-    "Medium Xp": 25,
+    "Small Xp": 25,
+    "Small Money": 25,
+    "Medium Money": 15,
+    "Medium Xp": 15,
     "Large Money": 10,
     "Large Xp": 10,
-    "Random Card": 50
+    "Random Card": 50,
+    "Random New Card":50
 }
 
 traplist: List[ItemData] = [
     ItemData(0x1F2800B4, "Stink Trap", ItemClassification.trap),#be
-    ItemData(0x1F2800D6, "Stink Trap", ItemClassification.trap),#be
+    ItemData(0x1F2800D6, "Poltergeist Trap", ItemClassification.trap),#be
 ]
 
 ghostlist: List[ItemData] = [

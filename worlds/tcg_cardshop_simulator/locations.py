@@ -61,7 +61,6 @@ def generate_locations(world):
                     hex_id = 0x1F290000 | (1 << 12) | (border << 8) | (foil << 7) | monster_id
                     location_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = hex_id
                     rarity_item_dict[f"{name}_{card_border[border]}_{'Foil' if foil else 'NonFoil'}_{expansion}"] = second
-    print(location_dict)
     return location_dict
 
 def create_locations(world, region):
