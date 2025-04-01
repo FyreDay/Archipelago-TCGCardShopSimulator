@@ -22,12 +22,6 @@ def license_sum(world, license_list, state, amount) -> int:
 def requires_level(world, state, level):
     return state.can_reach_location(f"Level {level}", world.player),
 
-def has_all_ghosts(world, state) -> bool:
-    for ghost in ghostlist:
-        if not state.has(ghost.itemName, world.player):
-            return False
-    return True
-
 def get_rules(world):
     rules = {
         "locations": {
@@ -492,4 +486,4 @@ def set_rules(world):
     if world.options.goal.value == 1:
         world.multiworld.completion_condition[world.player] = lambda state: state.can_reach_location(f"Level {world.options.level_goal.value}", world.player),
     if world.options.goal.value == 2:
-        world.multiworld.completion_condition[world.player] = lambda state: has_all_ghosts(world, state)
+        world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Ghost Card", world.player, world.options.ghost_goal_amount.value)
