@@ -25,6 +25,8 @@ def generate_locations(world):
     for i in range(114):
         formatted_location = start_id +locs_amount+ 1+i
         location_dict[f"Level {i+2}"] = formatted_location
+        if world.options.goal.value == 1 and world.options.level_goal.value == i + 2:
+            location_dict[f"Level {i + 2}"] = None
         if i+2 == 115:
             start_id = formatted_location+1
     for i in range(30):
