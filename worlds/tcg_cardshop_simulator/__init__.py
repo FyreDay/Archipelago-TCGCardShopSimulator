@@ -45,6 +45,9 @@ class TCGSimulatorWorld(World):
     def create_regions(self):
         create_regions(self)
 
+    def connect_entrances(self):
+        connect_entrances(self)
+
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
             return TCGSimulatorItem(item, ItemClassification.filler, self.item_name_to_id[item], self.player)
@@ -57,7 +60,7 @@ class TCGSimulatorWorld(World):
         set_rules(self)
 
     def fill_slot_data(self) -> id:
-         return {
+        return {
             "ModVersion": "0.0.1",
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value, 
