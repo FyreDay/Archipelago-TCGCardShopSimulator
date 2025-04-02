@@ -439,7 +439,7 @@ def set_rules(world):
     # AP cant handle for looping this. I hate this
     world.get_location(f"Level {5}").access_rule = lambda state: state.has(f"Progressive {card_types[0]} Pack",world.player,1)
     world.get_location(f"Level {10}").access_rule = lambda state: state.can_reach_location(f"Level {5}", world.player) and state.has("Progressive Shop Expansion A", world.player, 1)
-    world.get_location(f"Level {15}").access_rule = lambda state: state.can_reach_location(f"Level {10}", world.player) and state.has(f"Progressive {card_types[1]} Pack",world.player,1)
+    world.get_location(f"Level {15}").access_rule = lambda state: state.can_reach_location(f"Level {10}", world.player) and state.has("Progressive Card Table",world.player,1)
     world.get_location(f"Level {20}").access_rule = lambda state: state.can_reach_location(f"Level {15}", world.player)and state.has("Progressive Shop Expansion A", world.player, 2)
     world.get_location(f"Level {25}").access_rule = lambda state: state.can_reach_location(f"Level {20}", world.player) and state.has(f"Progressive {card_types[1]} Pack",world.player,2)
     world.get_location(f"Level {30}").access_rule = lambda state: state.can_reach_location(f"Level {25}", world.player)and state.has("Progressive Shop Expansion A", world.player, 3)
@@ -478,8 +478,20 @@ def set_rules(world):
             world.get_location(location_name).access_rule = rule
         except KeyError:
             pass
+    eA_odds = [3, 5, 7, 11, 13, 15, 17, 21, 23, 25, 27, 31, 33, 35, 37, 41, 43, 45, 47, 51, 53, 55, 57, 61, 63, 65, 67, 71, 73]
+    for pA in range(1,31):
+        lvl = 2
+        if pA > 1:
+            lvl = eA_odds[pA-2]
 
-    #for p in range()
+        world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: requires_level(world, state, lvl) and state.has("Progressive Shop Expansion A", world.player, pA)
+
+    for pB in range(1, 15):
+        lvl = (((pB - 1) % 4) * 5) + 20 + 30 * ((pB-1)//4)
+
+        world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: requires_level(world, state,
+                                                                                                lvl) and state.has(
+            "Progressive Shop Expansion B", world.player, pB)
 
     if world.options.card_sanity.value > 0:
         for location_name, item_name in rarity_item_dict.items():
