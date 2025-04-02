@@ -1,5 +1,4 @@
-from typing import Dict, Optional, List, Tuple, NamedTuple
-import math
+from typing import Optional, List, NamedTuple, Dict
 
 from BaseClasses import Item, ItemClassification
 
@@ -7,36 +6,32 @@ from BaseClasses import Item, ItemClassification
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
 
+
 class ItemData(NamedTuple):
     code: int
-    itemName: str
     classification: ItemClassification
     amount: Optional[int] = 1
 
 
-
 def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
     for i in range(amount):
-        world.multiworld.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
+        world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
+
 
 def create_items(world):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
 
-    for item in itemList:
-        create_item(world, item.itemName, item.classification)
-
-    for item in progressivelist:
-        create_item(world, item.itemName, item.classification, item.amount)
-
-    create_item(world, expB.itemName, expB.classification, expB.amount)
-
-    ghostval = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value+5
+    ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
     if world.options.goal.value == 2:
-        create_item(world, ghostProgression.itemName, ghostProgression.classification, ghostval)
+        progressive_dict["Progressive Ghost Card"].amount = ghost_val
 
-    create_item(world, expA.itemName, ItemClassification.progression,expA.amount)
+    for item_name, item_data in item_dict:
+        create_item(world, item_name, item_data.classification, item_data.amount)
 
-    remaining_locations = total_location_count - len(itemList) - (len(progressivelist) + 36) - 14 - 30 - (0 if world.options.goal.value != 2 else ghostval)
+    for item_name, item_data in progressive_dict:
+        create_item(world, item_name, item_data.classification, item_data.amount)
+
+    remaining_locations: int = total_location_count - len(world.itempool)
     print(f"Remaining items here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
     junk_count = remaining_locations - trap_count
@@ -63,6 +58,9 @@ def create_items(world):
     for name in trap:
         create_item(world, name, ItemClassification.trap)
 
+    world.multiworld.itempool += world.itempool
+
+
 def get_junk_item_names(rand, k: int) -> str:
     junk = rand.choices(
         list(junk_weights.keys()),
@@ -78,152 +76,239 @@ def get_trap_item_names(rand, k: int, trap_weights) -> str:
         k=k)
     return trap
 
-startid = 0x1F280000
 
-itemList: List[ItemData] = [
-    
-    ItemData(0x1F280005, "Fire Battle Deck", ItemClassification.useful),
-    ItemData(0x1F280006, "Earth Battle Deck", ItemClassification.useful),
-    ItemData(0x1F280007, "Water Battle Deck", ItemClassification.useful),
-    ItemData(0x1F280008, "Wind Battle Deck", ItemClassification.useful),
+start_id = 0x1F280000
 
-    ItemData(0x1F28000D, "Fire Destiny Deck", ItemClassification.useful),
-    ItemData(0x1F28000E, "Earth Destiny Deck", ItemClassification.useful),
-    ItemData(0x1F28000F, "Water Destiny Deck", ItemClassification.useful),
-    ItemData(0x1F280010, "Wind Destiny Deck", ItemClassification.useful),
-    
-    ItemData(0x1F280012, "Card Sleeves (Clear)", ItemClassification.useful),
-    ItemData(0x1F280013, "Card Sleeves (Tetramon)", ItemClassification.useful),
-    ItemData(0x1F280014, "D20 Dice Red", ItemClassification.useful),
-    ItemData(0x1F280015, "D20 Dice Blue", ItemClassification.useful),
-    ItemData(0x1F280016, "D20 Dice Black", ItemClassification.useful),
-    ItemData(0x1F280017, "D20 Dice White", ItemClassification.useful),
-    ItemData(0x1F280018, "Card Sleeves (Fire)", ItemClassification.useful),
-    ItemData(0x1F280019, "Card Sleeves (Earth)", ItemClassification.useful),
-    ItemData(0x1F28001A, "Card Sleeves (Water)", ItemClassification.useful),
-    ItemData(0x1F28001B, "Card Sleeves (Wind)", ItemClassification.useful),
-    
-    ItemData(0x1F280020, "Collection Book", ItemClassification.useful),
-    ItemData(0x1F280021, "Premium Collection Book", ItemClassification.useful),
-    ItemData(0x1F280022, "Playmat (Drilceros)", ItemClassification.useful),
-    ItemData(0x1F280023, "Playmat (Clamigo)", ItemClassification.useful),
-    ItemData(0x1F280024, "Playmat (Wispo)", ItemClassification.useful),
-    ItemData(0x1F280025, "Playmat (Lunight)", ItemClassification.useful),
-    ItemData(0x1F280026, "Playmat (Kyrone)", ItemClassification.useful),
-    ItemData(0x1F280027, "Playmat (Duel)", ItemClassification.useful),
-    ItemData(0x1F280028, "Playmat (Dracunix1)", ItemClassification.useful),
-    ItemData(0x1F280029, "Playmat (The Four Dragons)", ItemClassification.useful),
-    ItemData(0x1F28002A, "Playmat (Drakon)", ItemClassification.useful),
-    ItemData(0x1F28002B, "Playmat (GigatronX Evo)", ItemClassification.useful),
-    ItemData(0x1F28002C, "Playmat (Fire)", ItemClassification.useful),
-    ItemData(0x1F28002D, "Playmat (Earth)", ItemClassification.useful),
-    ItemData(0x1F28002E, "Playmat (Water)", ItemClassification.useful),
-    ItemData(0x1F28002F, "Playmat (Wind)", ItemClassification.useful),
-    ItemData(0x1F280030, "Playmat (Tetramon)", ItemClassification.useful),
-    ItemData(0x1F280031, "Pigni Plushie (12)", ItemClassification.useful),
-    ItemData(0x1F280032, "Nanomite Plushie (16)", ItemClassification.useful),
-    ItemData(0x1F280033, "Minstar Plushie (24)", ItemClassification.useful),
-    ItemData(0x1F280034, "Nocti Plushie (6)", ItemClassification.useful),
-    ItemData(0x1F280035, "Burpig Figurine (12)", ItemClassification.useful),
-    ItemData(0x1F280036, "Decimite Figurine (8)", ItemClassification.useful),
-    ItemData(0x1F280037, "Trickstar Figurine (12)", ItemClassification.useful),
-    ItemData(0x1F280038, "Lunight Figurine (8)", ItemClassification.useful),
-    ItemData(0x1F280039, "Inferhog Figurine (2)", ItemClassification.useful),
-    ItemData(0x1F28003A, "Meganite Figurine (2)", ItemClassification.useful),
-    ItemData(0x1F28003B, "Princestar Figurine (2)", ItemClassification.useful),
-    ItemData(0x1F28003C, "Vampicant Figurine (2)", ItemClassification.useful),
-    ItemData(0x1F28003D, "Blazoar Plushie (2)", ItemClassification.useful),
-    ItemData(0x1F28003E, "Giganite Statue (2)", ItemClassification.useful),
-    ItemData(0x1F28003F, "Kingstar Plushie (2)", ItemClassification.useful),
-    ItemData(0x1F280040, "Dracunix Figurine (1)", ItemClassification.useful),
-    ItemData(0x1F280041, "Bonfiox Plushie (8)", ItemClassification.useful),
-    ItemData(0x1F280042, "Drilceros Action Figure (4)", ItemClassification.useful),
-    ItemData(0x1F280043, "ToonZ Plushie (6)", ItemClassification.useful),
-    # ItemData(0x1F280044, "Small Cabinet", ItemClassification.useful),
-    ItemData(0x1F280045, "Small Metal Rack", ItemClassification.useful),
-    ItemData(0x1F280046, "Single Sided Shelf", ItemClassification.useful),
-    ItemData(0x1F280047, "Double Sided Shelf", ItemClassification.useful),
-    ItemData(0x1F280048, "Wide Shelf", ItemClassification.useful),
-    
-    ItemData(0x1F28004E, "Play Table", ItemClassification.useful),
-    ItemData(0x1F28004F, "Workbench", ItemClassification.useful),
-    ItemData(0x1F280050, "Trash Bin", ItemClassification.useful),
-    ItemData(0x1F280051, "Checkout Counter", ItemClassification.useful),
-    ItemData(0x1F280052, "System Gate #1", ItemClassification.useful),
-    ItemData(0x1F280053, "System Gate #2", ItemClassification.useful),
-    ItemData(0x1F280054, "Mafia Works", ItemClassification.useful),
-    ItemData(0x1F280055, "Necromonsters", ItemClassification.useful),
-    ItemData(0x1F280056, "Claim!", ItemClassification.useful),
-    ItemData(0x1F280057, "Penny Sleeves", ItemClassification.useful),
-    ItemData(0x1F280058, "Tower Deckbox", ItemClassification.useful),
-    ItemData(0x1F280059, "Magnetic Holder", ItemClassification.useful),
-    ItemData(0x1F28005A, "Toploader", ItemClassification.useful),
-    ItemData(0x1F28005B, "Card Preserver", ItemClassification.useful),
-    ItemData(0x1F28005C, "Playmat Gray", ItemClassification.useful),
-    ItemData(0x1F28005D, "Playmat Green", ItemClassification.useful),
-    ItemData(0x1F28005E, "Playmat Purple", ItemClassification.useful),
-    ItemData(0x1F28005F, "Playmat Yellow", ItemClassification.useful),
-    ItemData(0x1F280060, "Pocket Pages", ItemClassification.useful),
-    ItemData(0x1F280061, "Card Holder", ItemClassification.useful),
-    ItemData(0x1F2800B5, "Collectors Album", ItemClassification.useful),
-    ItemData(0x1F2800B6, "Worker - Zachery", ItemClassification.useful),
-    ItemData(0x1F2800B7, "Worker - Terence", ItemClassification.useful),
-    ItemData(0x1F2800B8, "Worker - Dennis", ItemClassification.useful),
-    ItemData(0x1F2800B9, "Worker - Clark", ItemClassification.useful),
-    ItemData(0x1F2800BA, "Worker - Angus", ItemClassification.useful),
-    ItemData(0x1F2800BB, "Worker - Benji", ItemClassification.useful),
-    ItemData(0x1F2800BC, "Worker - Lauren", ItemClassification.useful),
-    ItemData(0x1F2800BD, "Worker - Axel", ItemClassification.useful),
-    ItemData(0x1F2800BE, "Playmat (Dracunix2)", ItemClassification.useful),
-    ItemData(0x1F2800BF, "Playmat (GigatronX)", ItemClassification.useful),
-    ItemData(0x1F2800C2, "Playmat (Katengu Black)", ItemClassification.useful),
-    ItemData(0x1F2800C3, "Playmat (Katengu White)", ItemClassification.useful),
-    ItemData(0x1F2800C4, "Manga 1", ItemClassification.useful),
-    ItemData(0x1F2800C5, "Manga 2", ItemClassification.useful),
-    ItemData(0x1F2800C6, "Manga 3", ItemClassification.useful),
-    ItemData(0x1F2800C7, "Manga 4", ItemClassification.useful),
-    ItemData(0x1F2800C8, "Manga 5", ItemClassification.useful),
-    ItemData(0x1F2800C9, "Manga 6", ItemClassification.useful),
-    ItemData(0x1F2800CA, "Manga 7", ItemClassification.useful),
-    ItemData(0x1F2800CB, "Manga 8", ItemClassification.useful),
-    ItemData(0x1F2800CC, "Manga 9", ItemClassification.useful),
-    ItemData(0x1F2800CD, "Manga 10", ItemClassification.useful),
-    ItemData(0x1F2800CE, "Manga 11", ItemClassification.useful),
-    ItemData(0x1F2800CF, "Manga 12", ItemClassification.useful),
 
-]
+item_dict: Dict[str, ItemData] = {
+    "Fire Battle Deck": ItemData(0x5, ItemClassification.useful),
+    "Earth Battle Deck": ItemData(0x6, ItemClassification.useful),
+    "Water Battle Deck": ItemData(0x7, ItemClassification.useful),
+    "Wind Battle Deck": ItemData(0x8, ItemClassification.useful),
+    "Fire Destiny Deck": ItemData(0xD, ItemClassification.useful),
+    "Earth Destiny Deck": ItemData(0xE, ItemClassification.useful),
+    "Water Destiny Deck": ItemData(0xF, ItemClassification.useful),
+    "Wind Destiny Deck": ItemData(0x0, ItemClassification.useful),
+    "Card Sleeves (Clear)": ItemData(0x12, ItemClassification.useful),
+    "Card Sleeves (Tetramon)": ItemData(0x13, ItemClassification.useful),
+    "D20 Dice Red": ItemData(0x14, ItemClassification.useful),
+    "D20 Dice Blue": ItemData(0x15, ItemClassification.useful),
+    "D20 Dice Black": ItemData(0x16, ItemClassification.useful),
+    "D20 Dice White": ItemData(0x17, ItemClassification.useful),
+    "Card Sleeves (Fire)": ItemData(0x18, ItemClassification.useful),
+    "Card Sleeves (Earth)": ItemData(0x19, ItemClassification.useful),
+    "Card Sleeves (Water)": ItemData(0x1A, ItemClassification.useful),
+    "Card Sleeves (Wind)": ItemData(0x1B, ItemClassification.useful),
+    "Collection Book": ItemData(0x20, ItemClassification.useful),
+    "Premium Collection Book": ItemData(0x21, ItemClassification.useful),
+    "Playmat (Drilceros)": ItemData(0x22, ItemClassification.useful),
+    "Playmat (Clamigo)": ItemData(0x23, ItemClassification.useful),
+    "Playmat (Wispo)": ItemData(0x24, ItemClassification.useful),
+    "Playmat (Lunight)": ItemData(0x25, ItemClassification.useful),
+    "Playmat (Kyrone)": ItemData(0x26, ItemClassification.useful),
+    "Playmat (Duel)": ItemData(0x27, ItemClassification.useful),
+    "Playmat (Dracunix1)": ItemData(0x28, ItemClassification.useful),
+    "Playmat (The Four Dragons)": ItemData(0x29, ItemClassification.useful),
+    "Playmat (Drakon)": ItemData(0x2A, ItemClassification.useful),
+    "Playmat (GigatronX Evo)": ItemData(0x2B, ItemClassification.useful),
+    "Playmat (Fire)": ItemData(0x2C, ItemClassification.useful),
+    "Playmat (Earth)": ItemData(0x2D, ItemClassification.useful),
+    "Playmat (Water)": ItemData(0x2E, ItemClassification.useful),
+    "Playmat (Wind)": ItemData(0x2F, ItemClassification.useful),
+    "Playmat (Tetramon)": ItemData(0x30, ItemClassification.useful),
+    "Pigni Plushie": ItemData(0x31, ItemClassification.useful),
+    "Nanomite Plushie": ItemData(0x32, ItemClassification.useful),
+    "Minstar Plushie": ItemData(0x33, ItemClassification.useful),
+    "Nocti Plushie": ItemData(0x34, ItemClassification.useful),
+    "Burpig Figurine": ItemData(0x35, ItemClassification.useful),
+    "Decimite Figurine": ItemData(0x36, ItemClassification.useful),
+    "Trickstar Figurine": ItemData(0x37, ItemClassification.useful),
+    "Lunight Figurine": ItemData(0x38, ItemClassification.useful),
+    "Inferhog Figurine": ItemData(0x39, ItemClassification.useful),
+    "Meganite Figurine": ItemData(0x3A, ItemClassification.useful),
+    "Princestar Figurine": ItemData(0x3B, ItemClassification.useful),
+    "Vampicant Figurine": ItemData(0x3C, ItemClassification.useful),
+    "Blazoar Plushie": ItemData(0x3D, ItemClassification.useful),
+    "Giganite Statue": ItemData(0x3E, ItemClassification.useful),
+    "Kingstar Plushie": ItemData(0x3F, ItemClassification.useful),
+    "Dracunix Figurine": ItemData(0x40, ItemClassification.useful),
+    "Bonfiox Plushie": ItemData(0x41, ItemClassification.useful),
+    "Drilceros Action Figure": ItemData(0x42, ItemClassification.useful),
+    "ToonZ Plushie": ItemData(0x43, ItemClassification.useful),
+    "Small Cabinet": ItemData(0x44, ItemClassification.useful, 0),
+    "Small Metal Rack": ItemData(0x45, ItemClassification.useful),
+    "Single Sided Shelf": ItemData(0x46, ItemClassification.useful),
+    "Double Sided Shelf": ItemData(0x47, ItemClassification.useful),
+    "Wide Shelf": ItemData(0x48, ItemClassification.useful),
+    "Play Table": ItemData(0x4E, ItemClassification.useful),
+    "Workbench": ItemData(0x4F, ItemClassification.useful),
+    "Trash Bin": ItemData(0x50, ItemClassification.useful),
+    "Checkout Counter": ItemData(0x51, ItemClassification.useful),
+    "System Gate #1": ItemData(0x52, ItemClassification.useful),
+    "System Gate #2": ItemData(0x53, ItemClassification.useful),
+    "Mafia Works": ItemData(0x54, ItemClassification.useful),
+    "Necromonsters": ItemData(0x55, ItemClassification.useful),
+    "Claim!": ItemData(0x56, ItemClassification.useful),
+    "Penny Sleeves": ItemData(0x57, ItemClassification.useful),
+    "Tower Deckbox": ItemData(0x58, ItemClassification.useful),
+    "Magnetic Holder": ItemData(0x59, ItemClassification.useful),
+    "Toploader": ItemData(0x5A, ItemClassification.useful),
+    "Card Preserver": ItemData(0x5B, ItemClassification.useful),
+    "Playmat Gray": ItemData(0x5C, ItemClassification.useful),
+    "Playmat Green": ItemData(0x5D, ItemClassification.useful),
+    "Playmat Purple": ItemData(0x5E, ItemClassification.useful),
+    "Playmat Yellow": ItemData(0x5F, ItemClassification.useful),
+    "Pocket Pages": ItemData(0x60, ItemClassification.useful),
+    "Card Holder": ItemData(0x61, ItemClassification.useful),
+    "Collectors Album": ItemData(0xB5, ItemClassification.useful),
+    "Worker - Zachery": ItemData(0xB6, ItemClassification.useful),
+    "Worker - Terence": ItemData(0xB7, ItemClassification.useful),
+    "Worker - Dennis": ItemData(0xB8, ItemClassification.useful),
+    "Worker - Clark": ItemData(0xB9, ItemClassification.useful),
+    "Worker - Angus": ItemData(0xBA, ItemClassification.useful),
+    "Worker - Benji": ItemData(0xBB, ItemClassification.useful),
+    "Worker - Lauren": ItemData(0xBC, ItemClassification.useful),
+    "Worker - Axel": ItemData(0xBD, ItemClassification.useful),
+    "Playmat (Dracunix2)": ItemData(0xBE, ItemClassification.useful),
+    "Playmat (GigatronX)": ItemData(0xBF, ItemClassification.useful),
+    "Playmat (Katengu Black)": ItemData(0xC2, ItemClassification.useful),
+    "Playmat (Katengu White)": ItemData(0xC3, ItemClassification.useful),
+    "Manga 1": ItemData(0xC4, ItemClassification.useful),
+    "Manga 2": ItemData(0xC5, ItemClassification.useful),
+    "Manga 3": ItemData(0xC6, ItemClassification.useful),
+    "Manga 4": ItemData(0xC7, ItemClassification.useful),
+    "Manga 5": ItemData(0xC8, ItemClassification.useful),
+    "Manga 6": ItemData(0xC9, ItemClassification.useful),
+    "Manga 7": ItemData(0xCA, ItemClassification.useful),
+    "Manga 8": ItemData(0xCB, ItemClassification.useful),
+    "Manga 9": ItemData(0xCC, ItemClassification.useful),
+    "Manga 10": ItemData(0xCD, ItemClassification.useful),
+    "Manga 11": ItemData(0xCE, ItemClassification.useful),
+    "Manga 12": ItemData(0xCF, ItemClassification.useful),
+}
 
-progressivelist: List[ItemData] = [
-    ItemData(0x1F280001, "Progressive Basic Card Pack", ItemClassification.progression, 3),
-    ItemData(0x1F280002, "Progressive Rare Card Pack", ItemClassification.progression, 4),
-    ItemData(0x1F280003, "Progressive Epic Card Pack", ItemClassification.progression, 4),
-    ItemData(0x1F280004, "Progressive Legendary Card Pack", ItemClassification.progression, 4),
-    ItemData(0x1F280009, "Progressive Basic Destiny Pack", ItemClassification.progression, 4),
-    ItemData(0x1F28000A, "Progressive Rare Destiny Pack", ItemClassification.progression, 4),
-    ItemData(0x1F28000B, "Progressive Epic Destiny Pack", ItemClassification.useful, 4),
-    ItemData(0x1F28000C, "Progressive Legendary Destiny Pack", ItemClassification.useful, 4),
-    ItemData(0x1F280011, "Progressive Cleanser", ItemClassification.useful, 2),
-    ItemData(0x1F28001C, "Progressive Deck Box Red", ItemClassification.useful, 2),
-    ItemData(0x1F28001D, "Progressive Deck Box Green", ItemClassification.useful, 2),
-    ItemData(0x1F28001E, "Progressive Deck Box Blue", ItemClassification.useful, 2),
-    ItemData(0x1F28001F, "Progressive Deck Box Yellow", ItemClassification.useful, 2),
-    ItemData(0x1F280049, "Progressive Card Table", ItemClassification.useful, 2),
-    ItemData(0x1F28004A, "Progressive Card Display", ItemClassification.useful, 3),
-    ItemData(0x1F28004B, "Progressive Personal Shelf", ItemClassification.useful, 3),
-    ItemData(0x1F28004C, "Progressive Auto Scent", ItemClassification.useful, 3),
-    ItemData(0x1F28004D, "Progressive Warehouse Shelf", ItemClassification.useful,2),
-]
+progressive_dict: Dict[str, ItemData] = {
+    "Progressive Basic Card Pack": ItemData(0x01, ItemClassification.progression, 3),
+    "Progressive Rare Card Pack": ItemData(0x02, ItemClassification.progression, 4),
+    "Progressive Epic Card Pack": ItemData(0x03, ItemClassification.progression, 4),
+    "Progressive Legendary Card Pack": ItemData(0x04, ItemClassification.progression, 4),
+    "Progressive Basic Destiny Pack": ItemData(0x09, ItemClassification.progression, 4),
+    "Progressive Rare Destiny Pack": ItemData(0x0A, ItemClassification.progression, 4),
+    "Progressive Epic Destiny Pack": ItemData(0x0B, ItemClassification.useful, 4),
+    "Progressive Legendary Destiny Pack": ItemData(0x0C, ItemClassification.useful, 4),
+    "Progressive Cleanser": ItemData(0x11, ItemClassification.useful, 2),
+    "Progressive Deck Box Red": ItemData(0x1C, ItemClassification.useful, 2),
+    "Progressive Deck Box Green": ItemData(0x1D, ItemClassification.useful, 2),
+    "Progressive Deck Box Blue": ItemData(0x1E, ItemClassification.useful, 2),
+    "Progressive Deck Box Yellow": ItemData(0x1F, ItemClassification.useful, 2),
+    "Progressive Card Table": ItemData(0x49, ItemClassification.useful, 2),
+    "Progressive Card Display": ItemData(0x4A, ItemClassification.useful, 3),
+    "Progressive Personal Shelf": ItemData(0x4B, ItemClassification.useful, 3),
+    "Progressive Auto Scent": ItemData(0x4C, ItemClassification.useful, 3),
+    "Progressive Warehouse Shelf": ItemData(0x4D, ItemClassification.useful,2),
+    "Progressive Shop Expansion A": ItemData(0xC0, ItemClassification.progression, 30),
+    "Progressive Shop Expansion B": ItemData(0xC1, ItemClassification.useful, 14),
+    "Progressive Ghost Card": ItemData(0xD7, ItemClassification.progression_skip_balancing, 0)
+}
 
-junklist: List[ItemData] = [
-    ItemData(0x1F2800B2, "Small Xp", ItemClassification.filler),
-    ItemData(0x1F2800B3, "Small Money", ItemClassification.filler),
-    ItemData(0x1F2800D0, "Medium Xp", ItemClassification.filler),
-    ItemData(0x1F2800D1, "Medium Money", ItemClassification.filler),
-    ItemData(0x1F2800D2, "Large Xp", ItemClassification.filler),
-    ItemData(0x1F2800D3, "Large Money", ItemClassification.filler),
-    ItemData(0x1F2800D4, "Random Card", ItemClassification.filler),
-    ItemData(0x1F2800D5, "Random New Card", ItemClassification.filler),
-]
+ghost_list: Dict[str, ItemData] = {
+    "Ghost Blazoar (white)": ItemData(0x62, ItemClassification.progression_skip_balancing),
+    "Ghost Blazoar (Black)": ItemData(0x63, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Blazoar (white)": ItemData(0x64, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Blazoar (Black)": ItemData(0x65, ItemClassification.progression_skip_balancing),
+    "Ghost Kyuenbi (white)": ItemData(0x66, ItemClassification.progression_skip_balancing),
+    "Ghost Kyuenbi (Black)": ItemData(0x67, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Kyuenbi (white)": ItemData(0x68, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Kyuenbi (Black)": ItemData(0x69, ItemClassification.progression_skip_balancing),
+    "Ghost Giganite (white)": ItemData(0x6A, ItemClassification.progression_skip_balancing),
+    "Ghost Giganite (Black)": ItemData(0x6B, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Giganite (white)": ItemData(0x6C, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Giganite (Black)": ItemData(0x6D, ItemClassification.progression_skip_balancing),
+    "Ghost Mammotree (white)": ItemData(0x6E, ItemClassification.progression_skip_balancing),
+    "Ghost Mammotree (Black)": ItemData(0x6F, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Mammotree (white)": ItemData(0x70, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Mammotree (Black)": ItemData(0x71, ItemClassification.progression_skip_balancing),
+    "Ghost Kingstar (white)": ItemData(0x72, ItemClassification.progression_skip_balancing),
+    "Ghost Kingstar (Black)": ItemData(0x73, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Kingstar (white)": ItemData(0x74, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Kingstar (Black)": ItemData(0x75, ItemClassification.progression_skip_balancing),
+    "Ghost Fistronk (white)": ItemData(0x76, ItemClassification.progression_skip_balancing),
+    "Ghost Fistronk (Black)": ItemData(0x77, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Fistronk (white)": ItemData(0x78, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Fistronk (Black)": ItemData(0x79, ItemClassification.progression_skip_balancing),
+    "Ghost Royalama (white)": ItemData(0x7A, ItemClassification.progression_skip_balancing),
+    "Ghost Royalama (Black)": ItemData(0x7B, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Royalama (white)": ItemData(0x7C, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Royalama (Black)": ItemData(0x7D, ItemClassification.progression_skip_balancing),
+    "Ghost Dracunix (white)": ItemData(0x7E, ItemClassification.progression_skip_balancing),
+    "Ghost Dracunix (Black)": ItemData(0x7F, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Dracunix (white)": ItemData(0x80, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Dracunix (Black)": ItemData(0x81, ItemClassification.progression_skip_balancing),
+    "Ghost Magnoria (white)": ItemData(0x82, ItemClassification.progression_skip_balancing),
+    "Ghost Magnoria (Black)": ItemData(0x83, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Magnoria (white)": ItemData(0x84, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Magnoria (Black)": ItemData(0x85, ItemClassification.progression_skip_balancing),
+    "Ghost Hydroid (white)": ItemData(0x86, ItemClassification.progression_skip_balancing),
+    "Ghost Hydroid (Black)": ItemData(0x87, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Hydroid (white)": ItemData(0x88, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Hydroid (Black)": ItemData(0x89, ItemClassification.progression_skip_balancing),
+    "Ghost Drakon (white)": ItemData(0x8A, ItemClassification.progression_skip_balancing),
+    "Ghost Drakon (Black)": ItemData(0x8B, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Drakon (white)": ItemData(0x8C, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Drakon (Black)": ItemData(0x8D, ItemClassification.progression_skip_balancing),
+    "Ghost Bogon (white)": ItemData(0x8E, ItemClassification.progression_skip_balancing),
+    "Ghost Bogon (Black)": ItemData(0x8F, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Bogon (white)": ItemData(0x90, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Bogon (Black)": ItemData(0x91, ItemClassification.progression_skip_balancing),
+    "Ghost Hydron (white)": ItemData(0x92, ItemClassification.progression_skip_balancing),
+    "Ghost Hydron (Black)": ItemData(0x93, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Hydron (white)": ItemData(0x94, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Hydron (Black)": ItemData(0x95, ItemClassification.progression_skip_balancing),
+    "Ghost Raizon (white)": ItemData(0x96, ItemClassification.progression_skip_balancing),
+    "Ghost Raizon (Black)": ItemData(0x97, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Raizon (white)": ItemData(0x98, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Raizon (Black)": ItemData(0x99, ItemClassification.progression_skip_balancing),
+    "Ghost Lucadence (white)": ItemData(0x9A, ItemClassification.progression_skip_balancing),
+    "Ghost Lucadence (Black)": ItemData(0x9B, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Lucadence (white)": ItemData(0x9C, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Lucadence (Black)": ItemData(0x9D, ItemClassification.progression_skip_balancing),
+    "Ghost Jigajawr (white)": ItemData(0x9E, ItemClassification.progression_skip_balancing),
+    "Ghost Jigajawr (Black)": ItemData(0x9F, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Jigajawr (white)": ItemData(0xA0, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Jigajawr (Black)": ItemData(0xA1, ItemClassification.progression_skip_balancing),
+    "Ghost Jacktern (white)": ItemData(0xA2, ItemClassification.progression_skip_balancing),
+    "Ghost Jacktern (Black)": ItemData(0xA3, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Jacktern (white)": ItemData(0xA4, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Jacktern (Black)": ItemData(0xA5, ItemClassification.progression_skip_balancing),
+    "Ghost GigatronX (white)": ItemData(0xA6, ItemClassification.progression_skip_balancing),
+    "Ghost GigatronX (Black)": ItemData(0xA7, ItemClassification.progression_skip_balancing),
+    "Foil Ghost GigatronX (white)": ItemData(0xA8, ItemClassification.progression_skip_balancing),
+    "Foil Ghost GigatronX (Black)": ItemData(0xA9, ItemClassification.progression_skip_balancing),
+    "Ghost Clawcifear (white)": ItemData(0xAA, ItemClassification.progression_skip_balancing),
+    "Ghost Clawcifear (Black)": ItemData(0xAB, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Clawcifear (white)": ItemData(0xAC, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Clawcifear (Black)": ItemData(0xAD, ItemClassification.progression_skip_balancing),
+    "Ghost Katengu (white)": ItemData(0xAE, ItemClassification.progression_skip_balancing),
+    "Ghost Katengu (Black)": ItemData(0xAF, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Katengu (white)": ItemData(0xB0, ItemClassification.progression_skip_balancing),
+    "Foil Ghost Katengu (Black)": ItemData(0xB1, ItemClassification.progression_skip_balancing),
+}
+
+junk_list: Dict[str, ItemData] = {
+    "Small Xp": ItemData(0xB2, ItemClassification.filler),
+    "Small Money": ItemData(0xB3, ItemClassification.filler),
+    "Medium Xp": ItemData(0xD0, ItemClassification.filler),
+    "Medium Money": ItemData(0xD1, ItemClassification.filler),
+    "Large Xp": ItemData(0xD2, ItemClassification.filler),
+    "Large Money": ItemData(0xD3, ItemClassification.filler),
+    "Random Card": ItemData(0xD4, ItemClassification.filler),
+    "Random New Card": ItemData(0xD5, ItemClassification.filler),
+}
+
+trap_list: Dict[str, ItemData] = {
+    "Stink Trap": ItemData(0xB4, ItemClassification.trap),
+    "Poltergeist Trap": ItemData(0xD6, ItemClassification.trap),
+}
 
 junk_weights = {
     "Small Xp": 25,
@@ -236,97 +321,4 @@ junk_weights = {
     "Random New Card":50
 }
 
-traplist: List[ItemData] = [
-    ItemData(0x1F2800B4, "Stink Trap", ItemClassification.trap),#be
-    ItemData(0x1F2800D6, "Poltergeist Trap", ItemClassification.trap),#be
-]
-
-ghostlist: List[ItemData] = [
-    ItemData(0x1F280062, "Ghost Blazoar (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280063, "Ghost Blazoar (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280064, "Foil Ghost Blazoar (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280065, "Foil Ghost Blazoar (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280066, "Ghost Kyuenbi (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280067, "Ghost Kyuenbi (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280068, "Foil Ghost Kyuenbi (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280069, "Foil Ghost Kyuenbi (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006A, "Ghost Giganite (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006B, "Ghost Giganite (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006C, "Foil Ghost Giganite (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006D, "Foil Ghost Giganite (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006E, "Ghost Mammotree (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28006F, "Ghost Mammotree (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280070, "Foil Ghost Mammotree (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280071, "Foil Ghost Mammotree (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280072, "Ghost Kingstar (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280073, "Ghost Kingstar (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280074, "Foil Ghost Kingstar (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280075, "Foil Ghost Kingstar (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280076, "Ghost Fistronk (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280077, "Ghost Fistronk (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280078, "Foil Ghost Fistronk (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280079, "Foil Ghost Fistronk (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007A, "Ghost Royalama (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007B, "Ghost Royalama (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007C, "Foil Ghost Royalama (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007D, "Foil Ghost Royalama (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007E, "Ghost Dracunix (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28007F, "Ghost Dracunix (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280080, "Foil Ghost Dracunix (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280081, "Foil Ghost Dracunix (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280082, "Ghost Magnoria (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280083, "Ghost Magnoria (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280084, "Foil Ghost Magnoria (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280085, "Foil Ghost Magnoria (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280086, "Ghost Hydroid (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280087, "Ghost Hydroid (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280088, "Foil Ghost Hydroid (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280089, "Foil Ghost Hydroid (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008A, "Ghost Drakon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008B, "Ghost Drakon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008C, "Foil Ghost Drakon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008D, "Foil Ghost Drakon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008E, "Ghost Bogon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28008F, "Ghost Bogon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280090, "Foil Ghost Bogon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280091, "Foil Ghost Bogon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280092, "Ghost Hydron (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280093, "Ghost Hydron (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280094, "Foil Ghost Hydron (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280095, "Foil Ghost Hydron (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280096, "Ghost Raizon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280097, "Ghost Raizon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280098, "Foil Ghost Raizon (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F280099, "Foil Ghost Raizon (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009A, "Ghost Lucadence (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009B, "Ghost Lucadence (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009C, "Foil Ghost Lucadence (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009D, "Foil Ghost Lucadence (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009E, "Ghost Jigajawr (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F28009F, "Ghost Jigajawr (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A0, "Foil Ghost Jigajawr (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A1, "Foil Ghost Jigajawr (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A2, "Ghost Jacktern (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A3, "Ghost Jacktern (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A4, "Foil Ghost Jacktern (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A5, "Foil Ghost Jacktern (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A6, "Ghost GigatronX (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A7, "Ghost GigatronX (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A8, "Foil Ghost GigatronX (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800A9, "Foil Ghost GigatronX (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AA, "Ghost Clawcifear (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AB, "Ghost Clawcifear (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AC, "Foil Ghost Clawcifear (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AD, "Foil Ghost Clawcifear (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AE, "Ghost Katengu (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800AF, "Ghost Katengu (Black)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800B0, "Foil Ghost Katengu (white)", ItemClassification.progression_skip_balancing),
-    ItemData(0x1F2800B1, "Foil Ghost Katengu (Black)", ItemClassification.progression_skip_balancing),
-]
-expA = ItemData(0x1F2800C0, "Progressive Shop Expansion A", ItemClassification.progression,30)
-expB = ItemData(0x1F2800C1, "Progressive Shop Expansion B", ItemClassification.useful,14)
-ghostProgression = ItemData(0x1F2800D7, "Progressive Ghost Card", ItemClassification.progression_skip_balancing)
-
-full_item_list: List[ItemData] = [*itemList, *progressivelist, *junklist, *traplist, *ghostlist,ghostProgression,expA, expB]
-
-license_item_list: List[ItemData] = [*itemList, *progressivelist,expA, expB]
+full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_list, **trap_list, **ghost_list}

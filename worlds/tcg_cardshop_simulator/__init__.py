@@ -1,19 +1,12 @@
-
-import typing
-import string
-from typing import ClassVar, Dict, List, Set, TextIO
-import math
-import dataclasses
-from Options import OptionError
-#SonicHeroesItem, item_name_to_id, create_items, junk_weights
+from typing import ClassVar
 from worlds.AutoWorld import WebWorld, World
-
-from BaseClasses import Item, MultiWorld, Tutorial, ItemClassification, Region
+from BaseClasses import Tutorial
 from .options import *
 from .regions import *
 from .locations import *
 from .items import *
 from .rules import *
+
 
 class TCGSimulatorWeb(WebWorld):
     theme = "partyTime"
@@ -29,6 +22,7 @@ class TCGSimulatorWeb(WebWorld):
 
     tutorials = [setup_en]
 
+
 class TCGSimulatorWorld(World):
 
     game = "TCG Card Shop Simulator"
@@ -38,11 +32,11 @@ class TCGSimulatorWorld(World):
 
     option_groups = tcg_cardshop_simulator_option_groups
 
-    item_name_to_id: ClassVar[Dict[str, int]] = {item.itemName: item.code for item in full_item_list}
+    item_name_to_id: ClassVar[Dict[str, int]] = {item.itemName: item.code for item in full_item_dict}
     location_name_to_id: ClassVar[Dict[str, int]] = full_location_dict
 
-
     def __init__(self, multiworld, player):
+        self.itempool = []
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
@@ -55,14 +49,13 @@ class TCGSimulatorWorld(World):
         if item in junk_weights.keys():
             return TCGSimulatorItem(item, ItemClassification.filler, self.item_name_to_id[item], self.player)
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
-    
+
     def create_items(self):
         create_items(self)
-    
+
     def set_rules(self):
         set_rules(self)
 
-    
     def fill_slot_data(self) -> id:
          return {
             "ModVersion": "0.0.1",
