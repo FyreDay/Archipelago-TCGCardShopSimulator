@@ -32,7 +32,7 @@ class TCGSimulatorWorld(World):
 
     option_groups = tcg_cardshop_simulator_option_groups
 
-    item_name_to_id: ClassVar[Dict[str, int]] = {item.itemName: item.code for item in full_item_dict}
+    item_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_data.code for item_name, item_data in full_item_dict}
     location_name_to_id: ClassVar[Dict[str, int]] = full_location_dict
 
     def __init__(self, multiworld, player):

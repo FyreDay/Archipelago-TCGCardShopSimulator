@@ -318,7 +318,7 @@ junk_weights = {
     "Large Money": 10,
     "Large Xp": 10,
     "Random Card": 50,
-    "Random New Card":50
+    "Random New Card": 50
 }
 
 full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_list, **trap_list, **ghost_list}
