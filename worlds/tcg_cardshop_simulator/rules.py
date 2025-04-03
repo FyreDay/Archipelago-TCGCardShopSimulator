@@ -2,9 +2,9 @@ from BaseClasses import LocationProgressType
 from .items import *
 from .locations import *
 
+
 def has_card_pack(world, state, rarity):
     return state.has(f"{rarity} Pack (32)", world.player) or state.has(f"{rarity} Pack (64)", world.player) or state.has(f"{rarity} Box (4)", world.player) or state.has(f"{rarity} Box (8)", world.player)
-
 
 
 def get_rules(world):
@@ -507,7 +507,7 @@ def get_rules(world):
             "Destiny Legendary Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Legendary Destiny"),
-            "Warehouse":
+            "Warehouse Door":
                 lambda state:
                 state.has("Warehouse Unlock", world.player),
         }
@@ -517,7 +517,7 @@ def get_rules(world):
 
 def set_rules(world):
 
-    finish_level = 114#72
+    finish_level = 115#72
 
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
@@ -529,13 +529,15 @@ def set_rules(world):
     for entrance_name, rule in rules_lookup["entrances"].items():
         try:
             world.get_entrance(entrance_name).access_rule = rule
-        except KeyError:
+        except KeyError as e:
+            print(f"Key error, {e}")
             pass
 
     for location_name, rule in rules_lookup["locations"].items():
         try:
             world.get_location(location_name).access_rule = rule
-        except KeyError:
+        except KeyError as e:
+            print(f"Key error, {e}")
             pass
 
     world.multiworld.register_indirect_condition("Level 25", "Common Card Pack",)

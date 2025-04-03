@@ -223,11 +223,12 @@ rarity_item_dict = {}
 
 location_dict: Dict[str, LocData] = {}
 
+
 def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
 
-def randomize_shop(world, mapping, locs):
 
+def randomize_shop(world, mapping, locs):
     for index in range(len(mapping)):
         data = locs[index]
         global location_dict
@@ -256,6 +257,7 @@ def swap_within_n(world, lst, target, n, invalid_indexes):
 
     return invalid_indexes
 
+
 int_to_card_region = {
     0:"Common Card Pack",
     1:"Rare Card Pack",
@@ -267,10 +269,11 @@ int_to_card_region = {
     7:"Destiny Legendary Card Pack"
 }
 
+
 def generate_card(name, index, border, foil, expansion, rarity):
     loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
     global location_dict
-    location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, int_to_card_region[rarity.value + (4 * expansion.value)])
+    location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, int_to_card_region[(rarity.value - 1) + (4 * expansion.value)])
 
 
 def generate_locations(world):
@@ -283,15 +286,15 @@ def generate_locations(world):
     global pg3_mapping
     global tt_mapping
 
-    invalid_indexes = []
+    invalid_indices = []
     world.random.shuffle(pg1_mapping)
-    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 12, invalid_indexes)
+    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 12, invalid_indices)
 
     randomize_shop(world, pg1_mapping, hardcoded_pg1_locs)
 
-    invalid_indexes = []
+    invalid_indices = []
     world.random.shuffle(pg1_mapping)
-    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indexes)
+    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indices)
     randomize_shop(world, pg2_mapping, hardcoded_pg2_locs)
     randomize_shop(world, pg3_mapping, hardcoded_pg3_locs)
     randomize_shop(world, tt_mapping, hardcoded_tt_locs)
@@ -332,15 +335,15 @@ def create_locations(world, region):
     create_locations_from_dict(world, location_dict, region)
 
 
-def create_locations_from_dict(world,loc_dict, reg):
+def create_locations_from_dict(world, loc_dict, reg):
     for (key, data) in loc_dict.items():
         if data.region != reg.name:
             continue
-        create_location(world, reg, key, data.code)
-
+        create_location(world, reg, key, data.code + 0x1F280000)
 
 
 def create_location(world, region, name: str, code: int):
+    print(name)
     location = Location(world.player, name, code, region)
     region.locations.append(location)
 

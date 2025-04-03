@@ -55,6 +55,7 @@ def create_regions(world):
 
 def connect_entrances(world):
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
+    connect_regions(world, "Menu", "Warehouse", "Warehouse Door")
     connect_regions(world, "Level 1-4", "Common Card Pack", "Common Card Pack")
     connect_regions(world, "Level 1-4", "Level 5-9", "Level 5")
     connect_regions(world, "Level 5-9", "Rare Card Pack", "Rare Card Pack")
