@@ -321,7 +321,6 @@ def generate_locations(world):
     for index, data in enumerate(card_rarity):
         data = cast(MonsterData, data)
         for border in Border:
-            print(f"sanity {world.options.card_sanity.value} rarity {data.rarity.value}")
             if world.options.card_sanity.value >= data.rarity.value:
                 generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
                 generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
@@ -343,7 +342,6 @@ def create_locations_from_dict(world, loc_dict, reg):
 
 
 def create_location(world, region, name: str, code: int):
-    print(name)
     location = Location(world.player, name, code, region)
     region.locations.append(location)
 

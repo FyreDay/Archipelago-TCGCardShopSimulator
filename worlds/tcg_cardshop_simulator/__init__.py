@@ -46,8 +46,6 @@ class TCGSimulatorWorld(World):
 
     def create_regions(self):
         create_regions(self)
-
-    def connect_entrances(self):
         connect_entrances(self)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
