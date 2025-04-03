@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import Optional, NamedTuple, Dict
+from typing import Optional, Dict
 
 from BaseClasses import Item, ItemClassification
 
 
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
+
 
 @dataclass
 class ItemData:
