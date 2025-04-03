@@ -241,7 +241,7 @@ progressive_dict: Dict[str, ItemData] = {
     "Progressive Ghost Card": ItemData(0xD7, ItemClassification.progression_skip_balancing, 0)
 }
 
-ghost_list: Dict[str, ItemData] = {
+ghost_dict: Dict[str, ItemData] = {
     "Ghost Blazoar (white)": ItemData(0x62, ItemClassification.progression_skip_balancing),
     "Ghost Blazoar (Black)": ItemData(0x63, ItemClassification.progression_skip_balancing),
     "Foil Ghost Blazoar (white)": ItemData(0x64, ItemClassification.progression_skip_balancing),
@@ -324,7 +324,7 @@ ghost_list: Dict[str, ItemData] = {
     "Foil Ghost Katengu (Black)": ItemData(0xB1, ItemClassification.progression_skip_balancing),
 }
 
-junk_list: Dict[str, ItemData] = {
+junk_dict: Dict[str, ItemData] = {
     "Small Xp": ItemData(0xB2, ItemClassification.filler),
     "Small Money": ItemData(0xB3, ItemClassification.filler),
     "Medium Xp": ItemData(0xD0, ItemClassification.filler),
@@ -335,7 +335,7 @@ junk_list: Dict[str, ItemData] = {
     "Random New Card": ItemData(0xD5, ItemClassification.filler),
 }
 
-trap_list: Dict[str, ItemData] = {
+trap_dict: Dict[str, ItemData] = {
     "Stink Trap": ItemData(0xB4, ItemClassification.trap),
     "Poltergeist Trap": ItemData(0xD6, ItemClassification.trap),
 }
@@ -351,4 +351,4 @@ junk_weights = {
     "Random New Card": 50
 }
 
-full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_list, **trap_list, **ghost_list}
+full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_dict, **trap_dict, **ghost_dict}
