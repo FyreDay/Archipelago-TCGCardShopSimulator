@@ -135,7 +135,7 @@ item_dict: Dict[str, ItemData] = {
     "Bonfiox Plushie": ItemData(0x41, ItemClassification.useful),
     "Drilceros Action Figure": ItemData(0x42, ItemClassification.useful),
     "ToonZ Plushie": ItemData(0x43, ItemClassification.useful),
-    "Small Cabinet": ItemData(0x44, ItemClassification.useful, 0),
+    "Small Cabinet": ItemData(0x44, ItemClassification.useful),
     "Small Metal Rack": ItemData(0x45, ItemClassification.useful),
     "Single Sided Shelf": ItemData(0x46, ItemClassification.useful),
     "Double Sided Shelf": ItemData(0x47, ItemClassification.useful),
@@ -185,6 +185,7 @@ item_dict: Dict[str, ItemData] = {
     "Manga 10": ItemData(0xCD, ItemClassification.useful),
     "Manga 11": ItemData(0xCE, ItemClassification.useful),
     "Manga 12": ItemData(0xCF, ItemClassification.useful),
+    "Warehouse Unlock": ItemData(0xD8, ItemClassification.progression),
 }
 
 progressive_dict: Dict[str, ItemData] = {
