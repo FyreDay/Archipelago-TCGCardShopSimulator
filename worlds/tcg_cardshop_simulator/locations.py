@@ -133,7 +133,7 @@ hardcoded_pg3_locs = [
     NamedLocation("Blazoar Plushie (2)", LocData(0x149, "Level 55-59")),
     NamedLocation("Giganite Statue (2)", LocData(0x14A, "Level 70-74")),
     NamedLocation("Kingstar Plushie (2)", LocData(0x14B, "Level 65-69")),
-    NamedLocation("Dracunix Figurine (1)", LocData(0x14C, "Level 75-74")),
+    NamedLocation("Dracunix Figurine (1)", LocData(0x14C, "Level 75-79")),
     NamedLocation("Bonfiox Plushie (8)", LocData(0x14D, "Level 25-29")),
     NamedLocation("Drilceros Action Figure (4)", LocData(0x14E, "Level 80-84")),
     NamedLocation("ToonZ Plushie (6)", LocData(0x14F, "Level 10-14")),
@@ -321,7 +321,6 @@ def generate_locations(world):
         location_dict[f"Level {level}"] = LocData(loc_id, f"Level {start_level}-{end_level}")
         if world.options.goal.value == 1 and world.options.level_goal.value == level:
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
-    print(location_dict)
     current_loc += 113
 
     for index, data in enumerate(card_rarity):
@@ -345,7 +344,6 @@ def create_locations_from_dict(world, loc_dict, reg):
         if data.region != reg.name:
             continue
         if data.code is None:
-            print(f"None code: {key}")
             create_location(world, reg, key, None)
             continue
         create_location(world, reg, key, data.code + 0x1F280000)

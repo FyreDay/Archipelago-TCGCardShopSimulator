@@ -457,7 +457,7 @@ def set_rules(world):
 
 
     if world.options.goal.value != 1:
-        finish_level = 70  # 72
+        finish_level = 72  # 72
         for i in range(finish_level, 116):
             world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
 
