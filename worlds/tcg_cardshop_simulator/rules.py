@@ -214,9 +214,12 @@ def get_rules(world):
             "Playmat (Duel)":
                 lambda state:
                 state.has("Playmat (Duel)", world.player),
-            "Playmat (Dracunix)":
+            "Playmat (Dracunix1)":
                 lambda state:
-                state.has("Playmat (Dracunix)", world.player),
+                state.has("Playmat (Dracunix1)", world.player),
+            "Playmat (Dracunix2)":
+                lambda state:
+                state.has("Playmat (Dracunix2)", world.player),
             "Playmat (The Four Dragons)":
                 lambda state:
                 state.has("Playmat (The Four Dragons)", world.player),
@@ -298,72 +301,6 @@ def get_rules(world):
             "ToonZ Plushie (6)":
                 lambda state:
                 state.has("ToonZ Plushie (6)", world.player),
-            "Small Cabinet":
-                lambda state:
-                state.has("Small Cabinet", world.player),
-            "Small Metal Rack":
-                lambda state:
-                state.has("Small Metal Rack", world.player),
-            "Single Sided Shelf":
-                lambda state:
-                state.has("Single Sided Shelf", world.player),
-            "Double Sided Shelf":
-                lambda state:
-                state.has("Double Sided Shelf", world.player),
-            "Wide Shelf":
-                lambda state:
-                state.has("Wide Shelf", world.player),
-            "Card Table":
-                lambda state:
-                state.has("Progressive Card Table", world.player, 1),
-            "Small Card Display":
-                lambda state:
-                state.has("Progressive Card Display", world.player, 1),
-            "Card Display Table":
-                lambda state:
-                state.has("Progressive Card Display", world.player, 2),
-            "Vintage Card Table":
-                lambda state:
-                state.has("Progressive Card Table", world.player, 2),
-            "Big Card Display":
-                lambda state:
-                state.has("Progressive Card Display", world.player, 3),
-            "Small Personal Shelf":
-                lambda state:
-                state.has("Progressive Personal Shelf", world.player, 1),
-            "Big Personal Shelf":
-                lambda state:
-                state.has("Progressive Personal Shelf", world.player, 2),
-            "Huge Personal Shelf":
-                lambda state:
-                state.has("Progressive Personal Shelf", world.player, 3),
-            "Auto Scent M100":
-                lambda state:
-                state.has("Progressive Auto Scent", world.player, 1),
-            "Auto Scent G500":
-                lambda state:
-                state.has("Progressive Auto Scent", world.player, 2),
-            "Auto Scent T100":
-                lambda state:
-                state.has("Progressive Auto Scent", world.player, 3),
-            "Small Warehouse Shelf":
-                lambda state:
-                state.has("Small Warehouse Shelf", world.player),
-            "Big Warehouse Shelf":
-                lambda state:
-                state.has("Big Warehouse Shelf", world.player),
-            "Play Table":
-                lambda state:
-                state.has("Play Table", world.player),
-            "Workbench":
-                lambda state:
-                state.has("Workbench", world.player),
-            "Trash Bin":
-                lambda state:
-                state.has("Trash Bin", world.player),
-            "Checkout Counter":
-                lambda state:
-                state.has("Checkout Counter", world.player),
             "System Gate #1":
                 lambda state:
                 state.has("System Gate #1", world.player),
@@ -428,7 +365,7 @@ def get_rules(world):
                 state.has("Worker - Zachery", world.player) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 20":
                 lambda state:
-                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (8)", world.player)) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
+                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 25":
                 lambda state:
                 state.can_reach_region("Common Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
@@ -517,12 +454,12 @@ def get_rules(world):
 
 def set_rules(world):
 
-    finish_level = 115#72
 
-    if world.options.goal.value == 1:
-        finish_level = world.options.level_goal.value + 1
-    for i in range(finish_level, 116):
-        world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
+
+    if world.options.goal.value != 1:
+        finish_level = 70  # 72
+        for i in range(finish_level, 116):
+            world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
 
     rules_lookup = get_rules(world)
 

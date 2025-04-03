@@ -29,9 +29,9 @@ class LevelGoal(Range):
     """
 
     display_name = "LevelGoal"
-    range_start = 1
+    range_start = 35
     range_end = 100
-    default = 20
+    default = 35
 
 class GhostGoalAmount(Range):
     """
