@@ -256,10 +256,21 @@ def swap_within_n(world, lst, target, n, invalid_indexes):
 
     return invalid_indexes
 
-def generate_card(name, index, border, foil, expansion):
+int_to_card_region = {
+    0:"Common Card Pack",
+    1:"Rare Card Pack",
+    2:"Epic Card Pack",
+    3:"Legendary Card Pack",
+    4:"Destiny Common Card Pack",
+    5:"Destiny Rare Card Pack",
+    6:"Destiny Epic Card Pack",
+    7:"Destiny Legendary Card Pack"
+}
+
+def generate_card(name, index, border, foil, expansion, rarity):
     loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
     global location_dict
-    location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, "")
+    location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, int_to_card_region[rarity.value + (4 * expansion.value)])
 
 
 def generate_locations(world):
@@ -292,24 +303,28 @@ def generate_locations(world):
         loc_id = start_id + current_loc + level - 2
         # WHY     (XX0-XX4 but 1 - 4)
         start_level = max(1, level - (level % 5))
-        end_level = (level - (level % 5)) + 4
+        end_level = min((level - (level % 5)) + 4, 115)
         # WHY     (XX0-XX4 but 110 - 115)
         if end_level == 114:
             end_level = 115
+        if level == 115:
+            start_level = 110
         location_dict[f"Level {level}"] = LocData(loc_id, f"Level {start_level}-{end_level}")
         if world.options.goal.value == 1 and world.options.level_goal.value == level:
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
-        current_loc += 1
+
+    current_loc += 113
 
     for index, data in enumerate(card_rarity):
         data = cast(MonsterData, data)
         for border in Border:
+            print(f"sanity {world.options.card_sanity.value} rarity {data.rarity.value}")
             if world.options.card_sanity.value >= data.rarity.value:
-                generate_card(data.name, index, border, 0, Expansion.Tetramon)
-                generate_card(data.name, index, border, 1, Expansion.Tetramon)
+                generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
+                generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
             if world.options.card_sanity.value >= data.rarity.value + 4:
-                generate_card(data.name, index, border, 0, Expansion.Destiny)
-                generate_card(data.name, index, border, 1, Expansion.Destiny)
+                generate_card(data.name, index, border, 0, Expansion.Destiny, data.rarity)
+                generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
     return location_dict
 
 

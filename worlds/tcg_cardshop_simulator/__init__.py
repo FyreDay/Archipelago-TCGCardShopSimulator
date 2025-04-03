@@ -1,4 +1,6 @@
 from typing import ClassVar
+
+from Utils import visualize_regions
 from worlds.AutoWorld import WebWorld, World
 from BaseClasses import Tutorial
 from .options import *
@@ -58,6 +60,12 @@ class TCGSimulatorWorld(World):
 
     def set_rules(self):
         set_rules(self)
+
+    def generate_output(self, output_directory: str):
+        visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
+                          show_entrance_names=False,
+                          regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
+                              self.player])
 
     def fill_slot_data(self) -> id:
         return {

@@ -10,8 +10,8 @@ def create_region(world, name: str, hint: str):
 
 
 def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> Entrance:
-    entrance_region = world.get_region(from_name, world.player)
-    exit_region = world.get_region(to_name, world.player)
+    entrance_region = world.get_region(from_name)
+    exit_region = world.get_region(to_name)
     return entrance_region.connect(exit_region, entrance_name)
 
 

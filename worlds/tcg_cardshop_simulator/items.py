@@ -33,10 +33,10 @@ def create_items(world):
         create_item(world, item_name, item_data.classification, item_data.amount)
 
     remaining_locations: int = total_location_count - len(world.itempool)
-    print(f"Remaining items here: {remaining_locations}")
+    print(f"Remaining locations here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
     junk_count = remaining_locations - trap_count
-
+    print(f"traps: {trap_count} junk {junk_count}")
     trap_weights = {
         "Stink Trap": world.options.stink_trap,
         "Poltergeist Trap": world.options.poltergeist_trap
@@ -76,9 +76,6 @@ def get_trap_item_names(rand, k: int, trap_weights) -> str:
         weights=list(trap_weights.values()),
         k=k)
     return trap
-
-
-start_id = 0x1F280000
 
 
 item_dict: Dict[str, ItemData] = {

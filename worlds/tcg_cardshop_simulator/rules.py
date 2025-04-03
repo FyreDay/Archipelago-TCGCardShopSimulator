@@ -517,7 +517,7 @@ def get_rules(world):
 
 def set_rules(world):
 
-    finish_level = 51
+    finish_level = 114#72
 
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
@@ -538,14 +538,14 @@ def set_rules(world):
         except KeyError:
             pass
 
-    world.register_indirect_condition("Level 25", "Common Card Pack",)
-    world.register_indirect_condition("Level 40", "Rare Card Pack",)
-    world.register_indirect_condition("Level 45", "Epic Card Pack",)
-    world.register_indirect_condition("Level 50", "Legendary Card Pack",)
-    world.register_indirect_condition("Level 55", "Destiny Common Card Pack")
-    world.register_indirect_condition("Level 60", "Destiny Rare Card Pack")
-    world.register_indirect_condition("Level 65", "Destiny Epic Card Pack")
-    world.register_indirect_condition("Level 70", "Destiny Legendary Card Pack")
+    world.multiworld.register_indirect_condition("Level 25", "Common Card Pack",)
+    world.multiworld.register_indirect_condition("Level 40", "Rare Card Pack",)
+    world.multiworld.register_indirect_condition("Level 45", "Epic Card Pack",)
+    world.multiworld.register_indirect_condition("Level 50", "Legendary Card Pack",)
+    world.multiworld.register_indirect_condition("Level 55", "Destiny Common Card Pack")
+    world.multiworld.register_indirect_condition("Level 60", "Destiny Rare Card Pack")
+    world.multiworld.register_indirect_condition("Level 65", "Destiny Epic Card Pack")
+    world.multiworld.register_indirect_condition("Level 70", "Destiny Legendary Card Pack")
 
     for pA in range(1, 31):
         world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: state.has("Progressive Shop Expansion A", world.player, pA)
