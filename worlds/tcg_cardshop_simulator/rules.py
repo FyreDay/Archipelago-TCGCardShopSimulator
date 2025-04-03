@@ -507,6 +507,9 @@ def get_rules(world):
             "Destiny Legendary Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Legendary Destiny"),
+            "Warehouse":
+                lambda state:
+                state.has("Warehouse Unlock", world.player),
         }
     }
     return rules
