@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
-from collections import namedtuple
-from BaseClasses import Location, LocationProgressType
+from BaseClasses import Location
 
 
 class TCGSimulatorLocation(Location):
@@ -15,9 +14,10 @@ class LocData(NamedTuple):
 
 
 @dataclass
-class NamedLocation :
+class NamedLocation:
     name: str
-    locData : LocData
+    locData: LocData
+
 
 hardcoded_pg1_locs = [
     NamedLocation("Basic Card Pack (64)", LocData(0x0F0, "Level 1-4")),
@@ -137,6 +137,7 @@ hardcoded_pg3_locs = [
     NamedLocation("Drilceros Action Figure (4)", LocData(0x14D, "Level 80-84")),
     NamedLocation("ToonZ Plushie (6)", LocData(0x14E, "Level 10-14")),
 ]
+
 hardcoded_tt_locs = [
     NamedLocation("System Gate #1", LocData(0x14F, "Level 5-9")),
     NamedLocation("System Gate #2", LocData(0x150, "Level 5-9")),
@@ -156,6 +157,7 @@ hardcoded_tt_locs = [
     NamedLocation("Card Holder", LocData(0x15E, "Level 40-44")),
     NamedLocation("Collectors Album", LocData(0x15F, "Level 45-49")),
 ]
+
 hardcoded_locs = {
     "Worker - Zachery": LocData(0x170, "Level 1-4"),
     "Worker - Terence": LocData(0x171, "Level 1-4"),
@@ -212,7 +214,6 @@ hardcoded_locs = {
 }
 
 
-
 pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
 pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
 pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
@@ -222,6 +223,7 @@ rarity_item_dict = {}
 
 location_dict: Dict[str, LocData] = {}
 
+
 def randomize_shop(world, mapping, locs):
     world.random.shuffle(mapping)
     for index in range(len(mapping)):
@@ -229,6 +231,7 @@ def randomize_shop(world, mapping, locs):
         data.locData.region = locs[mapping[index]].locData.region
         global location_dict
         location_dict[data.name] = data.locData
+
 
 def generate_card(name, index, border, foil, expansion):
     loc_id = 0x1F290000 | (int(expansion) << 12) | (int(border) << 8) | (foil << 7) | (index + 1)
@@ -322,6 +325,7 @@ class Border(Enum):
 class Foil(Enum):
     NonFoil = 0,
     Foil = 1
+
 
 card_rarity: List[MonsterData] = [
     MonsterData("PiggyA", Rarity.Common),

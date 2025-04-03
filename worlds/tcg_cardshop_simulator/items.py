@@ -1,4 +1,4 @@
-from typing import Optional, List, NamedTuple, Dict
+from typing import Optional, NamedTuple, Dict
 
 from BaseClasses import Item, ItemClassification
 
@@ -206,7 +206,7 @@ progressive_dict: Dict[str, ItemData] = {
     "Progressive Card Display": ItemData(0x4A, ItemClassification.useful, 3),
     "Progressive Personal Shelf": ItemData(0x4B, ItemClassification.useful, 3),
     "Progressive Auto Scent": ItemData(0x4C, ItemClassification.useful, 3),
-    "Progressive Warehouse Shelf": ItemData(0x4D, ItemClassification.useful,2),
+    "Progressive Warehouse Shelf": ItemData(0x4D, ItemClassification.useful, 2),
     "Progressive Shop Expansion A": ItemData(0xC0, ItemClassification.progression, 30),
     "Progressive Shop Expansion B": ItemData(0xC1, ItemClassification.useful, 14),
     "Progressive Ghost Card": ItemData(0xD7, ItemClassification.progression_skip_balancing, 0)

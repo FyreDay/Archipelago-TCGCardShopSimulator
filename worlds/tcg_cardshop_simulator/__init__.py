@@ -67,7 +67,7 @@ class TCGSimulatorWorld(World):
             "ShopPg3Mapping": locations.pg3_mapping,
             "ShopTTMapping": locations.tt_mapping,
             "Goal": self.options.goal.value,
-            "ShopExpansionGoal": self.options.shop_expansion_goal.value, 
+            "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
             "CardSanity": self.options.card_sanity.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,

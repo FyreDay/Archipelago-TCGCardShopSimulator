@@ -1,3 +1,4 @@
+from BaseClasses import LocationProgressType
 from .items import *
 from .locations import *
 
@@ -406,70 +407,70 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player,1),
+                state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
             "Level 10":
                 lambda state:
-                state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player,2),
+                state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 15":
                 lambda state:
-                state.has("Worker - Zachery", world.player) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player,4),
+                state.has("Worker - Zachery", world.player) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 20":
                 lambda state:
-                state.has("Progressive Cleanser", world.player) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player,6),
+                state.has("Progressive Cleanser", world.player) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 25":
                 lambda state:
-                state.has("Progressive Basic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,8),
+                state.has("Progressive Basic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
             "Level 30":
                 lambda state:
-                state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player,10),
+                state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player, 10),
             "Level 35":
                 lambda state:
-                state.has("Warehouse Unlock", world.player) and state.has("Progressive Shop Expansion A", world.player,12),
+                state.has("Warehouse Unlock", world.player) and state.has("Progressive Shop Expansion A", world.player, 12),
             "Level 40":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,14),
+                state.has("Progressive Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 14),
             "Level 45":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,16),
+                state.has("Progressive Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 16),
             "Level 50":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,18),
+                state.has("Progressive Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 18),
             "Level 55":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,20),
+                state.has("Progressive Basic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 20),
             "Level 60":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,22),
+                state.has("Progressive Rare Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 22),
             "Level 65":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player,24),
+                state.has("Progressive Epic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 24),
             "Level 70":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,1),
+                state.has("Progressive Shop Expansion B", world.player, 1),
             "Level 75":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,2),
+                state.has("Progressive Shop Expansion B", world.player, 2),
             "Level 80":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,3),
+                state.has("Progressive Shop Expansion B", world.player, 3),
             "Level 85":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,4),
+                state.has("Progressive Shop Expansion B", world.player, 4),
             "Level 90":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,5),
+                state.has("Progressive Shop Expansion B", world.player, 5),
             "Level 95":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,6),
+                state.has("Progressive Shop Expansion B", world.player, 6),
             "Level 100":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,7),
+                state.has("Progressive Shop Expansion B", world.player, 7),
             "Level 105":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,8),
+                state.has("Progressive Shop Expansion B", world.player, 8),
             "Level 110":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player,9),
+                state.has("Progressive Shop Expansion B", world.player, 9),
         }
     }
     return rules
@@ -508,13 +509,13 @@ def set_rules(world):
     if world.options.card_sanity.value > 0:
         for location_name, item_name in rarity_item_dict.items():
             world.multiworld.get_location(location_name, world.player).access_rule = lambda state: state.has(item_name, world.player)
-    #victory conditions
+
+    # victory conditions
     if world.options.goal.value == 0:
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Shop Expansion A", world.player, world.options.shop_expansion_goal.value)
 
     if world.options.goal.value == 1:
         world.multiworld.get_location(f"Level {world.options.level_goal.value}", world.player).place_locked_item(TCGSimulatorItem("Victory", ItemClassification.progression, None, world.player))
-        #world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Ghost Card", world.player),
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
 
     if world.options.goal.value == 2:

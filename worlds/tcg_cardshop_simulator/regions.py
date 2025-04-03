@@ -1,7 +1,4 @@
-from typing import List, Dict, Optional, Callable
-import math
-
-from BaseClasses import Region, Entrance, MultiWorld
+from BaseClasses import Region, Entrance
 from .locations import *
 
 
@@ -88,25 +85,3 @@ def connect_entrances(world):
     connect_regions(world, "Level 95-99", "Level 100-104", "Level 100")
     connect_regions(world, "Level 100-104", "Level 105-109", "Level 105")
     connect_regions(world, "Level 105-109", "Level 110-115", "Level 110")
-
-#"Progressive Shop Expansion A", world.player, 1)
-   #"Progressive Card Table",world.player, 1)
-   #"Progressive Shop Expansion A", world.player, 2)
-   #f"Progressive {card_types[1]} Pack",world.player, 2)
-   #"Progressive Shop Expansion A", world.player, 3)
-   #f"Progressive {card_types[2]} Pack",world.player, 1)
-   #"Progressive Shop Expansion A", world.player, 4)
-   #f"Progressive {card_types[2]} Pack",world.player, 2)
-   #"Progressive Shop Expansion A", world.player, 5)
-   #f"Progressive {card_types[3]} Pack",world.player, 1)
-   #"Progressive Shop Expansion A", world.player, 6)
-   #f"Progressive {card_types[3]} Pack",world.player, 2)
-   #"Progressive Shop Expansion A", world.player, 7)
-   #f"Progressive {card_types[4]} Pack",world.player, 1)
-   #"Progressive Shop Expansion A", world.player, 8)
-   #f"Progressive {card_types[4]} Pack",world.player, 2)
-   #"Progressive Shop Expansion A", world.player, 9)
-   #f"Progressive {card_types[5]} Pack",world.player, 1)
-   #"Progressive Shop Expansion A", world.player, 10)
-   #f"Progressive {card_types[5]} Pack",world.player, 2)
-   #"Progressive Shop Expansion A", world.player, 11)
