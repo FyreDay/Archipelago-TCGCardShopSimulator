@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Optional, NamedTuple, Dict
 
 from BaseClasses import Item, ItemClassification
@@ -6,8 +7,8 @@ from BaseClasses import Item, ItemClassification
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
 
-
-class ItemData(NamedTuple):
+@dataclass
+class ItemData:
     code: int
     classification: ItemClassification
     amount: Optional[int] = 1
@@ -25,10 +26,10 @@ def create_items(world):
     if world.options.goal.value == 2:
         progressive_dict["Progressive Ghost Card"].amount = ghost_val
 
-    for item_name, item_data in item_dict:
+    for item_name, item_data in item_dict.items():
         create_item(world, item_name, item_data.classification, item_data.amount)
 
-    for item_name, item_data in progressive_dict:
+    for item_name, item_data in progressive_dict.items():
         create_item(world, item_name, item_data.classification, item_data.amount)
 
     remaining_locations: int = total_location_count - len(world.itempool)
@@ -88,7 +89,7 @@ item_dict: Dict[str, ItemData] = {
     "Fire Destiny Deck": ItemData(0xD, ItemClassification.useful),
     "Earth Destiny Deck": ItemData(0xE, ItemClassification.useful),
     "Water Destiny Deck": ItemData(0xF, ItemClassification.useful),
-    "Wind Destiny Deck": ItemData(0x0, ItemClassification.useful),
+    "Wind Destiny Deck": ItemData(0x10, ItemClassification.useful),
     "Card Sleeves (Clear)": ItemData(0x12, ItemClassification.useful),
     "Card Sleeves (Tetramon)": ItemData(0x13, ItemClassification.useful),
     "D20 Dice Red": ItemData(0x14, ItemClassification.useful),

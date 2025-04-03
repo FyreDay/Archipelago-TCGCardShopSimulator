@@ -230,9 +230,8 @@ def randomize_shop(world, mapping, locs):
 
     for index in range(len(mapping)):
         data = locs[index]
-        data.locData.region = locs[mapping[index]].locData.region
         global location_dict
-        location_dict[data.name] = data.locData
+        location_dict[data.name] = LocData(data.locData.code, locs[mapping[index]].locData.region)
 
 
 def swap_within_n(world, lst, target, n, invalid_indexes):
@@ -258,7 +257,7 @@ def swap_within_n(world, lst, target, n, invalid_indexes):
     return invalid_indexes
 
 def generate_card(name, index, border, foil, expansion):
-    loc_id = 0x1F290000 | (int(expansion) << 12) | (int(border) << 8) | (foil << 7) | (index + 1)
+    loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
     global location_dict
     location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, "")
 
@@ -286,7 +285,7 @@ def generate_locations(world):
     randomize_shop(world, pg3_mapping, hardcoded_pg3_locs)
     randomize_shop(world, tt_mapping, hardcoded_tt_locs)
 
-    location_dict += hardcoded_locs
+    location_dict.update(hardcoded_locs)
     current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs))
 
     for level in range(2, 116):
@@ -305,10 +304,10 @@ def generate_locations(world):
     for index, data in enumerate(card_rarity):
         data = cast(MonsterData, data)
         for border in Border:
-            if world.options.card_sanity.value >= int(data.rarity):
+            if world.options.card_sanity.value >= data.rarity.value:
                 generate_card(data.name, index, border, 0, Expansion.Tetramon)
                 generate_card(data.name, index, border, 1, Expansion.Tetramon)
-            if world.options.card_sanity.value >= int(data.rarity) + 4:
+            if world.options.card_sanity.value >= data.rarity.value + 4:
                 generate_card(data.name, index, border, 0, Expansion.Destiny)
                 generate_card(data.name, index, border, 1, Expansion.Destiny)
     return location_dict
@@ -318,9 +317,12 @@ def create_locations(world, region):
     create_locations_from_dict(world, location_dict, region)
 
 
-def create_locations_from_dict(world, loc_dict, region):
+def create_locations_from_dict(world,loc_dict, reg):
     for (key, data) in loc_dict.items():
-        create_location(world, region, key, data)
+        if data.region != reg.name:
+            continue
+        create_location(world, reg, key, data.code)
+
 
 
 def create_location(world, region, name: str, code: int):
@@ -329,10 +331,10 @@ def create_location(world, region, name: str, code: int):
 
 
 class Rarity(Enum):
-    Common = 1,
-    Rare = 2,
-    Epic = 3,
-    Legendary = 4,
+    Common = 1
+    Rare = 2
+    Epic = 3
+    Legendary = 4
 
 
 class MonsterData(NamedTuple):
@@ -341,21 +343,21 @@ class MonsterData(NamedTuple):
 
 
 class Expansion(Enum):
-    Tetramon = 0,
+    Tetramon = 0
     Destiny = 1
 
 
 class Border(Enum):
-    Base = 0,
-    FirstEdition = 1,
-    Silver = 2,
-    Gold = 3,
-    EX = 4,
+    Base = 0
+    FirstEdition = 1
+    Silver = 2
+    Gold = 3
+    EX = 4
     FullArt = 5
 
 
 class Foil(Enum):
-    NonFoil = 0,
+    NonFoil = 0
     Foil = 1
 
 
