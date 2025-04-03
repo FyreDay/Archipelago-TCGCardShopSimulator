@@ -71,9 +71,6 @@ hardcoded_pg2_locs = [
     NamedLocation("D20 Dice Black (16)", LocData(0x11D, "Level 1-4")),
     NamedLocation("D20 Dice White (16)", LocData(0x11E, "Level 1-4")),
     NamedLocation("Card Sleeves (Fire)", LocData(0x11F, "Level 10-14")),
-    NamedLocation("Card Sleeves (Earth)", LocData(0x120, "Level 20-24")),
-    NamedLocation("Card Sleeves (Water)", LocData(0x121, "Level 25-29")),
-    NamedLocation("Card Sleeves (Wind)", LocData(0x122, "Level 30-34")),
     NamedLocation("Deck Box Red (8)", LocData(0x123, "Level 5-9")),
     NamedLocation("Deck Box Red (16)", LocData(0x124, "Level 5-9")),
     NamedLocation("Deck Box Green (8)", LocData(0x125, "Level 5-9")),
@@ -83,6 +80,9 @@ hardcoded_pg2_locs = [
     NamedLocation("Deck Box Yellow (8)", LocData(0x129, "Level 5-9")),
     NamedLocation("Deck Box Yellow (16)", LocData(0x12A, "Level 5-9")),
     NamedLocation("Collection Book (4)", LocData(0x12B, "Level 10-14")),
+    NamedLocation("Card Sleeves (Earth)", LocData(0x120, "Level 20-24")),
+    NamedLocation("Card Sleeves (Water)", LocData(0x121, "Level 25-29")),
+    NamedLocation("Card Sleeves (Wind)", LocData(0x122, "Level 30-34")),
     NamedLocation("Premium Collection Book (4)", LocData(0x12C, "Level 50-54")),
     NamedLocation("Playmat (Drilceros)", LocData(0x12D, "Level 5-9")),
     NamedLocation("Playmat (Clamigo)", LocData(0x12E, "Level 10-14")),
@@ -223,15 +223,39 @@ rarity_item_dict = {}
 
 location_dict: Dict[str, LocData] = {}
 
+def get_index_by_name(lst, target_name):
+    return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
 
 def randomize_shop(world, mapping, locs):
-    world.random.shuffle(mapping)
+
     for index in range(len(mapping)):
         data = locs[index]
         data.locData.region = locs[mapping[index]].locData.region
         global location_dict
         location_dict[data.name] = data.locData
 
+
+def swap_within_n(world, lst, target, n, invalid_indexes):
+    if target not in lst:
+        return invalid_indexes  # Return unchanged invalid list if target not found
+
+    index = lst.index(target)  # Find the index of the target
+
+    # Generate a valid swap index (between 0 and n, but not in invalid_indexes)
+    valid_indexes = [i for i in range(min(n + 1, len(lst))) if i not in invalid_indexes]
+
+    if not valid_indexes:
+        return invalid_indexes  # No valid swaps available
+
+    swap_index = world.random.choice(valid_indexes)  # Pick a valid index
+
+    # Swap the target element with the chosen index
+    lst[index], lst[swap_index] = lst[swap_index], lst[index]
+
+    # Add the new index to the invalid list
+    invalid_indexes.append(swap_index)
+
+    return invalid_indexes
 
 def generate_card(name, index, border, foil, expansion):
     loc_id = 0x1F290000 | (int(expansion) << 12) | (int(border) << 8) | (foil << 7) | (index + 1)
@@ -249,7 +273,15 @@ def generate_locations(world):
     global pg3_mapping
     global tt_mapping
 
+    invalid_indexes = []
+    world.random.shuffle(pg1_mapping)
+    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 12, invalid_indexes)
+
     randomize_shop(world, pg1_mapping, hardcoded_pg1_locs)
+
+    invalid_indexes = []
+    world.random.shuffle(pg1_mapping)
+    swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indexes)
     randomize_shop(world, pg2_mapping, hardcoded_pg2_locs)
     randomize_shop(world, pg3_mapping, hardcoded_pg3_locs)
     randomize_shop(world, tt_mapping, hardcoded_tt_locs)

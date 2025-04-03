@@ -2,50 +2,62 @@ from BaseClasses import LocationProgressType
 from .items import *
 from .locations import *
 
+def has_card_pack(world, state, rarity):
+    return state.has(f"{rarity} Pack (32)", world.player) or state.has(f"{rarity} Pack (64)", world.player) or state.has(f"{rarity} Box (4)", world.player) or state.has(f"{rarity} Box (8)", world.player)
 
-def has_level(world, state, level):
-    return state.can_reach_location(f"Level {level}", world.player),
 
 
 def get_rules(world):
     rules = {
         "locations": {
+            "Basic Card Pack (32)":
+                lambda state:
+                state.has("Basic Card Pack (32)", world.player),
+            "Basic Card Pack (64)":
+                lambda state:
+                state.has("Basic Card Pack (32)", world.player),
+            "Basic Card Box (4)":
+                lambda state:
+                state.has("Basic Card Box (4)", world.player),
+            "Basic Card Box (8)":
+                lambda state:
+                state.has("Basic Card Box (8)", world.player),
             "Rare Card Pack (32)":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player, 1),
+                state.has("Rare Card Pack (32)", world.player),
             "Rare Card Pack (64)":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player, 2),
+                state.has("Rare Card Pack (64)", world.player),
             "Rare Card Box (4)":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player, 3),
+                state.has("Rare Card Box (4)", world.player),
             "Rare Card Box (8)":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player, 4),
+                state.has("Rare Card Box (8)", world.player),
             "Epic Card Pack (32)":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player, 1),
+                state.has("Epic Card Pack (32)", world.player),
             "Epic Card Pack (64)":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player, 2),
+                state.has("Epic Card Pack (64)", world.player),
             "Epic Card Box (4)":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player, 3),
+                state.has("Epic Card Box (4)", world.player),
             "Epic Card Box (8)":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player, 4),
+                state.has("Epic Card Box (8)", world.player),
             "Legendary Card Pack (32)":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player, 1),
+                state.has("Legendary Card Pack (32)", world.player),
             "Legendary Card Pack (64)":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player, 2),
+                state.has("Legendary Card Pack (64)", world.player),
             "Legendary Card Box (4)":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player, 3),
+                state.has("Legendary Card Box (4)", world.player),
             "Legendary Card Box (8)":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player, 4),
+                state.has("Legendary Card Box (8)", world.player),
             "Fire Battle Deck (18)":
                 lambda state:
                 state.has("Fire Battle Deck (18)", world.player),
@@ -60,52 +72,52 @@ def get_rules(world):
                 state.has("Wind Battle Deck (18)", world.player),
             "Basic Destiny Pack (32)":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player, 1),
+                state.has("Basic Destiny Pack (32)", world.player),
             "Basic Destiny Pack (64)":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player, 2),
+                state.has("Basic Destiny Pack (64)", world.player),
             "Basic Destiny Box (4)":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player, 3),
+                state.has("Basic Destiny Box (4)", world.player),
             "Basic Destiny Box (8)":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player, 4),
+                state.has("Basic Destiny Box (8)", world.player),
             "Rare Destiny Pack (32)":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player, 1),
+                state.has("Rare Destiny Pack (32)", world.player),
             "Rare Destiny Pack (64)":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player, 2),
+                state.has("Rare Destiny Pack (64)", world.player),
             "Rare Destiny Box (4)":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player, 3),
+                state.has("Rare Destiny Box (4)", world.player),
             "Rare Destiny Box (8)":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player, 4),
+                state.has("Rare Destiny Box (8)", world.player),
             "Epic Destiny Pack (32)":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player, 1),
+                state.has("Epic Destiny Pack (32)", world.player),
             "Epic Destiny Pack (64)":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player, 2),
+                state.has("Epic Destiny Pack (64)", world.player),
             "Epic Destiny Box (4)":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player, 3),
+                state.has("Epic Destiny Box (4)", world.player),
             "Epic Destiny Box (8)":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player, 4),
+                state.has("Epic Destiny Box (8)", world.player),
             "Legendary Destiny Pack (32)":
                 lambda state:
-                state.has("Progressive Legendary Destiny Pack", world.player, 1),
+                state.has("Legendary Destiny Pack (32)", world.player),
             "Legendary Destiny Pack (64)":
                 lambda state:
-                state.has("Progressive Legendary Destiny Pack", world.player, 2),
+                state.has("Legendary Destiny Pack (64)", world.player),
             "Legendary Destiny Box (4)":
                 lambda state:
-                state.has("Progressive Legendary Destiny Pack", world.player, 3),
+                state.has("Legendary Destiny Box (4)", world.player),
             "Legendary Destiny Box (8)":
                 lambda state:
-                state.has("Progressive Legendary Destiny Pack", world.player, 4),
+                state.has("Legendary Destiny Box (8)", world.player),
             "Fire Destiny Deck (18)":
                 lambda state:
                 state.has("Fire Destiny Deck (18)", world.player),
@@ -120,10 +132,10 @@ def get_rules(world):
                 state.has("Wind Destiny Deck (18)", world.player),
             "Cleanser (8)":
                 lambda state:
-                state.has("Progressive Cleanser", world.player, 1),
+                state.has("Cleanser (8)", world.player),
             "Cleanser (16)":
                 lambda state:
-                state.has("Progressive Cleanser", world.player, 2),
+                state.has("Cleanser (16)", world.player),
             "Card Sleeves (Clear)":
                 lambda state:
                 state.has("Card Sleeves (Clear)", world.player),
@@ -156,28 +168,28 @@ def get_rules(world):
                 state.has("Card Sleeves (Wind)", world.player),
             "Deck Box Red (8)":
                 lambda state:
-                state.has("Progressive Deck Box Red", world.player, 1),
+                state.has("Deck Box Red (8)", world.player),
             "Deck Box Red (16)":
                 lambda state:
-                state.has("Progressive Deck Box Red", world.player, 2),
+                state.has("Deck Box Red (16)", world.player),
             "Deck Box Green (8)":
                 lambda state:
-                state.has("Progressive Deck Box Green", world.player, 1),
+                state.has("Deck Box Green (8)", world.player),
             "Deck Box Green (16)":
                 lambda state:
-                state.has("Progressive Deck Box Green", world.player, 2),
+                state.has("Deck Box Green (16)", world.player),
             "Deck Box Blue (8)":
                 lambda state:
-                state.has("Progressive Deck Box Blue", world.player, 1),
+                state.has("Deck Box Blue (8)", world.player),
             "Deck Box Blue (16)":
                 lambda state:
-                state.has("Progressive Deck Box Blue", world.player, 2),
+                state.has("Deck Box Blue (16)", world.player),
             "Deck Box Yellow (8)":
                 lambda state:
-                state.has("Progressive Deck Box Yellow", world.player, 1),
+                state.has("Deck Box Yellow (8)", world.player),
             "Deck Box Yellow (16)":
                 lambda state:
-                state.has("Progressive Deck Box Yellow", world.player, 2),
+                state.has("Deck Box Yellow (16)", world.player),
             "Collection Book (4)":
                 lambda state:
                 state.has("Collection Book (4)", world.player),
@@ -416,10 +428,10 @@ def get_rules(world):
                 state.has("Worker - Zachery", world.player) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 20":
                 lambda state:
-                state.has("Progressive Cleanser", world.player) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
+                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (8)", world.player)) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 25":
                 lambda state:
-                state.has("Progressive Basic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
+                state.can_reach_region("Common Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
             "Level 30":
                 lambda state:
                 state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player, 10),
@@ -428,25 +440,25 @@ def get_rules(world):
                 state.has("Warehouse Unlock", world.player) and state.has("Progressive Shop Expansion A", world.player, 12),
             "Level 40":
                 lambda state:
-                state.has("Progressive Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 14),
+                state.can_reach_region("Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 14),
             "Level 45":
                 lambda state:
-                state.has("Progressive Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 16),
+                state.can_reach_region("Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 16),
             "Level 50":
                 lambda state:
-                state.has("Progressive Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 18),
+                state.can_reach_region("Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 18),
             "Level 55":
                 lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 20),
+                state.can_reach_region("Destiny Common Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 20),
             "Level 60":
                 lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 22),
+                state.can_reach_region("Destiny Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 22),
             "Level 65":
                 lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 24),
+                state.can_reach_region("Destiny Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 24),
             "Level 70":
                 lambda state:
-                state.has("Progressive Shop Expansion B", world.player, 1),
+                state.can_reach_region("Destiny Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion B", world.player, 1),
             "Level 75":
                 lambda state:
                 state.has("Progressive Shop Expansion B", world.player, 2),
@@ -471,6 +483,30 @@ def get_rules(world):
             "Level 110":
                 lambda state:
                 state.has("Progressive Shop Expansion B", world.player, 9),
+            "Common Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Basic Card"),
+            "Rare Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Rare Card"),
+            "Epic Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Epic Card"),
+            "Legendary Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Legendary Card"),
+            "Destiny Common Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Basic Destiny"),
+            "Destiny Rare Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Rare Destiny"),
+            "Destiny Epic Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Epic Destiny"),
+            "Destiny Legendary Card Pack":
+                lambda state:
+                has_card_pack(world, state, "Legendary Destiny"),
         }
     }
     return rules
@@ -498,6 +534,15 @@ def set_rules(world):
             world.get_location(location_name).access_rule = rule
         except KeyError:
             pass
+
+    world.register_indirect_condition("Level 25", "Common Card Pack",)
+    world.register_indirect_condition("Level 40", "Rare Card Pack",)
+    world.register_indirect_condition("Level 45", "Epic Card Pack",)
+    world.register_indirect_condition("Level 50", "Legendary Card Pack",)
+    world.register_indirect_condition("Level 55", "Destiny Common Card Pack")
+    world.register_indirect_condition("Level 60", "Destiny Rare Card Pack")
+    world.register_indirect_condition("Level 65", "Destiny Epic Card Pack")
+    world.register_indirect_condition("Level 70", "Destiny Legendary Card Pack")
 
     for pA in range(1, 31):
         world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: state.has("Progressive Shop Expansion A", world.player, pA)
