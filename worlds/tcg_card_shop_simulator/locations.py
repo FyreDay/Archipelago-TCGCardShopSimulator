@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
@@ -18,7 +19,12 @@ class NamedLocation:
     name: str
     id: int
     locData: LocData
+
 firstItem = ""
+
+lastRegion = 0
+excludedItems = []
+
 pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
     NamedLocation("Basic Card Pack (32)",0, LocData(0x0F0, "Level 1-4")),
@@ -332,6 +338,8 @@ def generate_locations(world):
         location_dict[f"Level {level}"] = LocData(loc_id, f"Level {start_level}-{end_level}")
         if world.options.goal.value == 1 and world.options.level_goal.value == level:
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
+        global lastRegion
+        lastRegion = end_level
     current_loc += 113
 
     for index, data in enumerate(card_rarity):
@@ -354,9 +362,14 @@ def create_locations_from_dict(world, loc_dict, reg):
     for (key, data) in loc_dict.items():
         if data.region != reg.name:
             continue
-        print(f"data: {key} - {reg}")
+
         if data.code is None:
             create_location(world, reg, key, None)
+            continue
+        match = re.search(r'\d+', data.region)
+        if match != None and lastRegion != 0 and lastRegion < int(match.group()):
+            excludedItems.insert(len(excludedItems),key)
+            print(excludedItems)
             continue
         create_location(world, reg, key, data.code + 0x1F280000)
 

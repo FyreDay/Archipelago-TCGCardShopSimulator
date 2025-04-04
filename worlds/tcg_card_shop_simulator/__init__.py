@@ -54,7 +54,7 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        create_items(self, locations.firstItem)
+        create_items(self, locations.firstItem, locations.excludedItems)
 
     def set_rules(self):
         set_rules(self, locations.firstItem)

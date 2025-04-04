@@ -528,11 +528,20 @@ def set_rules(world, ignore_item_name):
     # world.multiworld.register_indirect_condition("Warehouse", "Level 25")
 
     for pA in range(1, 31):
-        world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: state.has("Progressive Shop Expansion A", world.player, pA)
+        try:
+            world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: state.has("Progressive Shop Expansion A", world.player, pA)
+        except KeyError as e:
+            print(f"Key error, {e}")
+            pass
+
 
     for pB in range(1, 15):
-        world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: state.has("Progressive Shop Expansion B", world.player, pB)
-                                                                                  # and state.has("Progressive Shop Expansion A", world.player, pB))
+        try:
+            world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: (state.has("Progressive Shop Expansion B", world.player, pB)
+                                                                                  and state.has("Progressive Shop Expansion A", world.player, pB))
+        except KeyError as e:
+            print(f"Key error, {e}")
+            pass
 
     if world.options.card_sanity.value > 0:
         for location_name, item_name in rarity_item_dict.items():

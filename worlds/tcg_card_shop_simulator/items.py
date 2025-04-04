@@ -20,7 +20,7 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
 
 
-def create_items(world, ignore_item_name):
+def create_items(world, ignore_item_name, ignored_items):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
     ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
     if world.options.goal.value == 2:
@@ -28,7 +28,7 @@ def create_items(world, ignore_item_name):
 
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
-        if item_name == ignore_item_name:
+        if item_name == ignore_item_name or item_name in ignored_items:
             continue
         create_item(world, item_name, item_data.classification, item_data.amount)
 
