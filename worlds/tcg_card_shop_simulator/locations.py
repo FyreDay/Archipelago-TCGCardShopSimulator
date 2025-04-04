@@ -293,7 +293,7 @@ def generate_locations(world):
     global tt_ids
 
     invalid_indices = []
-    world.random.shuffle(pg1_ids)
+    # world.random.shuffle(pg1_ids)
     randomize_shop(world, pg1_ids, hardcoded_pg1_locs)
     #this calculates which item you start with to be removed from the item pool
     global firstItem
@@ -303,10 +303,10 @@ def generate_locations(world):
 
 
     invalid_indices = []
-    world.random.shuffle(pg2_ids)
+    # world.random.shuffle(pg2_ids)
     #swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indices)
     randomize_shop(world, pg2_ids, hardcoded_pg2_locs)
-    world.random.shuffle(pg3_ids)
+    # world.random.shuffle(pg3_ids)
     randomize_shop(world, pg3_ids, hardcoded_pg3_locs)
     # world.random.shuffle(tt_mapping)
     randomize_shop(world, tt_ids, hardcoded_tt_locs)

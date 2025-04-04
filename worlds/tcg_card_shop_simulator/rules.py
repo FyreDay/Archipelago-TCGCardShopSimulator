@@ -244,42 +244,42 @@ def get_rules(world):
             "Playmat (Tetramon)":
                 lambda state:
                 state.has("Playmat (Tetramon)", world.player),
-            "Manga 1":
-                lambda state:
-                state.has("Manga 1", world.player),
-            "Manga 2":
-                lambda state:
-                state.has("Manga 2", world.player),
-            "Manga 3":
-                lambda state:
-                state.has("Manga 3", world.player),
-            "Manga 4":
-                lambda state:
-                state.has("Manga 4", world.player),
-            "Manga 5":
-                lambda state:
-                state.has("Manga 5", world.player),
-            "Manga 6":
-                lambda state:
-                state.has("Manga 6", world.player),
-            "Manga 7":
-                lambda state:
-                state.has("Manga 7", world.player),
-            "Manga 8":
-                lambda state:
-                state.has("Manga 8", world.player),
-            "Manga 9":
-                lambda state:
-                state.has("Manga 9", world.player),
-            "Manga 10":
-                lambda state:
-                state.has("Manga 10", world.player),
-            "Manga 11":
-                lambda state:
-                state.has("Manga 11", world.player),
-            "Manga 12":
-                lambda state:
-                state.has("Manga 12", world.player),
+            # "Manga 1":
+            #     lambda state:
+            #     state.has("Manga 1", world.player),
+            # "Manga 2":
+            #     lambda state:
+            #     state.has("Manga 2", world.player),
+            # "Manga 3":
+            #     lambda state:
+            #     state.has("Manga 3", world.player),
+            # "Manga 4":
+            #     lambda state:
+            #     state.has("Manga 4", world.player),
+            # "Manga 5":
+            #     lambda state:
+            #     state.has("Manga 5", world.player),
+            # "Manga 6":
+            #     lambda state:
+            #     state.has("Manga 6", world.player),
+            # "Manga 7":
+            #     lambda state:
+            #     state.has("Manga 7", world.player),
+            # "Manga 8":
+            #     lambda state:
+            #     state.has("Manga 8", world.player),
+            # "Manga 9":
+            #     lambda state:
+            #     state.has("Manga 9", world.player),
+            # "Manga 10":
+            #     lambda state:
+            #     state.has("Manga 10", world.player),
+            # "Manga 11":
+            #     lambda state:
+            #     state.has("Manga 11", world.player),
+            # "Manga 12":
+            #     lambda state:
+            #     state.has("Manga 12", world.player),
             "Pigni Plushie (12)":
                 lambda state:
                 state.has("Pigni Plushie (12)", world.player),
@@ -388,34 +388,6 @@ def get_rules(world):
             "Collectors Album":
                 lambda state:
                 state.has("Collectors Album", world.player),
-            "Shop B Expansion 1": lambda state:
-                state.can_reach_region("Level 20-24", world.player),
-            "Shop B Expansion 2": lambda state:
-                state.can_reach_region("Level 25-29", world.player),
-            "Shop B Expansion 3": lambda state:
-                state.can_reach_region("Level 30-34", world.player),
-            "Shop B Expansion 4": lambda state:
-                state.can_reach_region("Level 35-39", world.player),
-            "Shop B Expansion 5": lambda state:
-                state.can_reach_region("Level 50-54", world.player),
-            "Shop B Expansion 6": lambda state:
-                state.can_reach_region("Level 55-59", world.player),
-            "Shop B Expansion 7": lambda state:
-                state.can_reach_region("Level 60-64", world.player),
-            "Shop B Expansion 8": lambda state:
-                state.can_reach_region("Level 65-69", world.player),
-            "Shop B Expansion 9": lambda state:
-                state.can_reach_region("Level 80-84", world.player),
-            "Shop B Expansion 10": lambda state:
-                state.can_reach_region("Level 85-89", world.player),
-            "Shop B Expansion 11": lambda state:
-                state.can_reach_region("Level 90-94", world.player),
-            "Shop B Expansion 12": lambda state:
-                state.can_reach_region("Level 95-99", world.player),
-            "Shop B Expansion 13": lambda state:
-                state.can_reach_region("Level 110-115", world.player),
-            "Shop B Expansion 14": lambda state:
-                state.can_reach_region("Level 110-115", world.player),
         },
         "entrances": {
             "Level 5":
@@ -429,7 +401,7 @@ def get_rules(world):
                 (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 20":
                 lambda state:
-                 state.can_reach_region("Common Card Pack", world.player) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
+                 has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 25":
                 lambda state:
                 state.has("Progressive Shop Expansion A", world.player, 8),
@@ -441,25 +413,25 @@ def get_rules(world):
                 state.has("Warehouse Unlock", world.player) and state.has("Progressive Shop Expansion A", world.player, 12),
             "Level 40":
                 lambda state:
-                state.can_reach_region("Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 14),
+                has_card_pack(world, state, "Rare Card") and state.has("Progressive Shop Expansion A", world.player, 14),
             "Level 45":
                 lambda state:
-                state.can_reach_region("Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 16),
+                has_card_pack(world, state, "Epic Card") and state.has("Progressive Shop Expansion A", world.player, 16),
             "Level 50":
                 lambda state:
-                state.can_reach_region("Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 18),
+                has_card_pack(world, state, "Legendary Card") and state.has("Progressive Shop Expansion A", world.player, 18),
             "Level 55":
                 lambda state:
-                state.can_reach_region("Destiny Common Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 20),
+                has_card_pack(world, state, "Basic Destiny") and state.has("Progressive Shop Expansion A", world.player, 20),
             "Level 60":
                 lambda state:
-                state.can_reach_region("Destiny Rare Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 22),
+                has_card_pack(world, state, "Rare Destiny") and state.has("Progressive Shop Expansion A", world.player, 22),
             "Level 65":
                 lambda state:
-                state.can_reach_region("Destiny Epic Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 24),
+                has_card_pack(world, state, "Epic Destiny") and state.has("Progressive Shop Expansion A", world.player, 24),
             "Level 70":
                 lambda state:
-                state.can_reach_region("Destiny Legendary Card Pack", world.player) and state.has("Progressive Shop Expansion B", world.player, 1),
+                has_card_pack(world, state, "Legendary Destiny") and state.has("Progressive Shop Expansion B", world.player, 1),
             "Level 75":
                 lambda state:
                 state.has("Progressive Shop Expansion B", world.player, 2),
@@ -510,7 +482,7 @@ def get_rules(world):
                 has_card_pack(world, state, "Legendary Destiny"),
             "Warehouse Door":
                 lambda state:
-                state.has("Warehouse Unlock", world.player),
+                 state.has("Warehouse Unlock", world.player),#state.can_reach_region("Level 25-29", world.player) and
 
         }
     }
@@ -545,21 +517,22 @@ def set_rules(world, ignore_item_name):
             print(f"Key error, {e}")
             pass
 
-    world.multiworld.register_indirect_condition("Level 20", "Common Card Pack",)
-    world.multiworld.register_indirect_condition("Level 40", "Rare Card Pack",)
-    world.multiworld.register_indirect_condition("Level 45", "Epic Card Pack",)
-    world.multiworld.register_indirect_condition("Level 50", "Legendary Card Pack",)
-    world.multiworld.register_indirect_condition("Level 55", "Destiny Common Card Pack")
-    world.multiworld.register_indirect_condition("Level 60", "Destiny Rare Card Pack")
-    world.multiworld.register_indirect_condition("Level 65", "Destiny Epic Card Pack")
-    world.multiworld.register_indirect_condition("Level 70", "Destiny Legendary Card Pack")
+    # world.multiworld.register_indirect_condition("Level 20-24", "Common Card Pack",)
+    # world.multiworld.register_indirect_condition("Level 40-44", "Rare Card Pack",)
+    # world.multiworld.register_indirect_condition("Level 45-49", "Epic Card Pack",)
+    # world.multiworld.register_indirect_condition("Level 50-54", "Legendary Card Pack",)
+    # world.multiworld.register_indirect_condition("Level 55-59", "Destiny Common Card Pack")
+    # world.multiworld.register_indirect_condition("Level 60-64", "Destiny Rare Card Pack")
+    # world.multiworld.register_indirect_condition("Level 65-69", "Destiny Epic Card Pack")
+    # world.multiworld.register_indirect_condition("Level 70-74", "Destiny Legendary Card Pack")
+    # world.multiworld.register_indirect_condition("Warehouse", "Level 25")
 
     for pA in range(1, 31):
         world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state: state.has("Progressive Shop Expansion A", world.player, pA)
 
     for pB in range(1, 15):
-        world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: (state.has("Progressive Shop Expansion B", world.player, pB)
-                                                                                  and state.has("Warehouse Unlock", world.player))
+        world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: state.has("Progressive Shop Expansion B", world.player, pB)
+                                                                                  # and state.has("Progressive Shop Expansion A", world.player, pB))
 
     if world.options.card_sanity.value > 0:
         for location_name, item_name in rarity_item_dict.items():
@@ -575,3 +548,32 @@ def set_rules(world, ignore_item_name):
 
     if world.options.goal.value == 2:
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Ghost Card", world.player, world.options.ghost_goal_amount.value)
+
+# "Shop B Expansion 1": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 1) and state.can_reach_region("Level 20-24", world.player),
+#             "Shop B Expansion 2": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 2) and state.can_reach_region("Level 25-29", world.player),
+#             "Shop B Expansion 3": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 3) and state.can_reach_region("Level 30-34", world.player),
+#             "Shop B Expansion 4": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 4) and state.can_reach_region("Level 35-39", world.player),
+#             "Shop B Expansion 5": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 5) and state.can_reach_region("Level 50-54", world.player),
+#             "Shop B Expansion 6": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 6) and state.can_reach_region("Level 55-59", world.player),
+#             "Shop B Expansion 7": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 7) and state.can_reach_region("Level 60-64", world.player),
+#             "Shop B Expansion 8": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 8) and state.can_reach_region("Level 65-69", world.player),
+#             "Shop B Expansion 9": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 9) and state.can_reach_region("Level 80-84", world.player),
+#             "Shop B Expansion 10": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 10) and state.can_reach_region("Level 85-89", world.player),
+#             "Shop B Expansion 11": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 11) and state.can_reach_region("Level 90-94", world.player),
+#             "Shop B Expansion 12": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 12) and state.can_reach_region("Level 95-99", world.player),
+#             "Shop B Expansion 13": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 13) and state.can_reach_region("Level 110-115", world.player),
+#             "Shop B Expansion 14": lambda state:
+#                 state.has("Progressive Shop Expansion B", world.player, 14) and state.can_reach_region("Level 110-115", world.player),
