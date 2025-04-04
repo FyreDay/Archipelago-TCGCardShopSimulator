@@ -220,9 +220,9 @@ worker_locs ={
     "Worker - Axel": LocData(0x178, "Level 1-4"),
 }
 
-# pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
-# pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
-# pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
+pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
+pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
+pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
 tt_mapping: List[int] = list(range(len(hardcoded_tt_locs)))
 
 rarity_item_dict = {}
@@ -238,7 +238,7 @@ def randomize_shop(world, mapping, locs):
     for index in range(len(mapping)):
         data: NamedLocation = locs[index]
         global location_dict
-        location_dict[data.name] = LocData(data.locData.code, locs[mapping.index(data.id)].locData.region)
+        location_dict[data.name] = LocData(data.locData.code, locs[mapping[index]].locData.region)
 
 
 def swap_within_n(world, lst, target, n, invalid_indexes):
@@ -292,24 +292,24 @@ def generate_locations(world):
     global pg3_ids
     global tt_ids
 
-    invalid_indices = []
-    # world.random.shuffle(pg1_ids)
-    randomize_shop(world, pg1_ids, hardcoded_pg1_locs)
-    #this calculates which item you start with to be removed from the item pool
-    global firstItem
-    firstItem = next((value for value in hardcoded_pg1_locs if value.id == pg1_ids[0]), None).name
-    print(f"first Item is {firstItem}")
+    world.random.shuffle(pg1_ids)
+    for index in range(len(pg1_ids)):
+        data = hardcoded_pg1_locs[index]
+        location_dict[data.name] = LocData(data.locData.code, hardcoded_pg1_locs[pg1_ids.index(data.id)].locData.region)
 
+    world.random.shuffle(pg2_ids)
+    for index in range(len(pg2_ids)):
+        data = hardcoded_pg2_locs[index]
+        location_dict[data.name] = LocData(data.locData.code, hardcoded_pg2_locs[pg2_ids.index(data.id)].locData.region)
 
+    world.random.shuffle(pg3_ids)
+    for index in range(len(pg3_ids)):
+        data = hardcoded_pg3_locs[index]
+        location_dict[data.name] = LocData(data.locData.code, hardcoded_pg3_locs[pg3_ids.index(data.id)].locData.region)
 
-    invalid_indices = []
-    # world.random.shuffle(pg2_ids)
-    #swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indices)
-    randomize_shop(world, pg2_ids, hardcoded_pg2_locs)
-    # world.random.shuffle(pg3_ids)
-    randomize_shop(world, pg3_ids, hardcoded_pg3_locs)
-    # world.random.shuffle(tt_mapping)
-    randomize_shop(world, tt_ids, hardcoded_tt_locs)
+    for index in range(len(tt_mapping)):
+        data = hardcoded_tt_locs[index]
+        location_dict[data.name] = LocData(data.locData.code, hardcoded_tt_locs[tt_mapping[index]].locData.region)
 
     location_dict.update(hardcoded_locs)
     current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs) + len(worker_locs))
@@ -354,6 +354,7 @@ def create_locations_from_dict(world, loc_dict, reg):
     for (key, data) in loc_dict.items():
         if data.region != reg.name:
             continue
+        print(f"data: {key} - {reg}")
         if data.code is None:
             create_location(world, reg, key, None)
             continue
