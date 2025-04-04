@@ -367,7 +367,7 @@ def create_locations_from_dict(world, loc_dict, reg):
             create_location(world, reg, key, None)
             continue
         match = re.search(r'\d+', data.region)
-        if match != None and lastRegion != 0 and lastRegion < int(match.group()):
+        if match and lastRegion != 0 and lastRegion < int(match.group()):
             excludedItems.insert(len(excludedItems),key)
             print(excludedItems)
             continue

@@ -244,42 +244,42 @@ def get_rules(world):
             "Playmat (Tetramon)":
                 lambda state:
                 state.has("Playmat (Tetramon)", world.player),
-            # "Manga 1":
-            #     lambda state:
-            #     state.has("Manga 1", world.player),
-            # "Manga 2":
-            #     lambda state:
-            #     state.has("Manga 2", world.player),
-            # "Manga 3":
-            #     lambda state:
-            #     state.has("Manga 3", world.player),
-            # "Manga 4":
-            #     lambda state:
-            #     state.has("Manga 4", world.player),
-            # "Manga 5":
-            #     lambda state:
-            #     state.has("Manga 5", world.player),
-            # "Manga 6":
-            #     lambda state:
-            #     state.has("Manga 6", world.player),
-            # "Manga 7":
-            #     lambda state:
-            #     state.has("Manga 7", world.player),
-            # "Manga 8":
-            #     lambda state:
-            #     state.has("Manga 8", world.player),
-            # "Manga 9":
-            #     lambda state:
-            #     state.has("Manga 9", world.player),
-            # "Manga 10":
-            #     lambda state:
-            #     state.has("Manga 10", world.player),
-            # "Manga 11":
-            #     lambda state:
-            #     state.has("Manga 11", world.player),
-            # "Manga 12":
-            #     lambda state:
-            #     state.has("Manga 12", world.player),
+            "Manga 1":
+                lambda state:
+                state.has("Manga 1", world.player),
+            "Manga 2":
+                lambda state:
+                state.has("Manga 2", world.player),
+            "Manga 3":
+                lambda state:
+                state.has("Manga 3", world.player),
+            "Manga 4":
+                lambda state:
+                state.has("Manga 4", world.player),
+            "Manga 5":
+                lambda state:
+                state.has("Manga 5", world.player),
+            "Manga 6":
+                lambda state:
+                state.has("Manga 6", world.player),
+            "Manga 7":
+                lambda state:
+                state.has("Manga 7", world.player),
+            "Manga 8":
+                lambda state:
+                state.has("Manga 8", world.player),
+            "Manga 9":
+                lambda state:
+                state.has("Manga 9", world.player),
+            "Manga 10":
+                lambda state:
+                state.has("Manga 10", world.player),
+            "Manga 11":
+                lambda state:
+                state.has("Manga 11", world.player),
+            "Manga 12":
+                lambda state:
+                state.has("Manga 12", world.player),
             "Pigni Plushie (12)":
                 lambda state:
                 state.has("Pigni Plushie (12)", world.player),
@@ -516,15 +516,6 @@ def set_rules(world, ignore_item_name):
         except KeyError as e:
             print(f"Key error, {e}")
             pass
-
-    # world.multiworld.register_indirect_condition("Level 20-24", "Common Card Pack",)
-    # world.multiworld.register_indirect_condition("Level 40-44", "Rare Card Pack",)
-    # world.multiworld.register_indirect_condition("Level 45-49", "Epic Card Pack",)
-    # world.multiworld.register_indirect_condition("Level 50-54", "Legendary Card Pack",)
-    # world.multiworld.register_indirect_condition("Level 55-59", "Destiny Common Card Pack")
-    # world.multiworld.register_indirect_condition("Level 60-64", "Destiny Rare Card Pack")
-    # world.multiworld.register_indirect_condition("Level 65-69", "Destiny Epic Card Pack")
-    # world.multiworld.register_indirect_condition("Level 70-74", "Destiny Legendary Card Pack")
     # world.multiworld.register_indirect_condition("Warehouse", "Level 25")
 
     for pA in range(1, 31):
