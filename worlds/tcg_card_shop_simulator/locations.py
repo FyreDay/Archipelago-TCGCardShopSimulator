@@ -16,129 +16,132 @@ class LocData(NamedTuple):
 @dataclass
 class NamedLocation:
     name: str
+    id: int
     locData: LocData
 
-
+pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
-    NamedLocation("Basic Card Pack (32)", LocData(0x0F0, "Level 1-4")),
-    NamedLocation("Basic Card Pack (64)", LocData(0x0F1, "Level 1-4")),
-    NamedLocation("Basic Card Box (4)", LocData(0x0F2, "Level 1-4")),
-    NamedLocation("Basic Card Box (8)", LocData(0x0F3, "Level 1-4")),
-    NamedLocation("Rare Card Pack (32)", LocData(0x0F4, "Level 5-9")),
-    NamedLocation("Rare Card Pack (64)", LocData(0x0F5, "Level 5-9")),
-    NamedLocation("Rare Card Box (4)", LocData(0x0F6, "Level 5-9")),
-    NamedLocation("Rare Card Box (8)", LocData(0x0F7, "Level 10-14")),
-    NamedLocation("Epic Card Pack (32)", LocData(0x0F8, "Level 10-14")),
-    NamedLocation("Epic Card Pack (64)", LocData(0x0F9, "Level 15-19")),
-    NamedLocation("Epic Card Box (4)", LocData(0x0FA, "Level 15-19")),
-    NamedLocation("Epic Card Box (8)", LocData(0x0FB, "Level 15-19")),
-    NamedLocation("Legendary Card Pack (32)", LocData(0x0FC, "Level 20-24")),
-    NamedLocation("Legendary Card Pack (64)", LocData(0x0FD, "Level 25-29")),
-    NamedLocation("Legendary Card Box (4)", LocData(0x0FE, "Level 20-24")),
-    NamedLocation("Legendary Card Box (8)", LocData(0x0FF, "Level 30-34")),
-    NamedLocation("Fire Battle Deck (18)", LocData(0x100, "Level 5-9")),
-    NamedLocation("Earth Battle Deck (18)", LocData(0x101, "Level 10-14")),
-    NamedLocation("Water Battle Deck (18)", LocData(0x102, "Level 15-19")),
-    NamedLocation("Wind Battle Deck (18)", LocData(0x103, "Level 20-24")),
-    NamedLocation("Basic Destiny Pack (32)", LocData(0x104, "Level 25-29")),
-    NamedLocation("Basic Destiny Pack (64)", LocData(0x105, "Level 25-29")),
-    NamedLocation("Basic Destiny Box (4)", LocData(0x106, "Level 25-29")),
-    NamedLocation("Basic Destiny Box (8)", LocData(0x107, "Level 30-34")),
-    NamedLocation("Rare Destiny Pack (32)", LocData(0x108, "Level 30-34")),
-    NamedLocation("Rare Destiny Pack (64)", LocData(0x109, "Level 35-39")),
-    NamedLocation("Rare Destiny Box (4)", LocData(0x10A, "Level 30-34")),
-    NamedLocation("Rare Destiny Box (8)", LocData(0x10B, "Level 35-39")),
-    NamedLocation("Epic Destiny Pack (32)", LocData(0x10C, "Level 40-44")),
-    NamedLocation("Epic Destiny Pack (64)", LocData(0x10D, "Level 45-49")),
-    NamedLocation("Epic Destiny Box (4)", LocData(0x10E, "Level 45-49")),
-    NamedLocation("Epic Destiny Box (8)", LocData(0x10F, "Level 55-59")),
-    NamedLocation("Legendary Destiny Pack (32)", LocData(0x110, "Level 50-54")),
-    NamedLocation("Legendary Destiny Pack (64)", LocData(0x111, "Level 65-69")),
-    NamedLocation("Legendary Destiny Box (4)", LocData(0x112, "Level 60-64")),
-    NamedLocation("Legendary Destiny Box (8)", LocData(0x113, "Level 70-74")),
-    NamedLocation("Fire Destiny Deck (18)", LocData(0x114, "Level 30-34")),
-    NamedLocation("Earth Destiny Deck (18)", LocData(0x115, "Level 45-49")),
-    NamedLocation("Water Destiny Deck (18)", LocData(0x116, "Level 40-44")),
-    NamedLocation("Wind Destiny Deck (18)", LocData(0x117, "Level 50-54")),
+    NamedLocation("Basic Card Pack (32)",0, LocData(0x0F0, "Level 1-4")),
+    NamedLocation("Basic Card Pack (64)",1, LocData(0x0F1, "Level 1-4")),
+    NamedLocation("Basic Card Box (4)",2, LocData(0x0F2, "Level 1-4")),
+    NamedLocation("Basic Card Box (8)",3, LocData(0x0F3, "Level 1-4")),
+    NamedLocation("Rare Card Pack (32)",4, LocData(0x0F4, "Level 5-9")),
+    NamedLocation("Rare Card Pack (64)",5, LocData(0x0F5, "Level 5-9")),
+    NamedLocation("Rare Card Box (4)",6, LocData(0x0F6, "Level 5-9")),
+    NamedLocation("Rare Card Box (8)",7, LocData(0x0F7, "Level 10-14")),
+    NamedLocation("Epic Card Pack (32)",8, LocData(0x0F8, "Level 10-14")),
+    NamedLocation("Epic Card Pack (64)",9, LocData(0x0F9, "Level 15-19")),
+    NamedLocation("Epic Card Box (4)",10, LocData(0x0FA, "Level 15-19")),
+    NamedLocation("Epic Card Box (8)",11, LocData(0x0FB, "Level 15-19")),
+    NamedLocation("Legendary Card Pack (32)",12, LocData(0x0FC, "Level 20-24")),
+    NamedLocation("Legendary Card Pack (64)",13, LocData(0x0FD, "Level 25-29")),
+    NamedLocation("Legendary Card Box (4)",14, LocData(0x0FE, "Level 20-24")),
+    NamedLocation("Legendary Card Box (8)",15, LocData(0x0FF, "Level 30-34")),
+    NamedLocation("Fire Battle Deck (18)",67, LocData(0x100, "Level 5-9")),
+    NamedLocation("Earth Battle Deck (18)",68, LocData(0x101, "Level 10-14")),
+    NamedLocation("Water Battle Deck (18)",69, LocData(0x102, "Level 15-19")),
+    NamedLocation("Wind Battle Deck (18)",70, LocData(0x103, "Level 20-24")),
+    NamedLocation("Basic Destiny Pack (32)",24, LocData(0x104, "Level 25-29")),
+    NamedLocation("Basic Destiny Pack (64)",25, LocData(0x105, "Level 25-29")),
+    NamedLocation("Basic Destiny Box (4)",26, LocData(0x106, "Level 25-29")),
+    NamedLocation("Basic Destiny Box (8)",27, LocData(0x107, "Level 30-34")),
+    NamedLocation("Rare Destiny Pack (32)",28, LocData(0x108, "Level 30-34")),
+    NamedLocation("Rare Destiny Pack (64)",29, LocData(0x109, "Level 35-39")),
+    NamedLocation("Rare Destiny Box (4)",30, LocData(0x10A, "Level 30-34")),
+    NamedLocation("Rare Destiny Box (8)",31, LocData(0x10B, "Level 35-39")),
+    NamedLocation("Epic Destiny Pack (32)",32, LocData(0x10C, "Level 40-44")),
+    NamedLocation("Epic Destiny Pack (64)",33, LocData(0x10D, "Level 45-49")),
+    NamedLocation("Epic Destiny Box (4)",34, LocData(0x10E, "Level 45-49")),
+    NamedLocation("Epic Destiny Box (8)",35, LocData(0x10F, "Level 55-59")),
+    NamedLocation("Legendary Destiny Pack (32)",36, LocData(0x110, "Level 50-54")),
+    NamedLocation("Legendary Destiny Pack (64)",37, LocData(0x111, "Level 65-69")),
+    NamedLocation("Legendary Destiny Box (4)",38, LocData(0x112, "Level 60-64")),
+    NamedLocation("Legendary Destiny Box (8)",39, LocData(0x113, "Level 70-74")),
+    NamedLocation("Fire Destiny Deck (18)",71, LocData(0x114, "Level 30-34")),
+    NamedLocation("Earth Destiny Deck (18)",72, LocData(0x115, "Level 45-49")),
+    NamedLocation("Water Destiny Deck (18)",73, LocData(0x116, "Level 40-44")),
+    NamedLocation("Wind Destiny Deck (18)",74, LocData(0x117, "Level 50-54")),
 ]
-
+pg2_ids = [40, 41, 75, 76, 43, 44, 45, 46, 77, 78, 79, 80, 16, 17, 18, 19, 20, 21, 22, 23, 42, 66, 83, 81, 87, 95, 90, 82, 86, 85, 84, 88, 91, 92, 94, 93, 89, 115, 116, 117, 118, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]
 hardcoded_pg2_locs = [
-    NamedLocation("Cleanser (8)", LocData(0x118, "Level 1-4")),
-    NamedLocation("Cleanser (16)", LocData(0x119, "Level 5-9")),
-    NamedLocation("Card Sleeves (Clear)", LocData(0x11A, "Level 1-4")),
-    NamedLocation("Card Sleeves (Tetramon)", LocData(0x11B, "Level 10-14")),
-    NamedLocation("D20 Dice Red (16)", LocData(0x11C, "Level 1-4")),
-    NamedLocation("D20 Dice Blue (16)", LocData(0x11D, "Level 1-4")),
-    NamedLocation("D20 Dice Black (16)", LocData(0x11E, "Level 1-4")),
-    NamedLocation("D20 Dice White (16)", LocData(0x11F, "Level 1-4")),
-    NamedLocation("Card Sleeves (Fire)", LocData(0x120, "Level 10-14")),
-    NamedLocation("Card Sleeves (Earth)", LocData(0x121, "Level 20-24")),
-    NamedLocation("Card Sleeves (Water)", LocData(0x122, "Level 25-29")),
-    NamedLocation("Card Sleeves (Wind)", LocData(0x123, "Level 30-34")),
-    NamedLocation("Deck Box Red (8)", LocData(0x124, "Level 5-9")),
-    NamedLocation("Deck Box Red (16)", LocData(0x125, "Level 5-9")),
-    NamedLocation("Deck Box Green (8)", LocData(0x126, "Level 5-9")),
-    NamedLocation("Deck Box Green (16)", LocData(0x127, "Level 5-9")),
-    NamedLocation("Deck Box Blue (8)", LocData(0x128, "Level 5-9")),
-    NamedLocation("Deck Box Blue (16)", LocData(0x129, "Level 5-9")),
-    NamedLocation("Deck Box Yellow (8)", LocData(0x12A, "Level 5-9")),
-    NamedLocation("Deck Box Yellow (16)", LocData(0x12B, "Level 5-9")),
-    NamedLocation("Collection Book (4)", LocData(0x12C, "Level 10-14")),
-    NamedLocation("Premium Collection Book (4)", LocData(0x12D, "Level 50-54")),
-    NamedLocation("Playmat (Drilceros)", LocData(0x12E, "Level 5-9")),
-    NamedLocation("Playmat (Clamigo)", LocData(0x12F, "Level 10-14")),
-    NamedLocation("Playmat (Wispo)", LocData(0x130, "Level 15-19")),
-    NamedLocation("Playmat (Lunight)", LocData(0x131, "Level 15-19")),
-    NamedLocation("Playmat (Kyrone)", LocData(0x132, "Level 15-19")),
-    NamedLocation("Playmat (Duel)", LocData(0x133, "Level 20-24")),
-    NamedLocation("Playmat (Dracunix1)", LocData(0x134, "Level 25-29")),
-    NamedLocation("Playmat (The Four Dragons)", LocData(0x135, "Level 35-39")),
-    NamedLocation("Playmat (Drakon)", LocData(0x136, "Level 35-39")),
-    NamedLocation("Playmat (GigatronX Evo)", LocData(0x137, "Level 35-39")),
-    NamedLocation("Playmat (Fire)", LocData(0x138, "Level 40-44")),
-    NamedLocation("Playmat (Earth)", LocData(0x139, "Level 45-49")),
-    NamedLocation("Playmat (Water)", LocData(0x13A, "Level 50-54")),
-    NamedLocation("Playmat (Wind)", LocData(0x13B, "Level 55-59")),
-    NamedLocation("Playmat (Tetramon)", LocData(0x13C, "Level 60-64")),
-    NamedLocation("Playmat (Dracunix2)", LocData(0x161, "Level 60-64")),
-    NamedLocation("Playmat (GigatronX)", LocData(0x162, "Level 65-69")),
-    NamedLocation("Playmat (Katengu Black)", LocData(0x163, "Level 70-74")),
-    NamedLocation("Playmat (Katengu White)", LocData(0x164, "Level 75-79")),
-    NamedLocation("Manga 1", LocData(0x165, "Level 10-14")),
-    NamedLocation("Manga 2", LocData(0x166, "Level 20-24")),
-    NamedLocation("Manga 3", LocData(0x167, "Level 25-29")),
-    NamedLocation("Manga 4", LocData(0x168, "Level 35-39")),
-    NamedLocation("Manga 5", LocData(0x169, "Level 40-44")),
-    NamedLocation("Manga 6", LocData(0x16A, "Level 45-49")),
-    NamedLocation("Manga 7", LocData(0x16B, "Level 50-54")),
-    NamedLocation("Manga 8", LocData(0x16C, "Level 55-59")),
-    NamedLocation("Manga 9", LocData(0x16D, "Level 55-59")),
-    NamedLocation("Manga 10", LocData(0x16E, "Level 60-64")),
-    NamedLocation("Manga 11", LocData(0x16F, "Level 65-69")),
-    NamedLocation("Manga 12", LocData(0x170, "Level 70-74")),
-]
-hardcoded_pg3_locs = [
-    NamedLocation("Pigni Plushie (12)", LocData(0x13D, "Level 5-9")),
-    NamedLocation("Nanomite Plushie (16)", LocData(0x13E, "Level 5-9")),
-    NamedLocation("Minstar Plushie (24)", LocData(0x13F, "Level 10-14")),
-    NamedLocation("Nocti Plushie (6)", LocData(0x140, "Level 10-14")),
-    NamedLocation("Burpig Figurine (12)", LocData(0x141, "Level 15-19")),
-    NamedLocation("Decimite Figurine (8)", LocData(0x142, "Level 15-19")),
-    NamedLocation("Trickstar Figurine (12)", LocData(0x143, "Level 20-24")),
-    NamedLocation("Lunight Figurine (8)", LocData(0x144, "Level 20-24")),
-    NamedLocation("Inferhog Figurine (2)", LocData(0x145, "Level 30-34")),
-    NamedLocation("Meganite Figurine (2)", LocData(0x146, "Level 30-34")),
-    NamedLocation("Princestar Figurine (2)", LocData(0x147, "Level 40-44")),
-    NamedLocation("Vampicant Figurine (2)", LocData(0x148, "Level 50-54")),
-    NamedLocation("Blazoar Plushie (2)", LocData(0x149, "Level 55-59")),
-    NamedLocation("Giganite Statue (2)", LocData(0x14A, "Level 70-74")),
-    NamedLocation("Kingstar Plushie (2)", LocData(0x14B, "Level 65-69")),
-    NamedLocation("Dracunix Figurine (1)", LocData(0x14C, "Level 75-79")),
-    NamedLocation("Bonfiox Plushie (8)", LocData(0x14D, "Level 25-29")),
-    NamedLocation("Drilceros Action Figure (4)", LocData(0x14E, "Level 80-84")),
-    NamedLocation("ToonZ Plushie (6)", LocData(0x14F, "Level 10-14")),
+    NamedLocation("Cleanser (8)",40, LocData(0x118, "Level 1-4")),
+    NamedLocation("Cleanser (16)",41, LocData(0x119, "Level 5-9")),
+    NamedLocation("Card Sleeves (Clear)",75, LocData(0x11A, "Level 1-4")),
+    NamedLocation("Card Sleeves (Tetramon)",76, LocData(0x11B, "Level 10-14")),
+    NamedLocation("D20 Dice Red (16)",43, LocData(0x11C, "Level 1-4")),
+    NamedLocation("D20 Dice Blue (16)",44, LocData(0x11D, "Level 1-4")),
+    NamedLocation("D20 Dice Black (16)",45, LocData(0x11E, "Level 1-4")),
+    NamedLocation("D20 Dice White (16)",46, LocData(0x11F, "Level 1-4")),
+    NamedLocation("Card Sleeves (Fire)",77, LocData(0x120, "Level 10-14")),
+    NamedLocation("Card Sleeves (Earth)",78, LocData(0x121, "Level 20-24")),
+    NamedLocation("Card Sleeves (Water)",79, LocData(0x122, "Level 25-29")),
+    NamedLocation("Card Sleeves (Wind)",80, LocData(0x123, "Level 30-34")),
+    NamedLocation("Deck Box Red (8)",16, LocData(0x124, "Level 5-9")),
+    NamedLocation("Deck Box Red (16)",17, LocData(0x125, "Level 5-9")),
+    NamedLocation("Deck Box Green (8)",18, LocData(0x126, "Level 5-9")),
+    NamedLocation("Deck Box Green (16)",19, LocData(0x127, "Level 5-9")),
+    NamedLocation("Deck Box Blue (8)",20, LocData(0x128, "Level 5-9")),
+    NamedLocation("Deck Box Blue (16)",21, LocData(0x129, "Level 5-9")),
+    NamedLocation("Deck Box Yellow (8)",22, LocData(0x12A, "Level 5-9")),
+    NamedLocation("Deck Box Yellow (16)",23, LocData(0x12B, "Level 5-9")),
+    NamedLocation("Collection Book (4)",42, LocData(0x12C, "Level 10-14")),
+    NamedLocation("Premium Collection Book (4)",66, LocData(0x12D, "Level 50-54")),
+    NamedLocation("Playmat (Drilceros)",83, LocData(0x12E, "Level 5-9")),
+    NamedLocation("Playmat (Clamigo)",81, LocData(0x12F, "Level 10-14")),
+    NamedLocation("Playmat (Wispo)",87, LocData(0x130, "Level 15-19")),
+    NamedLocation("Playmat (Lunight)",95, LocData(0x131, "Level 15-19")),
+    NamedLocation("Playmat (Kyrone)",90, LocData(0x132, "Level 15-19")),
+    NamedLocation("Playmat (Duel)",82, LocData(0x133, "Level 20-24")),
+    NamedLocation("Playmat (Dracunix1)",86, LocData(0x134, "Level 25-29")),
+    NamedLocation("Playmat (The Four Dragons)",85, LocData(0x135, "Level 35-39")),
+    NamedLocation("Playmat (Drakon)",84, LocData(0x136, "Level 35-39")),
+    NamedLocation("Playmat (GigatronX Evo)",88, LocData(0x137, "Level 35-39")),
+    NamedLocation("Playmat (Fire)",91, LocData(0x138, "Level 40-44")),
+    NamedLocation("Playmat (Earth)",92, LocData(0x139, "Level 45-49")),
+    NamedLocation("Playmat (Water)",94, LocData(0x13A, "Level 50-54")),
+    NamedLocation("Playmat (Wind)",93, LocData(0x13B, "Level 55-59")),
+    NamedLocation("Playmat (Tetramon)",89, LocData(0x13C, "Level 60-64")),
+    NamedLocation("Playmat (Dracunix2)",115, LocData(0x161, "Level 60-64")),
+    NamedLocation("Playmat (GigatronX)",116, LocData(0x162, "Level 65-69")),
+    NamedLocation("Playmat (Katengu Black)",117, LocData(0x163, "Level 70-74")),
+    NamedLocation("Playmat (Katengu White)",118, LocData(0x164, "Level 75-79")),
+    NamedLocation("Manga 1",101, LocData(0x165, "Level 10-14")),
+    NamedLocation("Manga 2",102, LocData(0x166, "Level 20-24")),
+    NamedLocation("Manga 3",103, LocData(0x167, "Level 25-29")),
+    NamedLocation("Manga 4",104, LocData(0x168, "Level 35-39")),
+    NamedLocation("Manga 5",105, LocData(0x169, "Level 40-44")),
+    NamedLocation("Manga 6",106, LocData(0x16A, "Level 45-49")),
+    NamedLocation("Manga 7",107, LocData(0x16B, "Level 50-54")),
+    NamedLocation("Manga 8",108, LocData(0x16C, "Level 55-59")),
+    NamedLocation("Manga 9",109, LocData(0x16D, "Level 55-59")),
+    NamedLocation("Manga 10",110, LocData(0x16E, "Level 60-64")),
+    NamedLocation("Manga 11",111, LocData(0x16F, "Level 65-69")),
+    NamedLocation("Manga 12",112, LocData(0x170, "Level 70-74")),
 ]
 
+pg3_ids = [ 47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
+hardcoded_pg3_locs = [
+    NamedLocation("Pigni Plushie (12)",47, LocData(0x13D, "Level 5-9")),
+    NamedLocation("Nanomite Plushie (16)",48, LocData(0x13E, "Level 5-9")),
+    NamedLocation("Minstar Plushie (24)",49, LocData(0x13F, "Level 10-14")),
+    NamedLocation("Nocti Plushie (6)",50, LocData(0x140, "Level 10-14")),
+    NamedLocation("Burpig Figurine (12)",52, LocData(0x141, "Level 15-19")),
+    NamedLocation("Decimite Figurine (8)",55, LocData(0x142, "Level 15-19")),
+    NamedLocation("Trickstar Figurine (12)",58, LocData(0x143, "Level 20-24")),
+    NamedLocation("Lunight Figurine (8)",61, LocData(0x144, "Level 20-24")),
+    NamedLocation("Inferhog Figurine (2)",53, LocData(0x145, "Level 30-34")),
+    NamedLocation("Meganite Figurine (2)",56, LocData(0x146, "Level 30-34")),
+    NamedLocation("Princestar Figurine (2)",59, LocData(0x147, "Level 40-44")),
+    NamedLocation("Vampicant Figurine (2)",62, LocData(0x148, "Level 50-54")),
+    NamedLocation("Blazoar Plushie (2)",54, LocData(0x149, "Level 55-59")),
+    NamedLocation("Giganite Statue (2)",57, LocData(0x14A, "Level 70-74")),
+    NamedLocation("Kingstar Plushie (2)",60, LocData(0x14B, "Level 65-69")),
+    NamedLocation("Dracunix Figurine (1)",63, LocData(0x14C, "Level 75-79")),
+    NamedLocation("Bonfiox Plushie (8)",65, LocData(0x14D, "Level 25-29")),
+    NamedLocation("Drilceros Action Figure (4)",64, LocData(0x14E, "Level 80-84")),
+    NamedLocation("ToonZ Plushie (6)",51, LocData(0x14F, "Level 10-14")),
+]
+tt_ids = [99, 100, 97, 96, 98, 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
 hardcoded_tt_locs = [
     NamedLocation("System Gate #1", LocData(0x150, "Level 5-9")),
     NamedLocation("System Gate #2", LocData(0x151, "Level 5-9")),
@@ -160,14 +163,14 @@ hardcoded_tt_locs = [
 ]
 
 hardcoded_locs = {
-    "Worker - Zachery": LocData(0x171, "Level 1-4"),
-    "Worker - Terence": LocData(0x172, "Level 1-4"),
-    "Worker - Dennis": LocData(0x173, "Level 1-4"),
-    "Worker - Clark": LocData(0x174, "Level 1-4"),
-    "Worker - Angus": LocData(0x175, "Level 1-4"),
-    "Worker - Benji": LocData(0x176, "Level 1-4"),
-    "Worker - Lauren": LocData(0x177, "Level 1-4"),
-    "Worker - Axel": LocData(0x178, "Level 1-4"),
+    # "Worker - Zachery": LocData(0x171, "Level 1-4"),
+    # "Worker - Terence": LocData(0x172, "Level 1-4"),
+    # "Worker - Dennis": LocData(0x173, "Level 1-4"),
+    # "Worker - Clark": LocData(0x174, "Level 1-4"),
+    # "Worker - Angus": LocData(0x175, "Level 1-4"),
+    # "Worker - Benji": LocData(0x176, "Level 1-4"),
+    # "Worker - Lauren": LocData(0x177, "Level 1-4"),
+    # "Worker - Axel": LocData(0x178, "Level 1-4"),
     "Shop A Expansion 1": LocData(0x179, "Level 1-4"),
     "Shop A Expansion 2": LocData(0x17A, "Level 1-4"),
     "Shop A Expansion 3": LocData(0x17B, "Level 5-9"),
@@ -198,26 +201,26 @@ hardcoded_locs = {
     "Shop A Expansion 28": LocData(0x194, "Level 65-69"),
     "Shop A Expansion 29": LocData(0x195, "Level 70-74"),
     "Shop A Expansion 30": LocData(0x196, "Level 70-74"),
-    "Shop B Expansion 1": LocData(0x197, "Level 20-24"),
-    "Shop B Expansion 2": LocData(0x198, "Level 25-29"),
-    "Shop B Expansion 3": LocData(0x199, "Level 30-34"),
-    "Shop B Expansion 4": LocData(0x19A, "Level 35-39"),
-    "Shop B Expansion 5": LocData(0x19B, "Level 50-54"),
-    "Shop B Expansion 6": LocData(0x19C, "Level 55-59"),
-    "Shop B Expansion 7": LocData(0x19D, "Level 60-64"),
-    "Shop B Expansion 8": LocData(0x19E, "Level 65-69"),
-    "Shop B Expansion 9": LocData(0x19F, "Level 80-84"),
-    "Shop B Expansion 10": LocData(0x1A0, "Level 85-89"),
-    "Shop B Expansion 11": LocData(0x1A1, "Level 90-94"),
-    "Shop B Expansion 12": LocData(0x1A2, "Level 95-99"),
-    "Shop B Expansion 13": LocData(0x1A3, "Level 110-115"),
-    "Shop B Expansion 14": LocData(0x1A4, "Level 110-115"),
+    "Shop B Expansion 1": LocData(0x197, "Warehouse"),
+    "Shop B Expansion 2": LocData(0x198, "Warehouse"),
+    "Shop B Expansion 3": LocData(0x199, "Warehouse"),
+    "Shop B Expansion 4": LocData(0x19A, "Warehouse"),
+    "Shop B Expansion 5": LocData(0x19B, "Warehouse"),
+    "Shop B Expansion 6": LocData(0x19C, "Warehouse"),
+    "Shop B Expansion 7": LocData(0x19D, "Warehouse"),
+    "Shop B Expansion 8": LocData(0x19E, "Warehouse"),
+    "Shop B Expansion 9": LocData(0x19F, "Warehouse"),
+    "Shop B Expansion 10": LocData(0x1A0, "Warehouse"),
+    "Shop B Expansion 11": LocData(0x1A1, "Warehouse"),
+    "Shop B Expansion 12": LocData(0x1A2, "Warehouse"),
+    "Shop B Expansion 13": LocData(0x1A3, "Warehouse"),
+    "Shop B Expansion 14": LocData(0x1A4, "Warehouse"),
 }
 
 
-pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
-pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
-pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
+# pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
+# pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
+# pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
 tt_mapping: List[int] = list(range(len(hardcoded_tt_locs)))
 
 rarity_item_dict = {}
@@ -229,11 +232,13 @@ def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
 
 
-def randomize_shop(world, mapping, locs):
+def randomize_shop(world, mapping, locs, removeIndex0 = False):
     for index in range(len(mapping)):
-        data = locs[index]
+        if index == 0 and removeIndex0:
+            continue
+        data: NamedLocation = locs[index]
         global location_dict
-        location_dict[data.name] = LocData(data.locData.code, locs[mapping[index]].locData.region)
+        location_dict[data.name] = LocData(data.locData.code, locs[mapping.index(data.id)].locData.region)
 
 
 def swap_within_n(world, lst, target, n, invalid_indexes):
@@ -282,23 +287,26 @@ def generate_locations(world):
     current_loc = 0
 
     global location_dict
-    global pg1_mapping
-    global pg2_mapping
-    global pg3_mapping
-    global tt_mapping
+    global pg1_ids
+    global pg2_ids
+    global pg3_ids
+    global tt_ids
 
     invalid_indices = []
-    world.random.shuffle(pg1_mapping)
+    world.random.shuffle(pg1_ids)
     #swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 12, invalid_indices)
 
-    randomize_shop(world, pg1_mapping, hardcoded_pg1_locs)
+    randomize_shop(world, pg1_ids, hardcoded_pg1_locs, True)
+
 
     invalid_indices = []
-    world.random.shuffle(pg1_mapping)
+    world.random.shuffle(pg2_ids)
     #swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 18, invalid_indices)
-    randomize_shop(world, pg2_mapping, hardcoded_pg2_locs)
-    randomize_shop(world, pg3_mapping, hardcoded_pg3_locs)
-    randomize_shop(world, tt_mapping, hardcoded_tt_locs)
+    randomize_shop(world, pg2_ids, hardcoded_pg2_locs)
+    world.random.shuffle(pg3_ids)
+    randomize_shop(world, pg3_ids, hardcoded_pg3_locs)
+    # world.random.shuffle(tt_mapping)
+    randomize_shop(world, tt_ids, hardcoded_tt_locs)
 
     location_dict.update(hardcoded_locs)
     current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs))

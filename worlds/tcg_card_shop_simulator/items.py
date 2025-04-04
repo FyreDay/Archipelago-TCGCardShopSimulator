@@ -37,6 +37,7 @@ def create_items(world):
     print(f"Remaining locations here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
     junk_count = remaining_locations - trap_count
+    print(f"junk count {junk_count+trap_count}")
     trap_weights = {
         "Stink Trap": world.options.stink_trap,
         "Poltergeist Trap": world.options.poltergeist_trap
