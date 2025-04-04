@@ -244,6 +244,42 @@ def get_rules(world):
             "Playmat (Tetramon)":
                 lambda state:
                 state.has("Playmat (Tetramon)", world.player),
+            "Manga 1":
+                lambda state:
+                state.has("Manga 1", world.player),
+            "Manga 2":
+                lambda state:
+                state.has("Manga 2", world.player),
+            "Manga 3":
+                lambda state:
+                state.has("Manga 3", world.player),
+            "Manga 4":
+                lambda state:
+                state.has("Manga 4", world.player),
+            "Manga 5":
+                lambda state:
+                state.has("Manga 5", world.player),
+            "Manga 6":
+                lambda state:
+                state.has("Manga 6", world.player),
+            "Manga 7":
+                lambda state:
+                state.has("Manga 7", world.player),
+            "Manga 8":
+                lambda state:
+                state.has("Manga 8", world.player),
+            "Manga 9":
+                lambda state:
+                state.has("Manga 9", world.player),
+            "Manga 10":
+                lambda state:
+                state.has("Manga 10", world.player),
+            "Manga 11":
+                lambda state:
+                state.has("Manga 11", world.player),
+            "Manga 12":
+                lambda state:
+                state.has("Manga 12", world.player),
             "Pigni Plushie (12)":
                 lambda state:
                 state.has("Pigni Plushie (12)", world.player),
@@ -384,19 +420,19 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
+                state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 10":
                 lambda state:
-                state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
+                state.has("Worker - Zachery", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 3),
             "Level 15":
                 lambda state:
-                state.has("Worker - Zachery", world.player) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
+                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 20":
                 lambda state:
-                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
+                 state.can_reach_region("Common Card Pack", world.player) and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 25":
                 lambda state:
-                state.can_reach_region("Common Card Pack", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
+                state.has("Progressive Shop Expansion A", world.player, 8),
             "Level 30":
                 lambda state:
                 state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player, 10),
@@ -509,7 +545,7 @@ def set_rules(world, ignore_item_name):
             print(f"Key error, {e}")
             pass
 
-    world.multiworld.register_indirect_condition("Level 25", "Common Card Pack",)
+    world.multiworld.register_indirect_condition("Level 20", "Common Card Pack",)
     world.multiworld.register_indirect_condition("Level 40", "Rare Card Pack",)
     world.multiworld.register_indirect_condition("Level 45", "Epic Card Pack",)
     world.multiworld.register_indirect_condition("Level 50", "Legendary Card Pack",)
