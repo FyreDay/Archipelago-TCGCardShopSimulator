@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Dict
 
 from BaseClasses import Item, ItemClassification
-
+from .locations import firstItem
 
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
@@ -20,14 +20,16 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
 
 
-def create_items(world):
+def create_items(world, ignore_item_name):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
     ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
     if world.options.goal.value == 2:
         progressive_dict["Progressive Ghost Card"].amount = ghost_val
 
     for item_name, item_data in item_dict.items():
-
+        #starting item should not be shuffled
+        if item_name == ignore_item_name:
+            continue
         create_item(world, item_name, item_data.classification, item_data.amount)
 
     for item_name, item_data in progressive_dict.items():

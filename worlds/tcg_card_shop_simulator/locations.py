@@ -18,7 +18,7 @@ class NamedLocation:
     name: str
     id: int
     locData: LocData
-
+firstItem = ""
 pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
     NamedLocation("Basic Card Pack (32)",0, LocData(0x0F0, "Level 1-4")),
@@ -143,34 +143,26 @@ hardcoded_pg3_locs = [
 ]
 tt_ids = [99, 100, 97, 96, 98, 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
 hardcoded_tt_locs = [
-    NamedLocation("System Gate #1", LocData(0x150, "Level 5-9")),
-    NamedLocation("System Gate #2", LocData(0x151, "Level 5-9")),
-    NamedLocation("Mafia Works", LocData(0x152, "Level 10-14")),
-    NamedLocation("Necromonsters", LocData(0x153, "Level 15-19")),
-    NamedLocation("Claim!", LocData(0x154, "Level 20-24")),
-    NamedLocation("Penny Sleeves", LocData(0x155, "Level 10-14")),
-    NamedLocation("Tower Deckbox", LocData(0x156, "Level 10-14")),
-    NamedLocation("Magnetic Holder", LocData(0x157, "Level 15-19")),
-    NamedLocation("Toploader", LocData(0x158, "Level 20-24")),
-    NamedLocation("Card Preserver", LocData(0x159, "Level 25-29")),
-    NamedLocation("Playmat Gray", LocData(0x15A, "Level 30-34")),
-    NamedLocation("Playmat Green", LocData(0x15B, "Level 30-34")),
-    NamedLocation("Playmat Purple", LocData(0x15C, "Level 30-34")),
-    NamedLocation("Playmat Yellow", LocData(0x15D, "Level 30-34")),
-    NamedLocation("Pocket Pages", LocData(0x15E, "Level 35-39")),
-    NamedLocation("Card Holder", LocData(0x15F, "Level 40-44")),
-    NamedLocation("Collectors Album", LocData(0x160, "Level 45-49")),
+    NamedLocation("System Gate #1",99, LocData(0x150, "Level 5-9")),
+    NamedLocation("System Gate #2",100, LocData(0x151, "Level 5-9")),
+    NamedLocation("Mafia Works",97, LocData(0x152, "Level 10-14")),
+    NamedLocation("Necromonsters",96, LocData(0x153, "Level 15-19")),
+    NamedLocation("Claim!",98, LocData(0x154, "Level 20-24")),
+    NamedLocation("Penny Sleeves",124, LocData(0x155, "Level 10-14")),
+    NamedLocation("Tower Deckbox",130, LocData(0x156, "Level 10-14")),
+    NamedLocation("Magnetic Holder",119, LocData(0x157, "Level 15-19")),
+    NamedLocation("Toploader",123, LocData(0x158, "Level 20-24")),
+    NamedLocation("Card Preserver",120, LocData(0x159, "Level 25-29")),
+    NamedLocation("Playmat Gray",125, LocData(0x15A, "Level 30-34")),
+    NamedLocation("Playmat Green",126, LocData(0x15B, "Level 30-34")),
+    NamedLocation("Playmat Purple",127, LocData(0x15C, "Level 30-34")),
+    NamedLocation("Playmat Yellow",128, LocData(0x15D, "Level 30-34")),
+    NamedLocation("Pocket Pages",121, LocData(0x15E, "Level 35-39")),
+    NamedLocation("Card Holder",122, LocData(0x15F, "Level 40-44")),
+    NamedLocation("Collectors Album",129, LocData(0x160, "Level 45-49")),
 ]
 
 hardcoded_locs = {
-    # "Worker - Zachery": LocData(0x171, "Level 1-4"),
-    # "Worker - Terence": LocData(0x172, "Level 1-4"),
-    # "Worker - Dennis": LocData(0x173, "Level 1-4"),
-    # "Worker - Clark": LocData(0x174, "Level 1-4"),
-    # "Worker - Angus": LocData(0x175, "Level 1-4"),
-    # "Worker - Benji": LocData(0x176, "Level 1-4"),
-    # "Worker - Lauren": LocData(0x177, "Level 1-4"),
-    # "Worker - Axel": LocData(0x178, "Level 1-4"),
     "Shop A Expansion 1": LocData(0x179, "Level 1-4"),
     "Shop A Expansion 2": LocData(0x17A, "Level 1-4"),
     "Shop A Expansion 3": LocData(0x17B, "Level 5-9"),
@@ -217,6 +209,16 @@ hardcoded_locs = {
     "Shop B Expansion 14": LocData(0x1A4, "Warehouse"),
 }
 
+worker_locs ={
+    "Worker - Zachery": LocData(0x171, "Level 1-4"),
+    "Worker - Terence": LocData(0x172, "Level 1-4"),
+    "Worker - Dennis": LocData(0x173, "Level 1-4"),
+    "Worker - Clark": LocData(0x174, "Level 1-4"),
+    "Worker - Angus": LocData(0x175, "Level 1-4"),
+    "Worker - Benji": LocData(0x176, "Level 1-4"),
+    "Worker - Lauren": LocData(0x177, "Level 1-4"),
+    "Worker - Axel": LocData(0x178, "Level 1-4"),
+}
 
 # pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
 # pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
@@ -232,10 +234,8 @@ def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
 
 
-def randomize_shop(world, mapping, locs, removeIndex0 = False):
+def randomize_shop(world, mapping, locs):
     for index in range(len(mapping)):
-        if index == 0 and removeIndex0:
-            continue
         data: NamedLocation = locs[index]
         global location_dict
         location_dict[data.name] = LocData(data.locData.code, locs[mapping.index(data.id)].locData.region)
@@ -294,9 +294,12 @@ def generate_locations(world):
 
     invalid_indices = []
     world.random.shuffle(pg1_ids)
-    #swap_within_n(world, pg1_mapping, get_index_by_name(hardcoded_pg1_locs, "Basic Card Pack (32)"), 12, invalid_indices)
+    randomize_shop(world, pg1_ids, hardcoded_pg1_locs)
+    #this calculates which item you start with to be removed from the item pool
+    global firstItem
+    firstItem = next((value for value in hardcoded_pg1_locs if value.id == pg1_ids[0]), None).name
+    print(f"first Item is {firstItem}")
 
-    randomize_shop(world, pg1_ids, hardcoded_pg1_locs, True)
 
 
     invalid_indices = []
@@ -309,7 +312,7 @@ def generate_locations(world):
     randomize_shop(world, tt_ids, hardcoded_tt_locs)
 
     location_dict.update(hardcoded_locs)
-    current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs))
+    current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs) + len(worker_locs))
 
     finish_level = 116
 

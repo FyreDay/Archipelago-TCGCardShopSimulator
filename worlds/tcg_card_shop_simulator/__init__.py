@@ -54,10 +54,10 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        create_items(self)
+        create_items(self, locations.firstItem)
 
     def set_rules(self):
-        set_rules(self)
+        set_rules(self, locations.firstItem)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
@@ -68,10 +68,10 @@ class TCGSimulatorWorld(World):
     def fill_slot_data(self) -> id:
         return {
             "ModVersion": "0.0.1",
-            "ShopPg1Mapping": locations.pg1_mapping,
-            "ShopPg2Mapping": locations.pg2_mapping,
-            "ShopPg3Mapping": locations.pg3_mapping,
-            "ShopTTMapping": locations.tt_mapping,
+            "ShopPg1Mapping": locations.pg1_ids,
+            "ShopPg2Mapping": locations.pg2_ids,
+            "ShopPg3Mapping": locations.pg3_ids,
+            "ShopTTMapping": locations.tt_ids,
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,

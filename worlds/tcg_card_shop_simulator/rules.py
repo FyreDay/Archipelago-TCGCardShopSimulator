@@ -481,7 +481,7 @@ def get_rules(world):
     return rules
 
 
-def set_rules(world):
+def set_rules(world, ignore_item_name):
 
 
 
@@ -501,6 +501,9 @@ def set_rules(world):
 
     for location_name, rule in rules_lookup["locations"].items():
         try:
+            # starting item was removes, therefor it cannot be required to access
+            if location_name == ignore_item_name:
+                continue
             world.get_location(location_name).access_rule = rule
         except KeyError as e:
             print(f"Key error, {e}")
