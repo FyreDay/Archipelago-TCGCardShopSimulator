@@ -307,8 +307,7 @@ int_to_card_region = {
 
 def generate_card(name, index, border, foil, expansion, rarity):
     loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
-    global location_dict
-    location_dict[f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}"] = LocData(loc_id, int_to_card_region[(rarity.value - 1) + (4 * expansion.value)])
+    return (f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", LocData(loc_id, int_to_card_region[(rarity.value - 1) + (4 * expansion.value)]))
 
 
 def generate_locations(world):
@@ -420,11 +419,16 @@ def generate_locations(world):
         data = cast(MonsterData, data)
         for border in Border:
             if world.options.card_sanity.value >= data.rarity.value:
-                generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
-                generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
+
+                name, code = generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
+                location_dict[name] = code
+                name, code = generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
+                location_dict[name] = code
             if world.options.card_sanity.value >= data.rarity.value + 4:
-                generate_card(data.name, index, border, 0, Expansion.Destiny, data.rarity)
-                generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
+                name, code = generate_card(data.name, index, border, 0, Expansion.Destiny, data.rarity)
+                location_dict[name] = code
+                name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
+                location_dict[name] = code
     return location_dict
 
 
