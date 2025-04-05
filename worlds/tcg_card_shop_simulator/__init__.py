@@ -54,16 +54,23 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        create_items(self, locations.firstItem, locations.excludedItems)
+        create_items(self, starting_names, locations.excludedItems)
 
     def set_rules(self):
-        set_rules(self, locations.firstItem)
+        set_rules(self, starting_names)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
                           show_entrance_names=False,
                           regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
                               self.player])
+
+    def pre_fill(self) -> None:
+        print(starting_items)
+        self.push_precollected(starting_items[0])
+        self.push_precollected(starting_items[1])
+        self.push_precollected(starting_items[2])
+
 
     def fill_slot_data(self) -> id:
         return {

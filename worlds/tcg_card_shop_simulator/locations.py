@@ -1,8 +1,10 @@
+import random
 import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
 from BaseClasses import Location
+from worlds.blasphemous import skill_dict
 
 
 class TCGSimulatorLocation(Location):
@@ -20,7 +22,7 @@ class NamedLocation:
     id: int
     locData: LocData
 
-firstItem = ""
+starting_names: List[str] =[]
 
 lastRegion = 0
 excludedItems = []
@@ -213,6 +215,30 @@ hardcoded_locs = {
     "Shop B Expansion 12": LocData(0x1A2, "Warehouse"),
     "Shop B Expansion 13": LocData(0x1A3, "Warehouse"),
     "Shop B Expansion 14": LocData(0x1A4, "Warehouse"),
+    "item 1 Sold 1": LocData(0x217,"Level 1-4"),
+    "item 1 Sold 2": LocData(0x218,"Level 1-4"),
+    "item 1 Sold 3": LocData(0x219,"Level 1-4"),
+    "item 1 Sold 4": LocData(0x21A,"Level 1-4"),
+    "item 1 Sold 5": LocData(0x21B,"Level 1-4"),
+    "item 1 Sold 6": LocData(0x21C,"Level 1-4"),
+    "item 1 Sold 7": LocData(0x21D,"Level 1-4"),
+    "item 1 Sold 8": LocData(0x21E,"Level 1-4"),
+    "item 2 Sold 1": LocData(0x21F,"Level 1-4"),
+    "item 2 Sold 2": LocData(0x221,"Level 1-4"),
+    "item 2 Sold 3": LocData(0x222,"Level 1-4"),
+    "item 2 Sold 4": LocData(0x223,"Level 1-4"),
+    "item 2 Sold 5": LocData(0x224,"Level 1-4"),
+    "item 2 Sold 6": LocData(0x225,"Level 1-4"),
+    "item 2 Sold 7": LocData(0x226,"Level 1-4"),
+    "item 2 Sold 8": LocData(0x227,"Level 1-4"),
+    "item 3 Sold 1": LocData(0x228,"Level 1-4"),
+    "item 3 Sold 2": LocData(0x229,"Level 1-4"),
+    "item 3 Sold 3": LocData(0x22A,"Level 1-4"),
+    "item 3 Sold 4": LocData(0x22B,"Level 1-4"),
+    "item 3 Sold 5": LocData(0x22C,"Level 1-4"),
+    "item 3 Sold 6": LocData(0x22D,"Level 1-4"),
+    "item 3 Sold 7": LocData(0x22E,"Level 1-4"),
+    "item 3 Sold 8": LocData(0x22F,"Level 1-4"),
 }
 
 worker_locs ={
@@ -226,9 +252,6 @@ worker_locs ={
     "Worker - Axel": LocData(0x178, "Level 1-4"),
 }
 
-pg1_mapping: List[int] = list(range(len(hardcoded_pg1_locs)))
-pg2_mapping: List[int] = list(range(len(hardcoded_pg2_locs)))
-pg3_mapping: List[int] = list(range(len(hardcoded_pg3_locs)))
 tt_mapping: List[int] = list(range(len(hardcoded_tt_locs)))
 
 rarity_item_dict = {}
@@ -299,26 +322,77 @@ def generate_locations(world):
     global tt_ids
 
     world.random.shuffle(pg1_ids)
+
+    invalid_swaps = []
+
+    random_basic = random.randint(0,3)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_basic),12, invalid_swaps)
+    invalid_swaps.insert(random_basic,len(invalid_swaps))
+
+    random_rare = random.randint(4, 7)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_rare), 16, invalid_swaps)
+    invalid_swaps.insert(random_rare, len(invalid_swaps))
+
+    random_epic = random.randint(8, 11)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_epic), 20, invalid_swaps)
+    invalid_swaps.insert(random_epic, len(invalid_swaps))
+
+    random_legendary = random.randint(12, 15)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_legendary), 20, invalid_swaps)
+    invalid_swaps.insert(random_legendary, len(invalid_swaps))
+
+    random_d_basic = random.randint(0, 3)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_basic), 25, invalid_swaps)
+    invalid_swaps.insert(random_d_basic, len(invalid_swaps))
+
+    random_d_rare = random.randint(4, 7)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_rare), 25, invalid_swaps)
+    invalid_swaps.insert(random_d_rare, len(invalid_swaps))
+
+    random_d_epic = random.randint(8, 11)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_epic), 25, invalid_swaps)
+    invalid_swaps.insert(random_d_epic, len(invalid_swaps))
+
+    random_d_legendary = random.randint(12, 15)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_legendary), 25, invalid_swaps)
+    invalid_swaps.insert(random_d_legendary, len(invalid_swaps))
+
+    random_cleanser = random.randint(40, 41)
+    swap_within_n(world, pg2_ids, pg2_ids.index(random_cleanser), 8, invalid_swaps)
+    invalid_swaps.insert(random_cleanser, len(invalid_swaps))
+
+
+
+
+
     for index in range(len(pg1_ids)):
         data = hardcoded_pg1_locs[index]
+        if pg1_ids.index(data.id) == 0:
+            starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg1_locs[pg1_ids.index(data.id)].locData.region)
 
     world.random.shuffle(pg2_ids)
     for index in range(len(pg2_ids)):
         data = hardcoded_pg2_locs[index]
+        if pg2_ids.index(data.id) == 0:
+            starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg2_locs[pg2_ids.index(data.id)].locData.region)
 
     world.random.shuffle(pg3_ids)
+
     for index in range(len(pg3_ids)):
         data = hardcoded_pg3_locs[index]
+        if pg3_ids.index(data.id) == 0:
+            starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg3_locs[pg3_ids.index(data.id)].locData.region)
 
     for index in range(len(tt_mapping)):
         data = hardcoded_tt_locs[index]
         location_dict[data.name] = LocData(data.locData.code, hardcoded_tt_locs[tt_mapping[index]].locData.region)
 
+    print(starting_names)
     location_dict.update(hardcoded_locs)
-    current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + len(hardcoded_locs) + len(worker_locs))
+    current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + (len(hardcoded_locs)- 24) + len(worker_locs))
 
     finish_level = 116
 
@@ -830,6 +904,30 @@ full_location_dict = {
     "Level 113": 0x1F280214,
     "Level 114": 0x1F280215,
     "Level 115": 0x1F280216,
+    "item 1 Sold 1": 0x1F280217,
+    "item 1 Sold 2": 0x1F280218,
+    "item 1 Sold 3": 0x1F280219,
+    "item 1 Sold 4": 0x1F28021A,
+    "item 1 Sold 5": 0x1F28021B,
+    "item 1 Sold 6": 0x1F28021C,
+    "item 1 Sold 7": 0x1F28021D,
+    "item 1 Sold 8": 0x1F28021E,
+    "item 2 Sold 1": 0x1F28021F,
+    "item 2 Sold 2": 0x1F280221,
+    "item 2 Sold 3": 0x1F280222,
+    "item 2 Sold 4": 0x1F280223,
+    "item 2 Sold 5": 0x1F280224,
+    "item 2 Sold 6": 0x1F280225,
+    "item 2 Sold 7": 0x1F280226,
+    "item 2 Sold 8": 0x1F280227,
+    "item 3 Sold 1": 0x1F280218,
+    "item 3 Sold 2": 0x1F280229,
+    "item 3 Sold 3": 0x1F28022A,
+    "item 3 Sold 4": 0x1F28022B,
+    "item 3 Sold 5": 0x1F28022C,
+    "item 3 Sold 6": 0x1F28022D,
+    "item 3 Sold 7": 0x1F28022E,
+    "item 3 Sold 8": 0x1F28022F,
     "PiggyA Base NonFoil Tetramon": 0x1F290001,
     "PiggyB Base NonFoil Tetramon": 0x1F290002,
     "PiggyC Base NonFoil Tetramon": 0x1F290003,

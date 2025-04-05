@@ -1,9 +1,9 @@
 import re
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 from BaseClasses import Item, ItemClassification
-from .locations import firstItem
+
 
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
@@ -15,13 +15,14 @@ class ItemData:
     classification: ItemClassification
     amount: Optional[int] = 1
 
+starting_items: List[Item] = []
 
 def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
     for i in range(amount):
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
 
 
-def create_items(world, ignore_item_name, ignored_items):
+def create_items(world, starting_names, ignored_items):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
     print(total_location_count)
     ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
@@ -30,8 +31,9 @@ def create_items(world, ignore_item_name, ignored_items):
 
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
-        if item_name == ignore_item_name or item_name in ignored_items:
+        if item_name in starting_names or item_name in ignored_items:
             print(f"removed {item_name}")
+            starting_items.append(Item(item_name, item_data.classification, world.item_name_to_id[item_name], world.player))
             continue
 
         create_item(world, item_name, item_data.classification, item_data.amount)

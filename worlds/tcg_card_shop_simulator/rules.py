@@ -392,13 +392,13 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
+                  state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
             "Level 10":
                 lambda state:
-                state.has("Worker - Zachery", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 3),
+                 state.has("Worker - Zachery", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 15":
                 lambda state:
-                (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Trash Bin", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
+                  (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 20":
                 lambda state:
                  has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
@@ -489,7 +489,7 @@ def get_rules(world):
     return rules
 
 
-def set_rules(world, ignore_item_name):
+def set_rules(world, starting_inv):
 
 
 
@@ -510,7 +510,7 @@ def set_rules(world, ignore_item_name):
     for location_name, rule in rules_lookup["locations"].items():
         try:
             # starting item was removes, therefor it cannot be required to access
-            if location_name == ignore_item_name:
+            if location_name in starting_inv:
                 continue
             world.get_location(location_name).access_rule = rule
         except KeyError as e:
@@ -548,32 +548,3 @@ def set_rules(world, ignore_item_name):
 
     if world.options.goal.value == 2:
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Ghost Card", world.player, world.options.ghost_goal_amount.value)
-
-# "Shop B Expansion 1": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 1) and state.can_reach_region("Level 20-24", world.player),
-#             "Shop B Expansion 2": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 2) and state.can_reach_region("Level 25-29", world.player),
-#             "Shop B Expansion 3": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 3) and state.can_reach_region("Level 30-34", world.player),
-#             "Shop B Expansion 4": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 4) and state.can_reach_region("Level 35-39", world.player),
-#             "Shop B Expansion 5": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 5) and state.can_reach_region("Level 50-54", world.player),
-#             "Shop B Expansion 6": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 6) and state.can_reach_region("Level 55-59", world.player),
-#             "Shop B Expansion 7": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 7) and state.can_reach_region("Level 60-64", world.player),
-#             "Shop B Expansion 8": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 8) and state.can_reach_region("Level 65-69", world.player),
-#             "Shop B Expansion 9": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 9) and state.can_reach_region("Level 80-84", world.player),
-#             "Shop B Expansion 10": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 10) and state.can_reach_region("Level 85-89", world.player),
-#             "Shop B Expansion 11": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 11) and state.can_reach_region("Level 90-94", world.player),
-#             "Shop B Expansion 12": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 12) and state.can_reach_region("Level 95-99", world.player),
-#             "Shop B Expansion 13": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 13) and state.can_reach_region("Level 110-115", world.player),
-#             "Shop B Expansion 14": lambda state:
-#                 state.has("Progressive Shop Expansion B", world.player, 14) and state.can_reach_region("Level 110-115", world.player),
