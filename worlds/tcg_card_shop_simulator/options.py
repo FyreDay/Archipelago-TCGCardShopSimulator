@@ -30,7 +30,7 @@ class LevelGoal(Range):
 
     display_name = "LevelGoal"
     range_start = 30
-    range_end = 100
+    range_end = 115
     default = 30
 
 class GhostGoalAmount(Range):
@@ -51,7 +51,7 @@ class BetterTrades(DefaultOnToggle):
 
 class CardSanity(Choice):
     """
-    Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations
+    Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations. At destiny Legendary you are adding 2904 checks
     Basic is recommended if you wish this to be on
     """
     display_name = "Card Sanity"

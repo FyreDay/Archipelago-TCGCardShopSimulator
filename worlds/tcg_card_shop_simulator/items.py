@@ -24,11 +24,13 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
 
 def create_items(world, starting_names, ignored_items):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    print(total_location_count)
-    ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
-    if world.options.goal.value == 2:
-        progressive_dict["Progressive Ghost Card"].amount = ghost_val
+    print(f"total locs at start {total_location_count}")
+    print(f"total Itempool at start {len(world.itempool)}")
+    print(f"info {world.player} : {world.options.goal.value}")
+
     starting_items.clear()
+    print(f"total items at before forloop {len(world.itempool)}")
+    num  = 0;
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
         if item_name in starting_names:
@@ -36,19 +38,33 @@ def create_items(world, starting_names, ignored_items):
             continue
         if item_name in ignored_items:
             continue
-
+        num = num +1
         create_item(world, item_name, item_data.classification, item_data.amount)
-
+    print(f"total items at before progressive {len(world.itempool)}")
     for item_name, item_data in progressive_dict.items():
-        to_remove = 0
-        if item_name == "Progressive Shop Expansion A":
-            to_remove = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
-            print(f"removed {to_remove} A")
-        if item_name == "Progressive Shop Expansion B":
-            to_remove = sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
-            print(f"removed {to_remove} B")
-        create_item(world, item_name, item_data.classification, item_data.amount - to_remove)
+        override = 0
 
+        if item_name == "Progressive Shop Expansion A":
+            if world.options.goal.value == 0:
+                override = world.options.shop_expansion_goal.value +1
+            else:
+                test = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
+                override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
+            print(f"{override} Progressive A")
+
+        if item_name == "Progressive Shop Expansion B":
+            override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
+            print(f"{override} Progressive B")
+
+        if item_name == "Progressive Ghost Card" and world.options.goal.value == 2:
+            override = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
+            print(f"in ghost goal? {world.options.goal.value == 2} count: {override}")
+
+        print(f"item : {item_name} with {item_data.amount} override: {override}")
+        create_item(world, item_name, item_data.classification, item_data.amount if override == 0 else override)
+
+    print(f"total locs at remaining {total_location_count}")
+    print(f"total items at remaining {len(world.itempool)}")
     remaining_locations: int = total_location_count - len(world.itempool)
 
     print(f"Remaining locations here: {remaining_locations}")

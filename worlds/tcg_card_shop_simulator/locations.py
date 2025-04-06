@@ -24,7 +24,6 @@ class NamedLocation:
 lastRegion = 0
 excludedItems = []
 
-pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
     NamedLocation("Basic Card Pack (32)",0, LocData(0x0F0, "Level 1-4")),
     NamedLocation("Basic Card Pack (64)",1, LocData(0x0F1, "Level 1-4")),
@@ -67,7 +66,6 @@ hardcoded_pg1_locs = [
     NamedLocation("Water Destiny Deck (18)",73, LocData(0x116, "Level 40-44")),
     NamedLocation("Wind Destiny Deck (18)",74, LocData(0x117, "Level 50-54")),
 ]
-pg2_ids = [40, 41, 75, 76, 43, 44, 45, 46, 77, 78, 79, 80, 16, 17, 18, 19, 20, 21, 22, 23, 42, 66, 83, 81, 87, 95, 90, 82, 86, 85, 84, 88, 91, 92, 94, 93, 89, 115, 116, 117, 118, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]
 hardcoded_pg2_locs = [
     NamedLocation("Cleanser (8)",40, LocData(0x118, "Level 1-4")),
     NamedLocation("Cleanser (16)",41, LocData(0x119, "Level 5-9")),
@@ -124,7 +122,6 @@ hardcoded_pg2_locs = [
     NamedLocation("Manga 12",112, LocData(0x170, "Level 70-74")),
 ]
 
-pg3_ids = [ 47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
 hardcoded_pg3_locs = [
     NamedLocation("Pigni Plushie (12)",47, LocData(0x13D, "Level 5-9")),
     NamedLocation("Nanomite Plushie (16)",48, LocData(0x13E, "Level 5-9")),
@@ -146,7 +143,7 @@ hardcoded_pg3_locs = [
     NamedLocation("Drilceros Action Figure (4)",64, LocData(0x14E, "Level 80-84")),
     NamedLocation("ToonZ Plushie (6)",51, LocData(0x14F, "Level 10-14")),
 ]
-tt_ids = [99, 100, 97, 96, 98, 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
+
 hardcoded_tt_locs = [
     NamedLocation("System Gate #1",99, LocData(0x150, "Level 5-9")),
     NamedLocation("System Gate #2",100, LocData(0x151, "Level 5-9")),
@@ -315,10 +312,13 @@ def generate_locations(world):
     start_id = 0x1F2800F0
     current_loc = 0
 
-    global pg1_ids
-    global pg2_ids
-    global pg3_ids
-    global tt_ids
+    pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+               33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
+    pg2_ids = [40, 41, 75, 76, 43, 44, 45, 46, 77, 78, 79, 80, 16, 17, 18, 19, 20, 21, 22, 23, 42, 66, 83, 81, 87, 95, 90, 82, 86, 85, 84, 88, 91, 92, 94, 93, 89, 115, 116, 117, 118, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]
+
+    pg3_ids = [ 47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
+
+    tt_ids = [99, 100, 97, 96, 98, 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
 
     world.random.shuffle(pg1_ids)
 
@@ -358,7 +358,7 @@ def generate_locations(world):
 
     random_cleanser = random.randint(40, 41)
     swap_within_n(world, pg2_ids, pg2_ids.index(random_cleanser), 8, invalid_swaps)
-    invalid_swaps.insert(random_cleanser, len(invalid_swaps))
+    #invalid_swaps.insert(random_cleanser, len(invalid_swaps))
 
 
 
@@ -401,6 +401,8 @@ def generate_locations(world):
         finish_level = int(match.group()) + 10
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
+    if world.options.goal.value == 2:
+        finish_level = 75
 
     for level in range(2, finish_level):
         loc_id = 0xF0 + current_loc + level - 2
@@ -417,6 +419,7 @@ def generate_locations(world):
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
 
         lastRegion = end_level
+
     current_loc += 113
 
     for index, data in enumerate(card_rarity):
@@ -433,7 +436,7 @@ def generate_locations(world):
                 card_locs[name] = code
                 name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
                 card_locs[name] = code
-    return location_dict,card_locs, starting_names
+    return location_dict,card_locs, starting_names, pg1_ids,pg2_ids,pg3_ids,tt_ids
 
 def clear_excluded():
     global excludedItems

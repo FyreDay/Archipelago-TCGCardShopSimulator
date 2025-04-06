@@ -12,52 +12,52 @@ def get_rules(world):
         "locations": {
             "Basic Card Pack (32)":
                 lambda state:
-                state.has("Basic Card Pack (32)", world.player),
+                has_card_pack(world, state, "Basic Card"),
             "Basic Card Pack (64)":
                 lambda state:
-                state.has("Basic Card Pack (64)", world.player),
+                has_card_pack(world, state, "Basic Card"),
             "Basic Card Box (4)":
                 lambda state:
-                state.has("Basic Card Box (4)", world.player),
+                state.has("Basic Card Box (4)", world.player) or state.has("Basic Card Box (8)", world.player),
             "Basic Card Box (8)":
                 lambda state:
-                state.has("Basic Card Box (8)", world.player),
+                state.has("Basic Card Box (4)", world.player) or state.has("Basic Card Box (8)", world.player),
             "Rare Card Pack (32)":
                 lambda state:
-                state.has("Rare Card Pack (32)", world.player),
+                has_card_pack(world, state, "Rare Card"),
             "Rare Card Pack (64)":
                 lambda state:
-                state.has("Rare Card Pack (64)", world.player),
+                has_card_pack(world, state, "Rare Card"),
             "Rare Card Box (4)":
                 lambda state:
-                state.has("Rare Card Box (4)", world.player),
+                state.has("Rare Card Box (4)", world.player) or state.has("Rare Card Box (8)", world.player),
             "Rare Card Box (8)":
                 lambda state:
-                state.has("Rare Card Box (8)", world.player),
+                state.has("Rare Card Box (4)", world.player) or state.has("Rare Card Box (8)", world.player),
             "Epic Card Pack (32)":
                 lambda state:
-                state.has("Epic Card Pack (32)", world.player),
+                has_card_pack(world, state, "Epic Card"),
             "Epic Card Pack (64)":
                 lambda state:
-                state.has("Epic Card Pack (64)", world.player),
+                has_card_pack(world, state, "Epic Card"),
             "Epic Card Box (4)":
                 lambda state:
-                state.has("Epic Card Box (4)", world.player),
+                state.has("Epic Card Box (4)", world.player) or state.has("Epic Card Box (8)", world.player),
             "Epic Card Box (8)":
                 lambda state:
-                state.has("Epic Card Box (8)", world.player),
+                state.has("Epic Card Box (4)", world.player) or state.has("Epic Card Box (8)", world.player),
             "Legendary Card Pack (32)":
                 lambda state:
-                state.has("Legendary Card Pack (32)", world.player),
+                has_card_pack(world, state, "Legendary Card"),
             "Legendary Card Pack (64)":
                 lambda state:
-                state.has("Legendary Card Pack (64)", world.player),
+                has_card_pack(world, state, "Legendary Card"),
             "Legendary Card Box (4)":
                 lambda state:
-                state.has("Legendary Card Box (4)", world.player),
+                state.has("Legendary Card Box (4)", world.player) or state.has("Legendary Card Box (8)", world.player),
             "Legendary Card Box (8)":
                 lambda state:
-                state.has("Legendary Card Box (8)", world.player),
+                state.has("Legendary Card Box (4)", world.player) or state.has("Legendary Card Box (8)", world.player),
             "Fire Battle Deck (18)":
                 lambda state:
                 state.has("Fire Battle Deck (18)", world.player),
@@ -72,52 +72,52 @@ def get_rules(world):
                 state.has("Wind Battle Deck (18)", world.player),
             "Basic Destiny Pack (32)":
                 lambda state:
-                state.has("Basic Destiny Pack (32)", world.player),
+                has_card_pack(world, state, "Basic Destiny"),
             "Basic Destiny Pack (64)":
                 lambda state:
-                state.has("Basic Destiny Pack (64)", world.player),
+                has_card_pack(world, state, "Basic Destiny"),
             "Basic Destiny Box (4)":
                 lambda state:
-                state.has("Basic Destiny Box (4)", world.player),
+                state.has("Basic Destiny Box (4)", world.player) or state.has("Basic Destiny Box (8)", world.player),
             "Basic Destiny Box (8)":
                 lambda state:
-                state.has("Basic Destiny Box (8)", world.player),
+                state.has("Basic Destiny Box (4)", world.player) or state.has("Basic Destiny Box (8)", world.player),
             "Rare Destiny Pack (32)":
                 lambda state:
-                state.has("Rare Destiny Pack (32)", world.player),
+                has_card_pack(world, state, "Rare Destiny"),
             "Rare Destiny Pack (64)":
                 lambda state:
-                state.has("Rare Destiny Pack (64)", world.player),
+                has_card_pack(world, state, "Rare Destiny"),
             "Rare Destiny Box (4)":
                 lambda state:
-                state.has("Rare Destiny Box (4)", world.player),
+                state.has("Rare Destiny Box (4)", world.player) or state.has("Rare Destiny Box (8)", world.player),
             "Rare Destiny Box (8)":
                 lambda state:
-                state.has("Rare Destiny Box (8)", world.player),
+                state.has("Rare Destiny Box (4)", world.player) or state.has("Rare Destiny Box (8)", world.player),
             "Epic Destiny Pack (32)":
                 lambda state:
-                state.has("Epic Destiny Pack (32)", world.player),
+                has_card_pack(world, state, "Epic Destiny"),
             "Epic Destiny Pack (64)":
                 lambda state:
-                state.has("Epic Destiny Pack (64)", world.player),
+                has_card_pack(world, state, "Epic Destiny"),
             "Epic Destiny Box (4)":
                 lambda state:
-                state.has("Epic Destiny Box (4)", world.player),
+                state.has("Epic Destiny Box (4)", world.player) or state.has("Epic Destiny Box (8)", world.player),
             "Epic Destiny Box (8)":
                 lambda state:
-                state.has("Epic Destiny Box (8)", world.player),
+                state.has("Epic Destiny Box (4)", world.player) or state.has("Epic Destiny Box (8)", world.player),
             "Legendary Destiny Pack (32)":
                 lambda state:
-                state.has("Legendary Destiny Pack (32)", world.player),
+                has_card_pack(world, state, "Legendary Destiny"),
             "Legendary Destiny Pack (64)":
                 lambda state:
-                state.has("Legendary Destiny Pack (64)", world.player),
+                has_card_pack(world, state, "Legendary Destiny"),
             "Legendary Destiny Box (4)":
                 lambda state:
-                state.has("Legendary Destiny Box (4)", world.player),
+                state.has("Legendary Destiny Box (4)", world.player) or state.has("Legendary Destiny Box (8)", world.player),
             "Legendary Destiny Box (8)":
                 lambda state:
-                state.has("Legendary Destiny Box (8)", world.player),
+                state.has("Legendary Destiny Box (4)", world.player) or state.has("Legendary Destiny Box (8)", world.player),
             "Fire Destiny Deck (18)":
                 lambda state:
                 state.has("Fire Destiny Deck (18)", world.player),
@@ -544,10 +544,12 @@ def set_rules(world, starting_inv, excluded_locs):
 
 
 
-    if world.options.goal.value == 2:
-        finish_level = 72  # 72
-        for i in range(finish_level, 116):
-            world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
+    # if world.options.goal.value == 2:
+    #     print(f"Im a ghost Card Goal")
+    #     finish_level = 35 + world.options.ghost_goal_amount.value # 72
+    #     for i in range(finish_level, 116):
+    #         print(f"Level {i}")
+    #         world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
 
     rules_lookup = get_rules(world)
 

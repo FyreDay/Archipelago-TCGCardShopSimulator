@@ -41,16 +41,25 @@ class TCGSimulatorWorld(World):
     card_dict = {}
     starting_names = []
     excludedKeys = []
+    pg1_ids = []
+    pg2_ids = []
+    pg3_ids = []
+    tt_ids = []
 
     def __init__(self, multiworld, player):
         self.itempool = []
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        loc_dict, card_locs, starting_str = generate_locations(self)
+        loc_dict, card_locs, starting_str, pg1,pg2,pg3,pgtt = generate_locations(self)
         self.location_dict = loc_dict.copy()
         self.card_dict = card_locs.copy()
         self.starting_names = starting_str[:]
+        self.pg1_ids = pg1[:]
+        self.pg2_ids = pg2[:]
+        self.pg3_ids = pg3[:]
+        self.tt_ids = pgtt[:]
+
 
     def create_regions(self):
         excluded = create_regions(self, self.location_dict , self.card_dict)
@@ -80,11 +89,11 @@ class TCGSimulatorWorld(World):
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.0.1",
-            "ShopPg1Mapping": locations.pg1_ids,
-            "ShopPg2Mapping": locations.pg2_ids,
-            "ShopPg3Mapping": locations.pg3_ids,
-            "ShopTTMapping": locations.tt_ids,
+            "ModVersion": "0.0.3",
+            "ShopPg1Mapping": self.pg1_ids,
+            "ShopPg2Mapping": self.pg2_ids,
+            "ShopPg3Mapping": self.pg3_ids,
+            "ShopTTMapping": self.tt_ids,
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
