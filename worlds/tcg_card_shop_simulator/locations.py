@@ -309,6 +309,7 @@ def generate_card(name, index, border, foil, expansion, rarity):
     loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
     return (f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", LocData(loc_id, int_to_card_region[(rarity.value - 1) + (4 * expansion.value)]))
 
+card_locs = {}
 
 def generate_locations(world):
     start_id = 0x1F2800F0
@@ -421,19 +422,21 @@ def generate_locations(world):
             if world.options.card_sanity.value >= data.rarity.value:
 
                 name, code = generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
-                location_dict[name] = code
+                card_locs[name] = code
                 name, code = generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
-                location_dict[name] = code
+                card_locs[name] = code
             if world.options.card_sanity.value >= data.rarity.value + 4:
                 name, code = generate_card(data.name, index, border, 0, Expansion.Destiny, data.rarity)
-                location_dict[name] = code
+                card_locs[name] = code
                 name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
-                location_dict[name] = code
+                card_locs[name] = code
+    print(card_locs)
     return location_dict
 
 
 def create_locations(world, region):
     create_locations_from_dict(world, location_dict, region)
+    create_card_locations(world, card_locs, region)
 
 
 def create_locations_from_dict(world, loc_dict, reg):
@@ -451,6 +454,16 @@ def create_locations_from_dict(world, loc_dict, reg):
             continue
         create_location(world, reg, key, data.code + 0x1F280000)
 
+def create_card_locations(world, card_locs, region):
+    for (key, data) in card_locs.items():
+        if data.region != region.name:
+            continue
+        match = re.search(r'\d+', data.region)
+        if match and lastRegion != 0 and lastRegion < int(match.group()):
+            excludedItems.insert(len(excludedItems), key)
+            print(excludedItems)
+            continue
+        create_location(world, region, key, data.code)
 
 def create_location(world, region, name: str, code: int):
     location = Location(world.player, name, code, region)
