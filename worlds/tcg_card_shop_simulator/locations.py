@@ -201,20 +201,20 @@ hardcoded_locs = {
     "Shop A Expansion 28": LocData(0x194, "Level 65-69"),
     "Shop A Expansion 29": LocData(0x195, "Level 70-74"),
     "Shop A Expansion 30": LocData(0x196, "Level 70-74"),
-    "Shop B Expansion 1": LocData(0x197, "Warehouse"),
-    "Shop B Expansion 2": LocData(0x198, "Warehouse"),
-    "Shop B Expansion 3": LocData(0x199, "Warehouse"),
-    "Shop B Expansion 4": LocData(0x19A, "Warehouse"),
-    "Shop B Expansion 5": LocData(0x19B, "Warehouse"),
-    "Shop B Expansion 6": LocData(0x19C, "Warehouse"),
-    "Shop B Expansion 7": LocData(0x19D, "Warehouse"),
-    "Shop B Expansion 8": LocData(0x19E, "Warehouse"),
-    "Shop B Expansion 9": LocData(0x19F, "Warehouse"),
-    "Shop B Expansion 10": LocData(0x1A0, "Warehouse"),
-    "Shop B Expansion 11": LocData(0x1A1, "Warehouse"),
-    "Shop B Expansion 12": LocData(0x1A2, "Warehouse"),
-    "Shop B Expansion 13": LocData(0x1A3, "Warehouse"),
-    "Shop B Expansion 14": LocData(0x1A4, "Warehouse"),
+    "Shop B Expansion 1": LocData(0x197, "Level 20-24"),
+    "Shop B Expansion 2": LocData(0x198, "Level 25-29"),
+    "Shop B Expansion 3": LocData(0x199, "Level 30-34"),
+    "Shop B Expansion 4": LocData(0x19A, "Level 35-39"),
+    "Shop B Expansion 5": LocData(0x19B, "Level 50-54"),
+    "Shop B Expansion 6": LocData(0x19C, "Level 55-59"),
+    "Shop B Expansion 7": LocData(0x19D, "Level 60-64"),
+    "Shop B Expansion 8": LocData(0x19E, "Level 65-69"),
+    "Shop B Expansion 9": LocData(0x19F, "Level 80-84"),
+    "Shop B Expansion 10": LocData(0x1A0, "Level 85-89"),
+    "Shop B Expansion 11": LocData(0x1A1, "Level 90-94"),
+    "Shop B Expansion 12": LocData(0x1A2, "Level 95-99"),
+    "Shop B Expansion 13": LocData(0x1A3, "Level 110-115"),
+    "Shop B Expansion 14": LocData(0x1A4, "Level 110-115"),
     "Starting Booster Sold 1": LocData(0x217,"Level 1-4"),
     "Starting Booster Sold 2": LocData(0x218,"Level 1-4"),
     "Starting Booster Sold 3": LocData(0x219,"Level 1-4"),
@@ -334,27 +334,27 @@ def generate_locations(world):
     invalid_swaps.insert(random_rare, len(invalid_swaps))
 
     random_epic = random.randint(8, 11)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_epic), 20, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_epic), 16, invalid_swaps)
     invalid_swaps.insert(random_epic, len(invalid_swaps))
 
     random_legendary = random.randint(12, 15)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_legendary), 20, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_legendary), 16, invalid_swaps)
     invalid_swaps.insert(random_legendary, len(invalid_swaps))
 
     random_d_basic = random.randint(0, 3)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_basic), 25, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_basic), 16, invalid_swaps)
     invalid_swaps.insert(random_d_basic, len(invalid_swaps))
 
     random_d_rare = random.randint(4, 7)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_rare), 25, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_rare), 16, invalid_swaps)
     invalid_swaps.insert(random_d_rare, len(invalid_swaps))
 
     random_d_epic = random.randint(8, 11)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_epic), 25, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_epic), 16, invalid_swaps)
     invalid_swaps.insert(random_d_epic, len(invalid_swaps))
 
     random_d_legendary = random.randint(12, 15)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_legendary), 25, invalid_swaps)
+    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_legendary), 16, invalid_swaps)
     invalid_swaps.insert(random_d_legendary, len(invalid_swaps))
 
     random_cleanser = random.randint(40, 41)
@@ -390,7 +390,6 @@ def generate_locations(world):
         data = hardcoded_tt_locs[index]
         location_dict[data.name] = LocData(data.locData.code, hardcoded_tt_locs[tt_mapping[index]].locData.region)
 
-    print(starting_names)
     location_dict.update(hardcoded_locs)
     current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + (len(hardcoded_locs)- 24) + len(worker_locs))
 
@@ -430,7 +429,6 @@ def generate_locations(world):
                 card_locs[name] = code
                 name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
                 card_locs[name] = code
-    print(card_locs)
     return location_dict
 
 
@@ -450,18 +448,12 @@ def create_locations_from_dict(world, loc_dict, reg):
         match = re.search(r'\d+', data.region)
         if match and lastRegion != 0 and lastRegion < int(match.group()):
             excludedItems.insert(len(excludedItems),key)
-            print(excludedItems)
             continue
         create_location(world, reg, key, data.code + 0x1F280000)
 
 def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():
         if data.region != region.name:
-            continue
-        match = re.search(r'\d+', data.region)
-        if match and lastRegion != 0 and lastRegion < int(match.group()):
-            excludedItems.insert(len(excludedItems), key)
-            print(excludedItems)
             continue
         create_location(world, region, key, data.code)
 
@@ -921,30 +913,30 @@ full_location_dict = {
     "Level 113": 0x1F280214,
     "Level 114": 0x1F280215,
     "Level 115": 0x1F280216,
-    "item 1 Sold 1": 0x1F280217,
-    "item 1 Sold 2": 0x1F280218,
-    "item 1 Sold 3": 0x1F280219,
-    "item 1 Sold 4": 0x1F28021A,
-    "item 1 Sold 5": 0x1F28021B,
-    "item 1 Sold 6": 0x1F28021C,
-    "item 1 Sold 7": 0x1F28021D,
-    "item 1 Sold 8": 0x1F28021E,
-    "item 2 Sold 1": 0x1F28021F,
-    "item 2 Sold 2": 0x1F280221,
-    "item 2 Sold 3": 0x1F280222,
-    "item 2 Sold 4": 0x1F280223,
-    "item 2 Sold 5": 0x1F280224,
-    "item 2 Sold 6": 0x1F280225,
-    "item 2 Sold 7": 0x1F280226,
-    "item 2 Sold 8": 0x1F280227,
-    "item 3 Sold 1": 0x1F280218,
-    "item 3 Sold 2": 0x1F280229,
-    "item 3 Sold 3": 0x1F28022A,
-    "item 3 Sold 4": 0x1F28022B,
-    "item 3 Sold 5": 0x1F28022C,
-    "item 3 Sold 6": 0x1F28022D,
-    "item 3 Sold 7": 0x1F28022E,
-    "item 3 Sold 8": 0x1F28022F,
+    "Starting Booster Sold 1": 0x1F280217,
+    "Starting Booster Sold 2": 0x1F280218,
+    "Starting Booster Sold 3": 0x1F280219,
+    "Starting Booster Sold 4": 0x1F28021A,
+    "Starting Booster Sold 5": 0x1F28021B,
+    "Starting Booster Sold 6": 0x1F28021C,
+    "Starting Booster Sold 7": 0x1F28021D,
+    "Starting Booster Sold 8": 0x1F28021E,
+    "Starting Accessory Sold 1": 0x1F28021F,
+    "Starting Accessory Sold 2": 0x1F280221,
+    "Starting Accessory Sold 3": 0x1F280222,
+    "Starting Accessory Sold 4": 0x1F280223,
+    "Starting Accessory Sold 5": 0x1F280224,
+    "Starting Accessory Sold 6": 0x1F280225,
+    "Starting Accessory Sold 7": 0x1F280226,
+    "Starting Accessory Sold 8": 0x1F280227,
+    "Starting Figurine Sold 1": 0x1F280228,
+    "Starting Figurine Sold 2": 0x1F280229,
+    "Starting Figurine Sold 3": 0x1F28022A,
+    "Starting Figurine Sold 4": 0x1F28022B,
+    "Starting Figurine Sold 5": 0x1F28022C,
+    "Starting Figurine Sold 6": 0x1F28022D,
+    "Starting Figurine Sold 7": 0x1F28022E,
+    "Starting Figurine Sold 8": 0x1F28022F,
     "PiggyA Base NonFoil Tetramon": 0x1F290001,
     "PiggyB Base NonFoil Tetramon": 0x1F290002,
     "PiggyC Base NonFoil Tetramon": 0x1F290003,

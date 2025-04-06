@@ -66,6 +66,7 @@ class TCGSimulatorWorld(World):
                               self.player])
 
     def pre_fill(self) -> None:
+        print(f"starting {len(starting_items)}")
         print(starting_items)
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])

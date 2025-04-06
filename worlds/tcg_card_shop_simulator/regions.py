@@ -50,12 +50,10 @@ def create_regions(world):
     create_region(world, "Destiny Epic Card Pack", "Epic Card Pack")
     create_region(world, "Destiny Legendary Card Pack", "Legendary Card Pack")
 
-    create_region(world, "Warehouse", "Warehouse")
 
 
 def connect_entrances(world):
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
-    connect_regions(world, "Menu", "Warehouse", "Warehouse Door")
     connect_regions(world, "Menu", "Common Card Pack", "Common Card Pack")
     connect_regions(world, "Level 1-4", "Level 5-9", "Level 5")
     connect_regions(world, "Menu", "Rare Card Pack", "Rare Card Pack")

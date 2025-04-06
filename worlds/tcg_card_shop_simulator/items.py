@@ -24,16 +24,16 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
 
 def create_items(world, starting_names, ignored_items):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    print(total_location_count)
     ghost_val = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
     if world.options.goal.value == 2:
         progressive_dict["Progressive Ghost Card"].amount = ghost_val
 
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
-        if item_name in starting_names or item_name in ignored_items:
-            print(f"removed {item_name}")
+        if item_name in starting_names:
             starting_items.append(Item(item_name, item_data.classification, world.item_name_to_id[item_name], world.player))
+            continue
+        if item_name in ignored_items:
             continue
 
         create_item(world, item_name, item_data.classification, item_data.amount)
@@ -42,17 +42,16 @@ def create_items(world, starting_names, ignored_items):
         to_remove = 0
         if item_name == "Progressive Shop Expansion A":
             to_remove = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
-            print(f"removed {to_remove} A")
+            print(f"A has {item_data.amount - to_remove}")
         if item_name == "Progressive Shop Expansion B":
             to_remove = sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
-            print(f"removed {to_remove} B")
+            print(f"B has {item_data.amount - to_remove}")
         create_item(world, item_name, item_data.classification, item_data.amount - to_remove)
 
     remaining_locations: int = total_location_count - len(world.itempool)
-    print(f"Remaining locations here: {remaining_locations}")
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
-    junk_count = remaining_locations - trap_count
-    print(f"junk count {junk_count+trap_count}")
+
+    junk_count = remaining_locations - trap_count - 1 if world.options.goal == 1 else 0
     trap_weights = {
         "Stink Trap": world.options.stink_trap,
         "Poltergeist Trap": world.options.poltergeist_trap
@@ -198,7 +197,7 @@ item_dict: Dict[str, ItemData] = {
     "Manga 10": ItemData(0x1F2800CD, ItemClassification.progression),
     "Manga 11": ItemData(0x1F2800CE, ItemClassification.progression),
     "Manga 12": ItemData(0x1F2800CF, ItemClassification.progression),
-    "Warehouse Unlock": ItemData(0x1F2800F5, ItemClassification.progression),
+    "Warehouse Key": ItemData(0x1F2800F5, ItemClassification.progression),
     "Basic Card Pack (32)": ItemData(0x1F280001, ItemClassification.progression),
     "Basic Card Pack (64)": ItemData(0x1F2800D8, ItemClassification.progression),
     "Basic Card Box (4)": ItemData(0x1F2800D9, ItemClassification.progression),
