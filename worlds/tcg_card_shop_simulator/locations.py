@@ -341,19 +341,19 @@ def generate_locations(world):
     swap_within_n(world, pg1_ids, pg1_ids.index(random_legendary), 16, invalid_swaps)
     invalid_swaps.insert(random_legendary, len(invalid_swaps))
 
-    random_d_basic = random.randint(0, 3)
+    random_d_basic = random.randint(24, 27)
     swap_within_n(world, pg1_ids, pg1_ids.index(random_d_basic), 16, invalid_swaps)
     invalid_swaps.insert(random_d_basic, len(invalid_swaps))
 
-    random_d_rare = random.randint(4, 7)
+    random_d_rare = random.randint(28, 31)
     swap_within_n(world, pg1_ids, pg1_ids.index(random_d_rare), 16, invalid_swaps)
     invalid_swaps.insert(random_d_rare, len(invalid_swaps))
 
-    random_d_epic = random.randint(8, 11)
+    random_d_epic = random.randint(32, 35)
     swap_within_n(world, pg1_ids, pg1_ids.index(random_d_epic), 16, invalid_swaps)
     invalid_swaps.insert(random_d_epic, len(invalid_swaps))
 
-    random_d_legendary = random.randint(12, 15)
+    random_d_legendary = random.randint(36, 39)
     swap_within_n(world, pg1_ids, pg1_ids.index(random_d_legendary), 16, invalid_swaps)
     invalid_swaps.insert(random_d_legendary, len(invalid_swaps))
 
