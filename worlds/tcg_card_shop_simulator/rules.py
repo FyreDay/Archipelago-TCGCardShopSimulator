@@ -540,7 +540,7 @@ def get_rules(world):
     return rules
 
 
-def set_rules(world, starting_inv):
+def set_rules(world, starting_inv, excluded_locs):
 
 
 
@@ -566,7 +566,7 @@ def set_rules(world, starting_inv):
             # starting item was removes, therefor it cannot be required to access
             if location_name in starting_inv:
                 continue
-            if location_name in excludedItems:
+            if location_name in excluded_locs:
                 continue
             world.get_location(location_name).access_rule = rule
         except KeyError as e:
@@ -575,7 +575,7 @@ def set_rules(world, starting_inv):
 
     for pA in range(2, 31):
         try:
-            if f"Shop A Expansion {pA}" in excludedItems:
+            if f"Shop A Expansion {pA}" in excluded_locs:
                 continue
             world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state, _pA=pA: state.has("Progressive Shop Expansion A", world.player, _pA)
         except KeyError as e:

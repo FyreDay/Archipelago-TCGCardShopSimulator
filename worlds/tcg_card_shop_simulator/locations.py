@@ -21,12 +21,8 @@ class NamedLocation:
     id: int
     locData: LocData
 
-starting_names: List[str] =[]
-
 lastRegion = 0
 excludedItems = []
-
-location_dict: Dict[str, LocData] = {}
 
 pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
@@ -306,19 +302,15 @@ def generate_card(name, index, border, foil, expansion, rarity):
     loc_id = 0x1F290000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
     return (f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", LocData(loc_id, int_to_card_region[(rarity.value - 1) + (4 * expansion.value)]))
 
-card_locs = {}
+
 
 def generate_locations(world):
-    global starting_names
-    starting_names.clear()
+    location_dict: Dict[str, LocData] = {}
+    card_locs: Dict[str, LocData] = {}
+    starting_names: List[str] = []
+
     global lastRegion
     lastRegion = 0
-    global excludedItems
-    excludedItems.clear()
-    global location_dict
-    location_dict.clear()
-    global location_dict
-    card_locs.clear()
 
     start_id = 0x1F2800F0
     current_loc = 0
@@ -441,12 +433,18 @@ def generate_locations(world):
                 card_locs[name] = code
                 name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
                 card_locs[name] = code
-    return location_dict
+    return location_dict,card_locs, starting_names
 
+def clear_excluded():
+    global excludedItems
+    excludedItems.clear()
 
-def create_locations(world, region):
-    create_locations_from_dict(world, location_dict, region)
-    create_card_locations(world, card_locs, region)
+def get_excluded():
+    return excludedItems
+
+def create_locations(world, region, loc_dict, card_dict):
+    create_locations_from_dict(world, loc_dict, region)
+    create_card_locations(world, card_dict, region)
 
 
 def create_locations_from_dict(world, loc_dict, reg):

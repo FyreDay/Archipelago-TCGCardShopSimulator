@@ -1,10 +1,12 @@
 from BaseClasses import Region, Entrance
 from .locations import *
 
+location_dict = {}
+card_dict = {}
 
 def create_region(world, name: str, hint: str):
     region = Region(name, world.player, world.multiworld)
-    create_locations(world, region)
+    create_locations(world, region, location_dict, card_dict)
     world.multiworld.regions.append(region)
     return region
 
@@ -15,7 +17,12 @@ def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> 
     return entrance_region.connect(exit_region, entrance_name)
 
 
-def create_regions(world):
+def create_regions(world, loc_dict, card_locs):
+    global location_dict, card_dict
+    location_dict = loc_dict.copy()
+    card_dict = card_locs.copy()
+    clear_excluded()
+
     create_region(world, "Menu", "Menu Region")
     create_region(world, "Level 1-4", "Level 1-4")
     create_region(world, "Level 5-9", "Level 5-9")
@@ -49,6 +56,8 @@ def create_regions(world):
     create_region(world, "Destiny Rare Card Pack", "Rare Card Pack")
     create_region(world, "Destiny Epic Card Pack", "Epic Card Pack")
     create_region(world, "Destiny Legendary Card Pack", "Legendary Card Pack")
+
+    return get_excluded()
 
 
 

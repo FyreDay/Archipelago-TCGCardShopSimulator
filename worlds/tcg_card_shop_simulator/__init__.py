@@ -37,15 +37,24 @@ class TCGSimulatorWorld(World):
     item_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_data.code for item_name, item_data in full_item_dict.items()}
     location_name_to_id: ClassVar[Dict[str, int]] = full_location_dict
 
+    location_dict = {}
+    card_dict = {}
+    starting_names = []
+    excludedKeys = []
+
     def __init__(self, multiworld, player):
         self.itempool = []
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        generate_locations(self)
+        loc_dict, card_locs, starting_str = generate_locations(self)
+        self.location_dict = loc_dict.copy()
+        self.card_dict = card_locs.copy()
+        self.starting_names = starting_str[:]
 
     def create_regions(self):
-        create_regions(self)
+        excluded = create_regions(self, self.location_dict , self.card_dict)
+        self.excludedKeys = excluded[:]
         connect_entrances(self)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
@@ -54,14 +63,14 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        create_items(self, starting_names, locations.excludedItems)
+        create_items(self, self.starting_names, self.excludedKeys)
         print(starting_items)
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])
         self.push_precollected(starting_items[2])
 
     def set_rules(self):
-        set_rules(self, starting_names)
+        set_rules(self, self.starting_names, self.excludedKeys)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
