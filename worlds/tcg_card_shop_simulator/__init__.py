@@ -55,7 +55,6 @@ class TCGSimulatorWorld(World):
 
     def create_items(self):
         create_items(self, starting_names, locations.excludedItems)
-        print(f"starting {len(starting_items)}")
         print(starting_items)
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])

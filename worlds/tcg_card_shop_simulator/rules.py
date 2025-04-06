@@ -573,7 +573,6 @@ def set_rules(world, starting_inv):
     for pA in range(2, 31):
         try:
             if f"Shop A Expansion {pA}" in excludedItems:
-                print(f"skip Shop A Expansion {pA}")
                 continue
             world.get_location(f"Shop A Expansion {pA}").access_rule = lambda state, _pA=pA: state.has("Progressive Shop Expansion A", world.player, _pA)
         except KeyError as e:

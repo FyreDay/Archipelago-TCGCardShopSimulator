@@ -42,10 +42,8 @@ def create_items(world, starting_names, ignored_items):
         to_remove = 0
         if item_name == "Progressive Shop Expansion A":
             to_remove = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
-            print(f"A has {item_data.amount - to_remove}")
         if item_name == "Progressive Shop Expansion B":
             to_remove = sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
-            print(f"B has {item_data.amount - to_remove}")
         create_item(world, item_name, item_data.classification, item_data.amount - to_remove)
 
     remaining_locations: int = total_location_count - len(world.itempool)
