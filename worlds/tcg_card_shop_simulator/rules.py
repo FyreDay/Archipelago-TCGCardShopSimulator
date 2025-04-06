@@ -446,10 +446,10 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                 state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
+                 state.has("Single Sided Shelf", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
             "Level 10":
                 lambda state:
-                 state.has("Worker - Zachery", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
+                 state.has("Worker - Zachery", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 15":
                 lambda state:
                   (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)),
