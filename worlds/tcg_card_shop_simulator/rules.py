@@ -15,7 +15,7 @@ def get_rules(world):
                 state.has("Basic Card Pack (32)", world.player),
             "Basic Card Pack (64)":
                 lambda state:
-                state.has("Basic Card Pack (32)", world.player),
+                state.has("Basic Card Pack (64)", world.player),
             "Basic Card Box (4)":
                 lambda state:
                 state.has("Basic Card Box (4)", world.player),
@@ -378,7 +378,7 @@ def get_rules(world):
                 state.has("Playmat Purple", world.player),
             "Playmat Yellow":
                 lambda state:
-                state.has("Pocket Pages", world.player),
+                state.has("Playmat Yellow", world.player),
             "Pocket Pages":
                 lambda state:
                 state.has("Pocket Pages", world.player),
@@ -446,19 +446,19 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                  state.has("Progressive Card Table", world.player) and state.has("Small Cabinet", world.player) and state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
+                 state.has("Single Sided Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
             "Level 10":
                 lambda state:
                  state.has("Worker - Zachery", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
             "Level 15":
                 lambda state:
-                  (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)) and state.has("Progressive Shop Expansion A", world.player, 2),
+                  (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)),
             "Level 20":
                 lambda state:
-                 has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
+                 has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 5),
             "Level 25":
                 lambda state:
-                state.has("Progressive Shop Expansion A", world.player, 8),
+                state.has("Small Cabinet", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
             "Level 30":
                 lambda state:
                 state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player, 10),
@@ -544,7 +544,7 @@ def set_rules(world, starting_inv):
 
 
 
-    if world.options.goal.value != 1:
+    if world.options.goal.value == 2:
         finish_level = 72  # 72
         for i in range(finish_level, 116):
             world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
@@ -553,6 +553,9 @@ def set_rules(world, starting_inv):
 
     for entrance_name, rule in rules_lookup["entrances"].items():
         try:
+            match = re.search(r'Level (\d+)', entrance_name)
+            if match and lastRegion < int(match.group(1)):
+                continue
             world.get_entrance(entrance_name).access_rule = rule
         except KeyError as e:
             print(f"Key error, {e}")
@@ -578,19 +581,6 @@ def set_rules(world, starting_inv):
         except KeyError as e:
             print(f"Key error, {e}")
             pass
-
-
-    # for pB in range(1, 15):
-    #     try:
-    #         world.get_location(f"Shop B Expansion {pB}").access_rule = lambda state: (state.has("Progressive Shop Expansion B", world.player, pB)
-    #                                                                               and state.has("Progressive Shop Expansion A", world.player, pB))
-    #     except KeyError as e:
-    #         print(f"Key error, {e}")
-    #         pass
-
-    if world.options.card_sanity.value > 0:
-        for location_name, item_name in rarity_item_dict.items():
-            world.multiworld.get_location(location_name, world.player).access_rule = lambda state: state.has(item_name, world.player)
 
     # victory conditions
     if world.options.goal.value == 0:

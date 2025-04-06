@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
 from BaseClasses import Location
-from worlds.blasphemous import skill_dict
 
 
 class TCGSimulatorLocation(Location):
@@ -26,6 +25,8 @@ starting_names: List[str] =[]
 
 lastRegion = 0
 excludedItems = []
+
+location_dict: Dict[str, LocData] = {}
 
 pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
 hardcoded_pg1_locs = [
@@ -254,10 +255,6 @@ worker_locs ={
 
 tt_mapping: List[int] = list(range(len(hardcoded_tt_locs)))
 
-rarity_item_dict = {}
-
-location_dict: Dict[str, LocData] = {}
-
 
 def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
@@ -312,10 +309,20 @@ def generate_card(name, index, border, foil, expansion, rarity):
 card_locs = {}
 
 def generate_locations(world):
+    global starting_names
+    starting_names.clear()
+    global lastRegion
+    lastRegion = 0
+    global excludedItems
+    excludedItems.clear()
+    global location_dict
+    location_dict.clear()
+    global location_dict
+    card_locs.clear()
+
     start_id = 0x1F2800F0
     current_loc = 0
 
-    global location_dict
     global pg1_ids
     global pg2_ids
     global pg3_ids
@@ -395,6 +402,11 @@ def generate_locations(world):
 
     finish_level = 116
 
+
+    if world.options.goal.value == 0:
+        match = re.search(r'\d+', hardcoded_locs[f"Shop A Expansion {world.options.shop_expansion_goal.value}"].region)
+        # +10 because this does depend on finding the items. this give 2 regions of leeway
+        finish_level = int(match.group()) + 10
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
 
@@ -411,7 +423,7 @@ def generate_locations(world):
         location_dict[f"Level {level}"] = LocData(loc_id, f"Level {start_level}-{end_level}")
         if world.options.goal.value == 1 and world.options.level_goal.value == level:
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
-        global lastRegion
+
         lastRegion = end_level
     current_loc += 113
 

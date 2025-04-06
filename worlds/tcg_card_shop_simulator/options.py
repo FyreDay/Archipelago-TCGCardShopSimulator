@@ -19,9 +19,9 @@ class ShopExpansionGoal(Range):
     """
 
     display_name = "ShopExpansionGoal"
-    range_start = 1
+    range_start = 10
     range_end = 30
-    default = 8
+    default = 10
 
 class LevelGoal(Range):
     """
@@ -51,7 +51,8 @@ class BetterTrades(DefaultOnToggle):
 
 class CardSanity(Choice):
     """
-    Enables new Cards from that rarity and below to be checks
+    Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations
+    Basic is recommended if you wish this to be on
     """
     display_name = "Card Sanity"
     option_disabled = 0
