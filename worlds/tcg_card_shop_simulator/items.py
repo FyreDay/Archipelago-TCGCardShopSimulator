@@ -15,8 +15,6 @@ class ItemData:
     classification: ItemClassification
     amount: Optional[int] = 1
 
-starting_items: List[Item] = []
-
 def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
     for i in range(amount):
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
@@ -28,9 +26,9 @@ def create_items(world, starting_names, ignored_items):
     print(f"total Itempool at start {len(world.itempool)}")
     print(f"info {world.player} : {world.options.goal.value}")
 
-    starting_items.clear()
     print(f"total items at before forloop {len(world.itempool)}")
-    num  = 0;
+    starting_items: List[Item] = []
+    num  = 0
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
         if item_name in starting_names:
@@ -97,7 +95,7 @@ def create_items(world, starting_names, ignored_items):
     for name in trap:
         create_item(world, name, ItemClassification.trap)
     world.multiworld.itempool += world.itempool
-
+    return starting_items
 
 def get_junk_item_names(rand, k: int) -> str:
     junk = rand.choices(

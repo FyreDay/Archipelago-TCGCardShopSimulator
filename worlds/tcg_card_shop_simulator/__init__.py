@@ -46,20 +46,90 @@ class TCGSimulatorWorld(World):
     pg3_ids = []
     tt_ids = []
 
+    def swap_within_n(self, lst, target, n, invalid_indexes):
+        if target not in lst:
+            return invalid_indexes  # Return unchanged invalid list if target not found
+
+        index = lst.index(target)  # Find the index of the target
+
+        # Generate a valid swap index (between 0 and n, but not in invalid_indexes)
+        valid_indexes = [i for i in range(min(n + 1, len(lst))) if i not in invalid_indexes]
+
+        if not valid_indexes:
+            return invalid_indexes  # No valid swaps available
+
+        swap_index = self.random.choice(valid_indexes)  # Pick a valid index
+
+        # Swap the target element with the chosen index
+        lst[index], lst[swap_index] = lst[swap_index], lst[index]
+
+        # Add the new index to the invalid list
+        invalid_indexes.append(swap_index)
+
+        return invalid_indexes
+
+    def randomize_shops(self):
+        self.pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31,
+                   32,
+                   33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
+        self.pg2_ids = [40, 41, 75, 76, 43, 44, 45, 46, 77, 78, 79, 80, 16, 17, 18, 19, 20, 21, 22, 23, 42, 66, 83, 81, 87,
+                   95, 90, 82, 86, 85, 84, 88, 91, 92, 94, 93, 89, 115, 116, 117, 118, 101, 102, 103, 104, 105, 106,
+                   107, 108, 109, 110, 111, 112]
+
+        self.pg3_ids = [47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
+
+        self.tt_ids = [99, 100, 97, 96, 98 , 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
+
+        self.random.shuffle(self.pg1_ids)
+        self.random.shuffle(self.pg2_ids)
+        self.random.shuffle(self.pg3_ids)
+        self.random.shuffle(self.tt_ids)
+
+        invalid_swaps: list[int] = []
+
+        random_basic = random.randint(0, 3)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_basic), 12, invalid_swaps)
+
+        random_rare = random.randint(4, 7)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_rare), 16, invalid_swaps)
+
+        random_epic = random.randint(8, 11)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_epic), 16, invalid_swaps)
+
+        random_legendary = random.randint(12, 15)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_legendary), 16, invalid_swaps)
+
+        random_d_basic = random.randint(24, 27)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_d_basic), 20, invalid_swaps)
+
+        random_d_rare = random.randint(28, 31)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_d_rare), 20, invalid_swaps)
+
+        random_d_epic = random.randint(32, 35)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_d_epic), 20, invalid_swaps)
+
+        random_d_legendary = random.randint(36, 39)
+        invalid_swaps = self.swap_within_n(self.pg1_ids, self.pg1_ids.index(random_d_legendary), 20, invalid_swaps)
+
+        random_cleanser = random.randint(40, 41)
+        self.swap_within_n(self.pg2_ids, self.pg2_ids.index(random_cleanser), 8, invalid_swaps)
+
     def __init__(self, multiworld, player):
         self.itempool = []
+        self.starting_names = []
+        self.pg1_ids = []
+        self.pg2_ids = []
+        self.pg3_ids = []
+        self.tt_ids = []
+        self.excludedKeys = []
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        loc_dict, card_locs, starting_str, pg1,pg2,pg3,pgtt = generate_locations(self)
+        self.randomize_shops()
+        loc_dict, card_locs, starting_str = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
         self.location_dict = loc_dict.copy()
         self.card_dict = card_locs.copy()
         self.starting_names = starting_str[:]
-        self.pg1_ids = pg1[:]
-        self.pg2_ids = pg2[:]
-        self.pg3_ids = pg3[:]
-        self.tt_ids = pgtt[:]
-
 
     def create_regions(self):
         excluded = create_regions(self, self.location_dict , self.card_dict)
@@ -72,8 +142,8 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        create_items(self, self.starting_names, self.excludedKeys)
-        print(starting_items)
+        starting_items = create_items(self, self.starting_names, self.excludedKeys)
+
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])
         self.push_precollected(starting_items[2])
@@ -98,6 +168,9 @@ class TCGSimulatorWorld(World):
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
             "CardSanity": self.options.card_sanity.value,
+            "FoilInSanity": self.options.foil_sanity,
+            "borderInSanity": self.options.border_sanity,
+            "death_link": self.options.death_link,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
             "BetterTrades": self.options.better_trades.value,
             "TrapFill": self.options.trap_fill.value,

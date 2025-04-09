@@ -253,36 +253,6 @@ def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
 
 
-def randomize_shop(world, mapping, locs):
-    for index in range(len(mapping)):
-        data: NamedLocation = locs[index]
-        global location_dict
-        location_dict[data.name] = LocData(data.locData.code, locs[mapping[index]].locData.region)
-
-
-def swap_within_n(world, lst, target, n, invalid_indexes):
-    if target not in lst:
-        return invalid_indexes  # Return unchanged invalid list if target not found
-
-    index = lst.index(target)  # Find the index of the target
-
-    # Generate a valid swap index (between 0 and n, but not in invalid_indexes)
-    valid_indexes = [i for i in range(min(n + 1, len(lst))) if i not in invalid_indexes]
-
-    if not valid_indexes:
-        return invalid_indexes  # No valid swaps available
-
-    swap_index = world.random.choice(valid_indexes)  # Pick a valid index
-
-    # Swap the target element with the chosen index
-    lst[index], lst[swap_index] = lst[swap_index], lst[index]
-
-    # Add the new index to the invalid list
-    invalid_indexes.append(swap_index)
-
-    return invalid_indexes
-
-
 int_to_card_region = {
     0:"Common Card Pack",
     1:"Rare Card Pack",
@@ -301,7 +271,7 @@ def generate_card(name, index, border, foil, expansion, rarity):
 
 
 
-def generate_locations(world):
+def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
     location_dict: Dict[str, LocData] = {}
     card_locs: Dict[str, LocData] = {}
     starting_names: List[str] = []
@@ -309,60 +279,7 @@ def generate_locations(world):
     global lastRegion
     lastRegion = 0
 
-    start_id = 0x1F2800F0
     current_loc = 0
-
-    pg1_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 67, 68, 69, 70, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-               33, 34, 35, 36, 37, 38, 39, 71, 72, 73, 74]
-    pg2_ids = [40, 41, 75, 76, 43, 44, 45, 46, 77, 78, 79, 80, 16, 17, 18, 19, 20, 21, 22, 23, 42, 66, 83, 81, 87, 95, 90, 82, 86, 85, 84, 88, 91, 92, 94, 93, 89, 115, 116, 117, 118, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]
-
-    pg3_ids = [ 47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
-
-    tt_ids = [99, 100, 97, 96, 98, 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
-
-    world.random.shuffle(pg1_ids)
-
-    invalid_swaps = []
-
-    random_basic = random.randint(0,3)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_basic),12, invalid_swaps)
-    invalid_swaps.insert(random_basic,len(invalid_swaps))
-
-    random_rare = random.randint(4, 7)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_rare), 16, invalid_swaps)
-    invalid_swaps.insert(random_rare, len(invalid_swaps))
-
-    random_epic = random.randint(8, 11)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_epic), 16, invalid_swaps)
-    invalid_swaps.insert(random_epic, len(invalid_swaps))
-
-    random_legendary = random.randint(12, 15)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_legendary), 16, invalid_swaps)
-    invalid_swaps.insert(random_legendary, len(invalid_swaps))
-
-    random_d_basic = random.randint(24, 27)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_basic), 20, invalid_swaps)
-    invalid_swaps.insert(random_d_basic, len(invalid_swaps))
-
-    random_d_rare = random.randint(28, 31)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_rare), 20, invalid_swaps)
-    invalid_swaps.insert(random_d_rare, len(invalid_swaps))
-
-    random_d_epic = random.randint(32, 35)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_epic), 20, invalid_swaps)
-    invalid_swaps.insert(random_d_epic, len(invalid_swaps))
-
-    random_d_legendary = random.randint(36, 39)
-    swap_within_n(world, pg1_ids, pg1_ids.index(random_d_legendary), 20, invalid_swaps)
-    invalid_swaps.insert(random_d_legendary, len(invalid_swaps))
-
-    random_cleanser = random.randint(40, 41)
-    swap_within_n(world, pg2_ids, pg2_ids.index(random_cleanser), 8, invalid_swaps)
-    #invalid_swaps.insert(random_cleanser, len(invalid_swaps))
-
-
-
-
 
     for index in range(len(pg1_ids)):
         data = hardcoded_pg1_locs[index]
@@ -370,14 +287,11 @@ def generate_locations(world):
             starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg1_locs[pg1_ids.index(data.id)].locData.region)
 
-    world.random.shuffle(pg2_ids)
     for index in range(len(pg2_ids)):
         data = hardcoded_pg2_locs[index]
         if pg2_ids.index(data.id) == 0:
             starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg2_locs[pg2_ids.index(data.id)].locData.region)
-
-    world.random.shuffle(pg3_ids)
 
     for index in range(len(pg3_ids)):
         data = hardcoded_pg3_locs[index]
@@ -422,21 +336,27 @@ def generate_locations(world):
 
     current_loc += 113
 
+
     for index, data in enumerate(card_rarity):
         data = cast(MonsterData, data)
         for border in Border:
-            if world.options.card_sanity.value >= data.rarity.value:
+            if world.options.border_sanity.value < border.value:
+                continue
 
+            if world.options.card_sanity.value >= data.rarity.value:
                 name, code = generate_card(data.name, index, border, 0, Expansion.Tetramon, data.rarity)
                 card_locs[name] = code
-                name, code = generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
-                card_locs[name] = code
+                if world.options.foil_sanity.value:
+                    name, code = generate_card(data.name, index, border, 1, Expansion.Tetramon, data.rarity)
+                    card_locs[name] = code
             if world.options.card_sanity.value >= data.rarity.value + 4:
                 name, code = generate_card(data.name, index, border, 0, Expansion.Destiny, data.rarity)
                 card_locs[name] = code
-                name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
-                card_locs[name] = code
-    return location_dict,card_locs, starting_names, pg1_ids,pg2_ids,pg3_ids,tt_ids
+                if world.options.foil_sanity.value:
+                    name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
+                    card_locs[name] = code
+
+    return location_dict,card_locs,starting_names
 
 def clear_excluded():
     global excludedItems

@@ -19,7 +19,7 @@ class ShopExpansionGoal(Range):
     """
 
     display_name = "ShopExpansionGoal"
-    range_start = 10
+    range_start = 5
     range_end = 30
     default = 10
 
@@ -29,9 +29,9 @@ class LevelGoal(Range):
     """
 
     display_name = "LevelGoal"
-    range_start = 30
+    range_start = 10
     range_end = 115
-    default = 30
+    default = 20
 
 class GhostGoalAmount(Range):
     """
@@ -65,6 +65,30 @@ class CardSanity(Choice):
     option_destiny_epic = 7
     option_destiny_legendary = 8
     default = 0
+
+class FoilInSanity(DefaultOnToggle):
+    """
+    Adds Foil cards to Card sanity
+    Halves the amount of checks in card sanity
+    """
+    display_name = "Foil Cards in Sanity"
+
+class BorderInSanity(Choice):
+    """
+    Adds the borders up to the selected border to Card Sanity.
+    There are ~30 cards in each set of that border.
+    """
+    display_name = "Card Borders in Sanity"
+    option_Base = 0
+    option_FirstEdition = 1
+    option_Silver = 2
+    option_Gold = 3
+    option_EX = 4
+    option_FullArt = 5
+    default = 0
+
+class Deathlink(Toggle):
+    display_name = "Deathlink"
 
 class MoneyBags(Range):
     """
@@ -144,10 +168,13 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         GhostGoalAmount
     ]),
     OptionGroup("General", [
-        BetterTrades
+        BetterTrades,
+        Deathlink
     ]),
     OptionGroup("Sanity", [
-        CardSanity
+        CardSanity,
+        FoilInSanity,
+        BorderInSanity
     ]),
     OptionGroup("Filler and Traps", [
         MoneyBags,
@@ -167,6 +194,9 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     ghost_goal_amount: GhostGoalAmount
     better_trades: BetterTrades
     card_sanity: CardSanity
+    foil_sanity: FoilInSanity
+    border_sanity: BorderInSanity
+    death_link: Deathlink
     money_bags: MoneyBags
     xp_boosts: XpBoosts
     random_card: RandomCard
