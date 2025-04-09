@@ -7,7 +7,7 @@ class Goal(Choice):
     Collect Ghosts hides all ghost cards in locations to be found"""
 
     display_name = "Goal"
-    option_shopExpansion = 0
+    option_shop_Expansion_A = 0
     option_level = 1
     option_collect_Ghosts = 2
     default = 0
@@ -15,10 +15,10 @@ class Goal(Choice):
 
 class ShopExpansionGoal(Range):
     """
-    If on Shop Expansion Goal, What Shop expansion is your goal
+    If on Shop Expansion Goal, What Shop A expansion is your goal
     """
 
-    display_name = "ShopExpansionGoal"
+    display_name = "Shop Expansion A Goal"
     range_start = 5
     range_end = 30
     default = 10
