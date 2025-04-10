@@ -44,7 +44,7 @@ def create_items(world, starting_names, ignored_items):
 
         if item_name == "Progressive Shop Expansion A":
             if world.options.goal.value == 0:
-                override = world.options.shop_expansion_goal.value +1
+                override = world.options.shop_expansion_goal.value +1 + (1 if world.options.shop_expansion_goal.value > 5 else 2)
             else:
                 test = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
                 override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
