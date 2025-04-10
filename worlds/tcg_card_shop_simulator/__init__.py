@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from Options import OptionError
 from Utils import visualize_regions
 from worlds.AutoWorld import WebWorld, World
 from BaseClasses import Tutorial
@@ -78,7 +79,7 @@ class TCGSimulatorWorld(World):
 
         self.pg3_ids = [47, 48, 49, 50, 52, 55, 58, 61, 53, 56, 59, 62, 54, 57, 60, 63, 65, 64, 51]
 
-        self.tt_ids = [99, 100, 97, 96, 98 , 124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129]
+        self.tt_ids = [124, 130, 119, 123, 120, 125, 126, 127, 128, 121, 122, 129, 99, 100, 97, 96, 98]
 
         self.random.shuffle(self.pg1_ids)
         self.random.shuffle(self.pg2_ids)
@@ -125,6 +126,12 @@ class TCGSimulatorWorld(World):
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
+
+        if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
+            raise OptionError("All Junk Weights are Zero")
+        if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0:
+            raise OptionError("All Trap Weights are Zero")
+
         self.randomize_shops()
         loc_dict, card_locs, starting_str = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
         self.location_dict = loc_dict.copy()
@@ -170,7 +177,6 @@ class TCGSimulatorWorld(World):
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
             "borderInSanity": self.options.border_sanity.value,
-            "death_link": self.options.death_link.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
             "BetterTrades": self.options.better_trades.value,
             "TrapFill": self.options.trap_fill.value,

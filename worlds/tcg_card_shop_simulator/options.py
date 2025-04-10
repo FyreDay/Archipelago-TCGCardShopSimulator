@@ -87,9 +87,6 @@ class BorderInSanity(Choice):
     option_FullArt = 5
     default = 0
 
-class Deathlink(Toggle):
-    display_name = "Deathlink"
-
 class MoneyBags(Range):
     """
     Determines the percentage of Filler contain money
@@ -168,8 +165,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         GhostGoalAmount
     ]),
     OptionGroup("General", [
-        BetterTrades,
-        Deathlink
+        BetterTrades
     ]),
     OptionGroup("Sanity", [
         CardSanity,
@@ -196,7 +192,6 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     card_sanity: CardSanity
     foil_sanity: FoilInSanity
     border_sanity: BorderInSanity
-    death_link: Deathlink
     money_bags: MoneyBags
     xp_boosts: XpBoosts
     random_card: RandomCard

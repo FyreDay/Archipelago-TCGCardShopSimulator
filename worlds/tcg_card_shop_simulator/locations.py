@@ -145,11 +145,6 @@ hardcoded_pg3_locs = [
 ]
 
 hardcoded_tt_locs = [
-    NamedLocation("System Gate #1",99, LocData(0x150, "Level 5-9")),
-    NamedLocation("System Gate #2",100, LocData(0x151, "Level 5-9")),
-    NamedLocation("Mafia Works",97, LocData(0x152, "Level 10-14")),
-    NamedLocation("Necromonsters",96, LocData(0x153, "Level 15-19")),
-    NamedLocation("Claim!",98, LocData(0x154, "Level 20-24")),
     NamedLocation("Penny Sleeves",124, LocData(0x155, "Level 10-14")),
     NamedLocation("Tower Deckbox",130, LocData(0x156, "Level 10-14")),
     NamedLocation("Magnetic Holder",119, LocData(0x157, "Level 15-19")),
@@ -162,6 +157,11 @@ hardcoded_tt_locs = [
     NamedLocation("Pocket Pages",121, LocData(0x15E, "Level 35-39")),
     NamedLocation("Card Holder",122, LocData(0x15F, "Level 40-44")),
     NamedLocation("Collectors Album",129, LocData(0x160, "Level 45-49")),
+    NamedLocation("System Gate #1",99, LocData(0x150, "Level 5-9")),
+    NamedLocation("System Gate #2",100, LocData(0x151, "Level 5-9")),
+    NamedLocation("Mafia Works",97, LocData(0x152, "Level 10-14")),
+    NamedLocation("Necromonsters",96, LocData(0x153, "Level 15-19")),
+    NamedLocation("Claim!",98, LocData(0x154, "Level 20-24")),
 ]
 
 hardcoded_locs = {
@@ -246,12 +246,8 @@ worker_locs ={
     "Worker - Axel": LocData(0x178, "Level 1-4"),
 }
 
-tt_mapping: List[int] = list(range(len(hardcoded_tt_locs)))
-
-
 def get_index_by_name(lst, target_name):
     return next((i for i, item in enumerate(lst) if item.name == target_name), -1)
-
 
 int_to_card_region = {
     0:"Common Card Pack",
@@ -299,9 +295,9 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
             starting_names.append(data.name)
         location_dict[data.name] = LocData(data.locData.code, hardcoded_pg3_locs[pg3_ids.index(data.id)].locData.region)
 
-    for index in range(len(tt_mapping)):
+    for index in range(len(tt_ids)):
         data = hardcoded_tt_locs[index]
-        location_dict[data.name] = LocData(data.locData.code, hardcoded_tt_locs[tt_mapping[index]].locData.region)
+        location_dict[data.name] = LocData(data.locData.code, hardcoded_tt_locs[tt_ids.index(data.id)].locData.region)
 
     location_dict.update(hardcoded_locs)
     current_loc += (len(hardcoded_pg1_locs) + len(hardcoded_pg2_locs) + len(hardcoded_pg3_locs) + len(hardcoded_tt_locs) + (len(hardcoded_locs)- 24) + len(worker_locs))
