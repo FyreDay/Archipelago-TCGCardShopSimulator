@@ -176,7 +176,7 @@ class TCGSimulatorWorld(World):
             "LevelGoal": self.options.level_goal.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
-            "borderInSanity": self.options.border_sanity.value,
+            "BorderInSanity": self.options.border_sanity.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
             "BetterTrades": self.options.better_trades.value,
             "TrapFill": self.options.trap_fill.value,
