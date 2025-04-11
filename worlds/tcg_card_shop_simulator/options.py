@@ -148,7 +148,7 @@ class ProgressiveCustomerWealth(Range):
     display_name = "Progressive Customer Wealth"
     range_start = 0
     range_end = 100
-    default = 50
+    default = 25
 
 class CardLuck(Range):
     """
@@ -158,7 +158,7 @@ class CardLuck(Range):
     display_name = "Card Luck"
     range_start = 0
     range_end = 100
-    default = 20
+    default = 25
 
 class TrapFill(Range):
     """
