@@ -9,385 +9,324 @@ def has_card_pack(world, state, rarity):
 
 def get_rules(world):
     rules = {
-        "locations": {
-            "Basic Card Pack (32)":
+        "sell_locations": {
+            "Sell Basic Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Basic Card"),
-            "Basic Card Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Basic Card"),
-            "Basic Card Box (4)":
+            "Sell Basic Card Box":
                 lambda state:
                 state.has("Basic Card Box (4)", world.player) or state.has("Basic Card Box (8)", world.player),
-            "Basic Card Box (8)":
-                lambda state:
-                state.has("Basic Card Box (4)", world.player) or state.has("Basic Card Box (8)", world.player),
-            "Rare Card Pack (32)":
+            "Sell Rare Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Rare Card"),
-            "Rare Card Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Rare Card"),
-            "Rare Card Box (4)":
+            "Sell Rare Card Box":
                 lambda state:
                 state.has("Rare Card Box (4)", world.player) or state.has("Rare Card Box (8)", world.player),
-            "Rare Card Box (8)":
-                lambda state:
-                state.has("Rare Card Box (4)", world.player) or state.has("Rare Card Box (8)", world.player),
-            "Epic Card Pack (32)":
+            "Sell Epic Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Epic Card"),
-            "Epic Card Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Epic Card"),
-            "Epic Card Box (4)":
+            "Sell Epic Card Box":
                 lambda state:
                 state.has("Epic Card Box (4)", world.player) or state.has("Epic Card Box (8)", world.player),
-            "Epic Card Box (8)":
-                lambda state:
-                state.has("Epic Card Box (4)", world.player) or state.has("Epic Card Box (8)", world.player),
-            "Legendary Card Pack (32)":
+            "Sell Legendary Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Legendary Card"),
-            "Legendary Card Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Legendary Card"),
-            "Legendary Card Box (4)":
+            "Sell Legendary Card Box":
                 lambda state:
                 state.has("Legendary Card Box (4)", world.player) or state.has("Legendary Card Box (8)", world.player),
-            "Legendary Card Box (8)":
-                lambda state:
-                state.has("Legendary Card Box (4)", world.player) or state.has("Legendary Card Box (8)", world.player),
-            "Fire Battle Deck (18)":
+            "Sell Fire Battle Deck":
                 lambda state:
                 state.has("Fire Battle Deck (18)", world.player),
-            "Earth Battle Deck (18)":
+            "Sell Earth Battle Deck":
                 lambda state:
                 state.has("Earth Battle Deck (18)", world.player),
-            "Water Battle Deck (18)":
+            "Sell Water Battle Deck":
                 lambda state:
                 state.has("Water Battle Deck (18)", world.player),
-            "Wind Battle Deck (18)":
+            "Sell Wind Battle Deck":
                 lambda state:
                 state.has("Wind Battle Deck (18)", world.player),
-            "Basic Destiny Pack (32)":
+            "Sell Basic Destiny Pack":
                 lambda state:
                 has_card_pack(world, state, "Basic Destiny"),
-            "Basic Destiny Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Basic Destiny"),
-            "Basic Destiny Box (4)":
+            "Sell Basic Destiny Box":
                 lambda state:
                 state.has("Basic Destiny Box (4)", world.player) or state.has("Basic Destiny Box (8)", world.player),
-            "Basic Destiny Box (8)":
-                lambda state:
-                state.has("Basic Destiny Box (4)", world.player) or state.has("Basic Destiny Box (8)", world.player),
-            "Rare Destiny Pack (32)":
+            "Sell Rare Destiny Pack":
                 lambda state:
                 has_card_pack(world, state, "Rare Destiny"),
-            "Rare Destiny Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Rare Destiny"),
-            "Rare Destiny Box (4)":
+            "Sell Rare Destiny Box":
                 lambda state:
                 state.has("Rare Destiny Box (4)", world.player) or state.has("Rare Destiny Box (8)", world.player),
-            "Rare Destiny Box (8)":
-                lambda state:
-                state.has("Rare Destiny Box (4)", world.player) or state.has("Rare Destiny Box (8)", world.player),
-            "Epic Destiny Pack (32)":
+            "Sell Epic Destiny Pack":
                 lambda state:
                 has_card_pack(world, state, "Epic Destiny"),
-            "Epic Destiny Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Epic Destiny"),
-            "Epic Destiny Box (4)":
+            "Sell Epic Destiny Box":
                 lambda state:
                 state.has("Epic Destiny Box (4)", world.player) or state.has("Epic Destiny Box (8)", world.player),
-            "Epic Destiny Box (8)":
-                lambda state:
-                state.has("Epic Destiny Box (4)", world.player) or state.has("Epic Destiny Box (8)", world.player),
-            "Legendary Destiny Pack (32)":
+            "Sell Legendary Destiny Pack":
                 lambda state:
                 has_card_pack(world, state, "Legendary Destiny"),
-            "Legendary Destiny Pack (64)":
-                lambda state:
-                has_card_pack(world, state, "Legendary Destiny"),
-            "Legendary Destiny Box (4)":
+            "Sell Legendary Destiny Box":
                 lambda state:
                 state.has("Legendary Destiny Box (4)", world.player) or state.has("Legendary Destiny Box (8)", world.player),
-            "Legendary Destiny Box (8)":
-                lambda state:
-                state.has("Legendary Destiny Box (4)", world.player) or state.has("Legendary Destiny Box (8)", world.player),
-            "Fire Destiny Deck (18)":
+            "Sell Fire Destiny Deck":
                 lambda state:
                 state.has("Fire Destiny Deck (18)", world.player),
-            "Earth Destiny Deck (18)":
+            "Sell Earth Destiny Deck":
                 lambda state:
                 state.has("Earth Destiny Deck (18)", world.player),
-            "Water Destiny Deck (18)":
+            "Sell Water Destiny Deck":
                 lambda state:
                 state.has("Water Destiny Deck (18)", world.player),
-            "Wind Destiny Deck (18)":
+            "Sell Wind Destiny Deck":
                 lambda state:
                 state.has("Wind Destiny Deck (18)", world.player),
-            "Cleanser (8)":
+            "Sell Cleanser":
                 lambda state:
-                state.has("Cleanser (8)", world.player),
-            "Cleanser (16)":
-                lambda state:
-                state.has("Cleanser (16)", world.player),
-            "Card Sleeves (Clear)":
+                state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player),
+            "Sell Card Sleeves (Clear)":
                 lambda state:
                 state.has("Card Sleeves (Clear)", world.player),
-            "Card Sleeves (Tetramon)":
+            "Sell Card Sleeves (Tetramon)":
                 lambda state:
                 state.has("Card Sleeves (Tetramon)", world.player),
-            "D20 Dice Red (16)":
+            "Sell D20 Dice Red":
                 lambda state:
                 state.has("D20 Dice Red (16)", world.player),
-            "D20 Dice Blue (16)":
+            "Sell D20 Dice Blue":
                 lambda state:
                 state.has("D20 Dice Blue (16)", world.player),
-            "D20 Dice Black (16)":
+            "Sell D20 Dice Black":
                 lambda state:
                 state.has("D20 Dice Black (16)", world.player),
-            "D20 Dice White (16)":
+            "Sell D20 Dice White":
                 lambda state:
                 state.has("D20 Dice White (16)", world.player),
-            "Card Sleeves (Fire)":
+            "Sell Card Sleeves (Fire)":
                 lambda state:
                 state.has("Card Sleeves (Fire)", world.player),
-            "Card Sleeves (Earth)":
+            "Sell Card Sleeves (Earth)":
                 lambda state:
                 state.has("Card Sleeves (Earth)", world.player),
-            "Card Sleeves (Water)":
+            "Sell Card Sleeves (Water)":
                 lambda state:
                 state.has("Card Sleeves (Water)", world.player),
-            "Card Sleeves (Wind)":
+            "Sell Card Sleeves (Wind)":
                 lambda state:
                 state.has("Card Sleeves (Wind)", world.player),
-            "Deck Box Red (8)":
+            "Sell Deck Box Red":
                 lambda state:
-                state.has("Deck Box Red (8)", world.player),
-            "Deck Box Red (16)":
+                state.has("Deck Box Red (8)", world.player) or state.has("Deck Box Red (16)", world.player),
+            "Sell Deck Box Green":
                 lambda state:
-                state.has("Deck Box Red (16)", world.player),
-            "Deck Box Green (8)":
+                state.has("Deck Box Green (8)", world.player) or state.has("Deck Box Green (16)", world.player),
+            "Sell Deck Box Blue":
                 lambda state:
-                state.has("Deck Box Green (8)", world.player),
-            "Deck Box Green (16)":
+                state.has("Deck Box Blue (8)", world.player) or state.has("Deck Box Blue (16)", world.player),
+            "Sell Deck Box Yellow":
                 lambda state:
-                state.has("Deck Box Green (16)", world.player),
-            "Deck Box Blue (8)":
-                lambda state:
-                state.has("Deck Box Blue (8)", world.player),
-            "Deck Box Blue (16)":
-                lambda state:
-                state.has("Deck Box Blue (16)", world.player),
-            "Deck Box Yellow (8)":
-                lambda state:
-                state.has("Deck Box Yellow (8)", world.player),
-            "Deck Box Yellow (16)":
-                lambda state:
-                state.has("Deck Box Yellow (16)", world.player),
-            "Collection Book (4)":
+                state.has("Deck Box Yellow (8)", world.player) or state.has("Deck Box Yellow (16)", world.player),
+            "Sell Collection Book":
                 lambda state:
                 state.has("Collection Book (4)", world.player),
-            "Premium Collection Book (4)":
+            "Sell Premium Collection Book":
                 lambda state:
                 state.has("Premium Collection Book (4)", world.player),
-            "Playmat (Drilceros)":
+            "Sell Playmat (Drilceros)":
                 lambda state:
                 state.has("Playmat (Drilceros)", world.player),
-            "Playmat (Clamigo)":
+            "Sell Playmat (Clamigo)":
                 lambda state:
                 state.has("Playmat (Clamigo)", world.player),
-            "Playmat (Wispo)":
+            "Sell Playmat (Wispo)":
                 lambda state:
                 state.has("Playmat (Wispo)", world.player),
-            "Playmat (Lunight)":
+            "Sell Playmat (Lunight)":
                 lambda state:
                 state.has("Playmat (Lunight)", world.player),
-            "Playmat (Kyrone)":
+            "Sell Playmat (Kyrone)":
                 lambda state:
                 state.has("Playmat (Kyrone)", world.player),
-            "Playmat (Duel)":
+            "Sell Playmat (Duel)":
                 lambda state:
                 state.has("Playmat (Duel)", world.player),
-            "Playmat (Dracunix1)":
+            "Sell Playmat (Dracunix1)":
                 lambda state:
                 state.has("Playmat (Dracunix1)", world.player),
-            "Playmat (Dracunix2)":
+            "Sell Playmat (Dracunix2)":
                 lambda state:
                 state.has("Playmat (Dracunix2)", world.player),
-            "Playmat (The Four Dragons)":
+            "Sell Playmat (The Four Dragons)":
                 lambda state:
                 state.has("Playmat (The Four Dragons)", world.player),
-            "Playmat (Drakon)":
+            "Sell Playmat (Drakon)":
                 lambda state:
                 state.has("Playmat (Drakon)", world.player),
-            "Playmat (GigatronX Evo)":
+            "Sell Playmat (GigatronX Evo)":
                 lambda state:
                 state.has("Playmat (GigatronX Evo)", world.player),
-            "Playmat (Fire)":
+            "Sell Playmat (Fire)":
                 lambda state:
                 state.has("Playmat (Fire)", world.player),
-            "Playmat (Earth)":
+            "Sell Playmat (Earth)":
                 lambda state:
                 state.has("Playmat (Earth)", world.player),
-            "Playmat (Water)":
+            "Sell Playmat (Water)":
                 lambda state:
                 state.has("Playmat (Water)", world.player),
-            "Playmat (Wind)":
+            "Sell Playmat (Wind)":
                 lambda state:
                 state.has("Playmat (Wind)", world.player),
-            "Playmat (Tetramon)":
+            "Sell Playmat (Tetramon)":
                 lambda state:
                 state.has("Playmat (Tetramon)", world.player),
-            "Manga 1":
+            "Sell Manga 1":
                 lambda state:
                 state.has("Manga 1", world.player),
-            "Manga 2":
+            "Sell Manga 2":
                 lambda state:
                 state.has("Manga 2", world.player),
-            "Manga 3":
+            "Sell Manga 3":
                 lambda state:
                 state.has("Manga 3", world.player),
-            "Manga 4":
+            "Sell Manga 4":
                 lambda state:
                 state.has("Manga 4", world.player),
-            "Manga 5":
+            "Sell Manga 5":
                 lambda state:
                 state.has("Manga 5", world.player),
-            "Manga 6":
+            "Sell Manga 6":
                 lambda state:
                 state.has("Manga 6", world.player),
-            "Manga 7":
+            "Sell Manga 7":
                 lambda state:
                 state.has("Manga 7", world.player),
-            "Manga 8":
+            "Sell Manga 8":
                 lambda state:
                 state.has("Manga 8", world.player),
-            "Manga 9":
+            "Sell Manga 9":
                 lambda state:
                 state.has("Manga 9", world.player),
-            "Manga 10":
+            "Sell Manga 10":
                 lambda state:
                 state.has("Manga 10", world.player),
-            "Manga 11":
+            "Sell Manga 11":
                 lambda state:
                 state.has("Manga 11", world.player),
-            "Manga 12":
+            "Sell Manga 12":
                 lambda state:
                 state.has("Manga 12", world.player),
-            "Pigni Plushie (12)":
+            "Sell Pigni Plushie":
                 lambda state:
                 state.has("Pigni Plushie (12)", world.player),
-            "Nanomite Plushie (16)":
+            "Sell Nanomite Plushie":
                 lambda state:
                 state.has("Nanomite Plushie (16)", world.player),
-            "Minstar Plushie (24)":
+            "Sell Minstar Plushie":
                 lambda state:
                 state.has("Minstar Plushie (24)", world.player),
-            "Nocti Plushie (6)":
+            "Sell Nocti Plushie":
                 lambda state:
                 state.has("Nocti Plushie (6)", world.player),
-            "Burpig Figurine (12)":
+            "Sell Burpig Figurine":
                 lambda state:
                 state.has("Burpig Figurine (12)", world.player),
-            "Decimite Figurine (8)":
+            "Sell Decimite Figurine":
                 lambda state:
                 state.has("Decimite Figurine (8)", world.player),
-            "Trickstar Figurine (12)":
+            "Sell Trickstar Figurine":
                 lambda state:
                 state.has("Trickstar Figurine (12)", world.player),
-            "Lunight Figurine (8)":
+            "Sell Lunight Figurine":
                 lambda state:
                 state.has("Lunight Figurine (8)", world.player),
-            "Inferhog Figurine (2)":
+            "Sell Inferhog Figurine":
                 lambda state:
                 state.has("Inferhog Figurine (2)", world.player),
-            "Meganite Figurine (2)":
+            "Sell Meganite Figurine":
                 lambda state:
                 state.has("Meganite Figurine (2)", world.player),
-            "Princestar Figurine (2)":
+            "Sell Princestar Figurine":
                 lambda state:
                 state.has("Princestar Figurine (2)", world.player),
-            "Vampicant Figurine (2)":
+            "Sell Vampicant Figurine":
                 lambda state:
                 state.has("Vampicant Figurine (2)", world.player),
-            "Blazoar Plushie (2)":
+            "Sell Blazoar Plushie":
                 lambda state:
                 state.has("Blazoar Plushie (2)", world.player),
-            "Giganite Statue (2)":
+            "Sell Giganite Statue":
                 lambda state:
                 state.has("Giganite Statue (2)", world.player),
-            "Kingstar Plushie (2)":
+            "Sell Kingstar Plushie":
                 lambda state:
                 state.has("Kingstar Plushie (2)", world.player),
-            "Dracunix Figurine (1)":
+            "Sell Dracunix Figurine":
                 lambda state:
                 state.has("Dracunix Figurine (1)", world.player),
-            "Bonfiox Plushie (8)":
+            "Sell Bonfiox Plushie":
                 lambda state:
                 state.has("Bonfiox Plushie (8)", world.player),
-            "Drilceros Action Figure (4)":
+            "Sell Drilceros Action Figure":
                 lambda state:
                 state.has("Drilceros Action Figure (4)", world.player),
-            "ToonZ Plushie (6)":
+            "Sell ToonZ Plushie":
                 lambda state:
                 state.has("ToonZ Plushie (6)", world.player),
-            "System Gate #1":
+            "Sell System Gate #1":
                 lambda state:
                 state.has("System Gate #1", world.player),
-            "System Gate #2":
+            "Sell System Gate #2":
                 lambda state:
                 state.has("System Gate #2", world.player),
-            "Mafia Works":
+            "Sell Mafia Works":
                 lambda state:
                 state.has("Mafia Works", world.player),
-            "Necromonsters":
+            "Sell Necromonsters":
                 lambda state:
                 state.has("Necromonsters", world.player),
-            "Claim!":
+            "Sell Claim!":
                 lambda state:
                 state.has("Claim!", world.player),
-            "Penny Sleeves":
+            "Sell Penny Sleeves":
                 lambda state:
                 state.has("Penny Sleeves", world.player),
-            "Tower Deckbox":
+            "Sell Tower Deckbox":
                 lambda state:
                 state.has("Tower Deckbox", world.player),
-            "Magnetic Holder":
+            "Sell Magnetic Holder":
                 lambda state:
                 state.has("Magnetic Holder", world.player),
-            "Toploader":
+            "Sell Toploader":
                 lambda state:
                 state.has("Toploader", world.player),
-            "Card Preserver":
+            "Sell Card Preserver":
                 lambda state:
                 state.has("Card Preserver", world.player),
-            "Playmat Gray":
+            "Sell Playmat Gray":
                 lambda state:
                 state.has("Playmat Gray", world.player),
-            "Playmat Green":
+            "Sell Playmat Green":
                 lambda state:
                 state.has("Playmat Green", world.player),
-            "Playmat Purple":
+            "Sell Playmat Purple":
                 lambda state:
                 state.has("Playmat Purple", world.player),
-            "Playmat Yellow":
+            "Sell Playmat Yellow":
                 lambda state:
                 state.has("Playmat Yellow", world.player),
-            "Pocket Pages":
+            "Sell Pocket Pages":
                 lambda state:
                 state.has("Pocket Pages", world.player),
-            "Card Holder":
+            "Sell Card Holder":
                 lambda state:
                 state.has("Card Holder", world.player),
-            "Collectors Album":
+            "Sell Collectors Album":
                 lambda state:
-                state.has("Collectors Album", world.player),
+                state.has("Collectors Album", world.player)
+        },
+        "locations": {
             "Shop B Expansion 1": lambda state:
                 state.has("Progressive Shop Expansion B", world.player, 1) and state.has("Warehouse Key", world.player),
 
@@ -540,7 +479,7 @@ def get_rules(world):
     return rules
 
 
-def set_rules(world, starting_inv, excluded_locs):
+def set_rules(world, excluded_locs, starting_locs):
 
 
 
@@ -565,12 +504,20 @@ def set_rules(world, starting_inv, excluded_locs):
 
     for location_name, rule in rules_lookup["locations"].items():
         try:
-            # starting item was removes, therefor it cannot be required to access
-            if location_name in starting_inv:
-                continue
             if location_name in excluded_locs:
                 continue
             world.get_location(location_name).access_rule = rule
+        except KeyError as e:
+            print(f"Key error, {e}")
+            pass
+
+    for location_name, rule in rules_lookup["sell_locations"].items():
+        try:
+            for n in range(1, world.options.sell_check_amount.value + 1):
+                if f"{location_name} {n}" in excluded_locs or f"{location_name} {n}" in starting_locs:
+                    continue
+
+                world.get_location(f"{location_name} {n}").access_rule = rule
         except KeyError as e:
             print(f"Key error, {e}")
             pass

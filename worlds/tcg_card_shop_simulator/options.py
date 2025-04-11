@@ -49,6 +49,21 @@ class BetterTrades(DefaultOnToggle):
     """
     display_name = "Better Trades"
 
+class SellCheckAmount(Range):
+    """
+    How many sell checks will each item have?
+    """
+    display_name = "Sell Check Amount"
+    range_start = 1
+    range_end = 16
+    default = 2
+
+class Deathlink(Toggle):
+    """
+    Enable Deathlink
+    """
+    display_name = "Deathlink"
+
 class CardSanity(Choice):
     """
     Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations. At destiny Legendary you are adding 2904 checks
@@ -165,7 +180,9 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         GhostGoalAmount
     ]),
     OptionGroup("General", [
-        BetterTrades
+        BetterTrades,
+        SellCheckAmount,
+        Deathlink
     ]),
     OptionGroup("Sanity", [
         CardSanity,
@@ -189,6 +206,8 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     level_goal: LevelGoal
     ghost_goal_amount: GhostGoalAmount
     better_trades: BetterTrades
+    sell_check_amount: SellCheckAmount
+    deathlink: Deathlink
     card_sanity: CardSanity
     foil_sanity: FoilInSanity
     border_sanity: BorderInSanity

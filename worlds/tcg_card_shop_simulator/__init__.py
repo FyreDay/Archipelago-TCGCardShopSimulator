@@ -42,6 +42,7 @@ class TCGSimulatorWorld(World):
     card_dict = {}
     starting_names = []
     excludedKeys = []
+    startingLocs = []
     pg1_ids = []
     pg2_ids = []
     pg3_ids = []
@@ -126,17 +127,17 @@ class TCGSimulatorWorld(World):
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-
         if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
             raise OptionError("All Junk Weights are Zero")
         if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0:
             raise OptionError("All Trap Weights are Zero")
 
         self.randomize_shops()
-        loc_dict, card_locs, starting_str = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
+        loc_dict, card_locs, starting_str, starting_l = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
         self.location_dict = loc_dict.copy()
         self.card_dict = card_locs.copy()
         self.starting_names = starting_str[:]
+        self.startingLocs = starting_l[:]
 
     def create_regions(self):
         excluded = create_regions(self, self.location_dict , self.card_dict)
@@ -156,7 +157,7 @@ class TCGSimulatorWorld(World):
         self.push_precollected(starting_items[2])
 
     def set_rules(self):
-        set_rules(self, self.starting_names, self.excludedKeys)
+        set_rules(self, self.excludedKeys, self.startingLocs)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
@@ -174,6 +175,8 @@ class TCGSimulatorWorld(World):
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
+            "Deathlink": self.options.deathlink.value,
+            "SellCheckAmount": self.options.sell_check_amount.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
             "BorderInSanity": self.options.border_sanity.value,

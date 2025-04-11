@@ -21,6 +21,7 @@ def create_regions(world, loc_dict, card_locs):
     global location_dict, card_dict
     location_dict = loc_dict.copy()
     card_dict = card_locs.copy()
+
     clear_excluded()
 
     create_region(world, "Menu", "Menu Region")

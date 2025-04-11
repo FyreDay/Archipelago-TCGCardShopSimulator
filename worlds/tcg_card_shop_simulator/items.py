@@ -52,6 +52,7 @@ def create_items(world, starting_names, ignored_items):
 
         if item_name == "Progressive Shop Expansion B":
             override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
+            print(sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item)))
             print(f"{override} Progressive B")
 
         if item_name == "Progressive Ghost Card" and world.options.goal.value == 2:
