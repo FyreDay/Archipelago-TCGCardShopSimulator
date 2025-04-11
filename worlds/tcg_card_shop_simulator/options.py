@@ -52,6 +52,7 @@ class BetterTrades(DefaultOnToggle):
 class SellCheckAmount(Range):
     """
     How many sell checks will each item have?
+    Please note there are 131 items.
     """
     display_name = "Sell Check Amount"
     range_start = 1
@@ -139,6 +140,26 @@ class RandomNewCard(Range):
     range_end = 100
     default = 50
 
+class ProgressiveCustomerWealth(Range):
+    """
+    Determines the percentage of Filler
+    increases how much money your customers have
+    """
+    display_name = "Progressive Customer Wealth"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class CardLuck(Range):
+    """
+    Determines the percentage of Filler
+    increases your chances to find better cards in packs
+    """
+    display_name = "Card Luck"
+    range_start = 0
+    range_end = 100
+    default = 20
+
 class TrapFill(Range):
     """
     Determines the percentage of the junk fill which is filled with traps.
@@ -170,6 +191,27 @@ class PoltergeistTrap(Range):
     range_end = 100
     default = 50
 
+class MarketChangeTrap(Range):
+    """
+    Causes prices to randomize
+    Determines the percentage of Traps are Market Change Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Market Change Trap"
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class CreditCardFailureTrap(Range):
+    """
+    Credit cards fail to work for a little while
+    Determines the percentage of Traps are Credit Card Failure Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Credit Card Failure Trap"
+    range_start = 0
+    range_end = 100
+    default = 50
 
 @dataclass
 class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
@@ -194,9 +236,13 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         XpBoosts,
         RandomCard,
         RandomNewCard,
+        ProgressiveCustomerWealth,
+        CardLuck,
         TrapFill,
         StinkTrap,
-        PoltergeistTrap
+        PoltergeistTrap,
+        CreditCardFailureTrap,
+        MarketChangeTrap
     ])
     
 @dataclass
@@ -215,6 +261,10 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     xp_boosts: XpBoosts
     random_card: RandomCard
     random_new_card: RandomNewCard
+    customer_wealth: ProgressiveCustomerWealth
+    card_luck: CardLuck
     trap_fill: TrapFill
     stink_trap: StinkTrap
     poltergeist_trap: PoltergeistTrap
+    credit_card_failure_trap: CreditCardFailureTrap
+    market_change_trap: MarketChangeTrap

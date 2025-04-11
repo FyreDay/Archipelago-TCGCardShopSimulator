@@ -76,7 +76,9 @@ def create_items(world, starting_names, ignored_items):
 
     trap_weights = {
         "Stink Trap": world.options.stink_trap,
-        "Poltergeist Trap": world.options.poltergeist_trap
+        "Poltergeist Trap": world.options.poltergeist_trap,
+        "Credit Card Failure Trap": world.options.credit_card_failure_trap,
+        "Market Change Trap":world.options.market_change_trap
     }
 
     junk_weights["Small Xp"] = world.options.xp_boosts * 0.5
@@ -87,6 +89,8 @@ def create_items(world, starting_names, ignored_items):
     junk_weights["Large Money"] = world.options.money_bags * 0.2
     junk_weights["Random Card"] = world.options.random_card
     junk_weights["Random New Card"] = world.options.random_new_card
+    junk_weights["Progressive Customer Money"] = world.options.customer_wealth
+    junk_weights["Increase Card Luck"] = world.options.card_luck
 
     junk = get_junk_item_names(world.multiworld.random, junk_count)
     for name in junk:
@@ -367,11 +371,16 @@ junk_dict: Dict[str, ItemData] = {
     "Large Money": ItemData(0x1F2800D3, ItemClassification.filler),
     "Random Card": ItemData(0x1F2800D4, ItemClassification.filler),
     "Random New Card": ItemData(0x1F2800D5, ItemClassification.filler),
+    "Progressive Customer Money": ItemData(0x1F2800F6, ItemClassification.filler),
+    "Increase Card Luck": ItemData(0x1F2800F7, ItemClassification.filler),
 }
 
 trap_dict: Dict[str, ItemData] = {
     "Stink Trap": ItemData(0x1F2800B4, ItemClassification.trap),
     "Poltergeist Trap": ItemData(0x1F2800D6, ItemClassification.trap),
+    "Credit Card Failure Trap": ItemData(0x1F2800F8, ItemClassification.trap),
+    "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
+    #"Currency Trap": ItemData(0x1F2800FA, ItemClassification.trap),
 }
 
 junk_weights = {
@@ -382,7 +391,9 @@ junk_weights = {
     "Large Money": 10,
     "Large Xp": 10,
     "Random Card": 50,
-    "Random New Card": 50
+    "Random New Card": 50,
+    "Progressive Customer Money": 50,
+    "Increase Card Luck": 0
 }
 
 full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_dict, **trap_dict, **ghost_dict}
