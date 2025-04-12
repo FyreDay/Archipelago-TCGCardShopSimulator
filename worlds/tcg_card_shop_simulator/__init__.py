@@ -167,7 +167,7 @@ class TCGSimulatorWorld(World):
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.0.3",
+            "ModVersion": "0.1.0",
             "ShopPg1Mapping": self.pg1_ids,
             "ShopPg2Mapping": self.pg2_ids,
             "ShopPg3Mapping": self.pg3_ids,
@@ -175,7 +175,7 @@ class TCGSimulatorWorld(World):
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
-            "Deathlink": self.options.deathlink.value,
+            # "Deathlink": self.options.deathlink.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,

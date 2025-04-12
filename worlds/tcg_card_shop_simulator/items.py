@@ -44,14 +44,13 @@ def create_items(world, starting_names, ignored_items):
 
         if item_name == "Progressive Shop Expansion A":
             if world.options.goal.value == 0:
-                override = world.options.shop_expansion_goal.value +1 + (1 if world.options.shop_expansion_goal.value > 5 else 2)
+                override = world.options.shop_expansion_goal.value +3
             else:
-                test = sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
                 override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
             print(f"{override} Progressive A")
 
         if item_name == "Progressive Shop Expansion B":
-            override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
+            override = item_data.amount + 1 - sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
             print(sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item)))
             print(f"{override} Progressive B")
 
@@ -78,7 +77,7 @@ def create_items(world, starting_names, ignored_items):
         "Stink Trap": world.options.stink_trap,
         "Poltergeist Trap": world.options.poltergeist_trap,
         "Credit Card Failure Trap": world.options.credit_card_failure_trap,
-        "Market Change Trap":world.options.market_change_trap
+        # "Market Change Trap":world.options.market_change_trap
     }
 
     junk_weights["Small Xp"] = world.options.xp_boosts * 0.5
@@ -379,7 +378,7 @@ trap_dict: Dict[str, ItemData] = {
     "Stink Trap": ItemData(0x1F2800B4, ItemClassification.trap),
     "Poltergeist Trap": ItemData(0x1F2800D6, ItemClassification.trap),
     "Credit Card Failure Trap": ItemData(0x1F2800F8, ItemClassification.trap),
-    "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
+    # "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
     #"Currency Trap": ItemData(0x1F2800FA, ItemClassification.trap),
 }
 

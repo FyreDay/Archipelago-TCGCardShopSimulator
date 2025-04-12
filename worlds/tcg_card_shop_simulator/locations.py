@@ -400,7 +400,6 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
 
         data_earliest_region = find_item_with_earliest_region(filtered_data, hardcoded_pg1_items, pg1_ids)
         for n in range(1,check_num+1):
-            print(f"name: {name} {n} code: {code + (n-1) * 0x1000}")
             location_dict[f"{name} {n}"] = LocData(code + (n-1) * 0x1000, hardcoded_pg1_items[pg1_ids.index(data_earliest_region.id)].locData.region)
 
     for name, code in pg2_locations.items():
