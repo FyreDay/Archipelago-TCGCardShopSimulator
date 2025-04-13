@@ -60,28 +60,38 @@ def create_regions(world, loc_dict, card_locs):
 
     return get_excluded()
 
+def connectPackRegion(world,card_region, options):
+    smallest_region = "Menu"
+    smallest_region_id = 110
+    for reg in options:
+        match = re.search(r'\d+', reg)
+        if match and smallest_region_id > int(match.group()):
+            smallest_region_id = int(match.group())
+            smallest_region = reg
+    connect_regions(world, smallest_region, card_region, card_region)
 
 
-def connect_entrances(world):
+def connect_entrances(world, loc_dict: Dict[str, LocData]):
+    connectPackRegion(world,"Common Card Pack",[loc_dict["Sell Basic Card Pack 1"].region,loc_dict["Sell Basic Card Box 1"].region])
+    connectPackRegion(world,"Rare Card Pack",[loc_dict["Sell Rare Card Pack 1"].region,loc_dict["Sell Rare Card Box 1"].region])
+    connectPackRegion(world,"Epic Card Pack",[loc_dict["Sell Epic Card Pack 1"].region,loc_dict["Sell Epic Card Box 1"].region])
+    connectPackRegion(world,"Legendary Card Pack",[loc_dict["Sell Legendary Card Pack 1"].region,loc_dict["Sell Legendary Card Box 1"].region])
+    connectPackRegion(world,"Destiny Common Card Pack",[loc_dict["Sell Basic Destiny Pack 1"].region,loc_dict["Sell Basic Destiny Box 1"].region])
+    connectPackRegion(world,"Destiny Rare Card Pack",[loc_dict["Sell Rare Destiny Pack 1"].region,loc_dict["Sell Rare Destiny Box 1"].region])
+    connectPackRegion(world,"Destiny Epic Card Pack",[loc_dict["Sell Epic Destiny Pack 1"].region,loc_dict["Sell Epic Destiny Box 1"].region])
+    connectPackRegion(world,"Destiny Legendary Card Pack",[loc_dict["Sell Legendary Destiny Pack 1"].region,loc_dict["Sell Legendary Destiny Box 1"].region])
+
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
-    connect_regions(world, "Menu", "Common Card Pack", "Common Card Pack")
     connect_regions(world, "Level 1-4", "Level 5-9", "Level 5")
-    connect_regions(world, "Menu", "Rare Card Pack", "Rare Card Pack")
     connect_regions(world, "Level 5-9", "Level 10-14", "Level 10")
-    connect_regions(world, "Menu", "Epic Card Pack", "Epic Card Pack")
     connect_regions(world, "Level 10-14", "Level 15-19", "Level 15")
     connect_regions(world, "Level 15-19", "Level 20-24", "Level 20")
-    connect_regions(world, "Menu", "Legendary Card Pack", "Legendary Card Pack")
     connect_regions(world, "Level 20-24", "Level 25-29", "Level 25")
-    connect_regions(world, "Menu", "Destiny Common Card Pack", "Destiny Common Card Pack")
     connect_regions(world, "Level 25-29", "Level 30-34", "Level 30")
-    connect_regions(world, "Menu", "Destiny Rare Card Pack", "Destiny Rare Card Pack")
     connect_regions(world, "Level 30-34", "Level 35-39", "Level 35")
     connect_regions(world, "Level 35-39", "Level 40-44", "Level 40")
-    connect_regions(world, "Menu", "Destiny Epic Card Pack", "Destiny Epic Card Pack")
     connect_regions(world, "Level 40-44", "Level 45-49", "Level 45")
     connect_regions(world, "Level 45-49", "Level 50-54", "Level 50")
-    connect_regions(world, "Menu", "Destiny Legendary Card Pack", "Destiny Legendary Card Pack")
     connect_regions(world, "Level 50-54", "Level 55-59", "Level 55")
     connect_regions(world, "Level 55-59", "Level 60-64", "Level 60")
     connect_regions(world, "Level 60-64", "Level 65-69", "Level 65")

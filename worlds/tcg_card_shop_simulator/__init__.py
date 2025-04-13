@@ -142,7 +142,7 @@ class TCGSimulatorWorld(World):
     def create_regions(self):
         excluded = create_regions(self, self.location_dict , self.card_dict)
         self.excludedKeys = excluded[:]
-        connect_entrances(self)
+        connect_entrances(self,self.location_dict)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
