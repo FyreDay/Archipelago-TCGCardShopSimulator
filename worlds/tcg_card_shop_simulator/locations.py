@@ -654,8 +654,8 @@ card_rarity: List[MonsterData] = [
     MonsterData("SeedBugA", Rarity.Common),
     MonsterData("SeedBugB", Rarity.Rare),
     MonsterData("SeedBugC", Rarity.Epic),
-    MonsterData("NinjaBirdA", Rarity.Common),
-    MonsterData("NinjaBirdB", Rarity.Rare),
+    MonsterData("NinjaBirdA", Rarity.Rare), #should be common, bad game
+    MonsterData("NinjaBirdB", Rarity.Epic), #should be rare bad game
     MonsterData("NinjaBirdC", Rarity.Epic),
     MonsterData("NinjaBirdD", Rarity.Legendary),
     MonsterData("NinjaCrowC", Rarity.Epic),

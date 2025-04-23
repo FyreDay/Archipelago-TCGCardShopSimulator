@@ -378,8 +378,9 @@ trap_dict: Dict[str, ItemData] = {
     "Stink Trap": ItemData(0x1F2800B4, ItemClassification.trap),
     "Poltergeist Trap": ItemData(0x1F2800D6, ItemClassification.trap),
     "Credit Card Failure Trap": ItemData(0x1F2800F8, ItemClassification.trap),
+    "Decrease Card Luck": ItemData(0x1F2800FB, ItemClassification.trap),
     # "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
-    #"Currency Trap": ItemData(0x1F2800FA, ItemClassification.trap),
+    "Currency Trap": ItemData(0x1F2800FA, ItemClassification.trap),
 }
 
 junk_weights = {
