@@ -442,9 +442,9 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
 
     finish_level = 116
     if world.options.goal.value == 0:
-        match = re.search(r'\d+', hardcoded_locs[f"Shop A Expansion {world.options.shop_expansion_goal.value}"].region)
-        # +10 because this does depend on finding the items. this give 2 regions of leeway
-        finish_level = int(match.group()) + 10
+        match = re.search(r'\d+-(\d+)', hardcoded_locs[f"Shop A Expansion {world.options.shop_expansion_goal.value}"].region)
+
+        finish_level = int(match.group(1))
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
     if world.options.goal.value == 2:
@@ -465,7 +465,7 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
             location_dict[f"Level {level}"] = LocData(None, f"Level {start_level}-{end_level}")
 
         lastRegion = end_level
-
+    print(f"Removed All Locations After Goal, Which is At Level {lastRegion}")
     for index, data in enumerate(card_rarity):
         data = cast(MonsterData, data)
         for border in Border:
@@ -484,8 +484,7 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
                 if world.options.foil_sanity.value:
                     name, code = generate_card(data.name, index, border, 1, Expansion.Destiny, data.rarity)
                     card_locs[name] = code
-    print(location_dict)
-    return location_dict,card_locs,starting_names, starting_locs
+    return location_dict,card_locs,starting_names, starting_locs, lastRegion
 
 excludedItems = []
 def clear_excluded():
@@ -496,12 +495,14 @@ def get_excluded():
     return excludedItems
 
 def create_locations(world, region, loc_dict, card_dict):
-    print(f"excluded on create locs: {excludedItems}")
+    # print(f"excluded on create locs: {excludedItems}")
     create_locations_from_dict(world, loc_dict, region)
     create_card_locations(world, card_dict, region)
 
 
 def create_locations_from_dict(world, loc_dict, reg):
+    # remove sell and number
+    pattern = re.compile(r'^Sell (.*?)(?: \d+)?$')
     for (key, data) in loc_dict.items():
         if data.region != reg.name:
             continue
@@ -509,6 +510,8 @@ def create_locations_from_dict(world, loc_dict, reg):
         if data.code is None:
             create_location(world, reg, key, None)
             continue
+
+        # find region
         match = re.search(r'\d+', data.region)
         if match and lastRegion != 0 and lastRegion < int(match.group()):
             excludedItems.insert(len(excludedItems),key)

@@ -19,7 +19,7 @@ class ShopExpansionGoal(Range):
     """
 
     display_name = "Shop Expansion A Goal"
-    range_start = 5
+    range_start = 3
     range_end = 30
     default = 10
 
@@ -29,7 +29,7 @@ class LevelGoal(Range):
     """
 
     display_name = "LevelGoal"
-    range_start = 10
+    range_start = 5
     range_end = 115
     default = 20
 
@@ -52,18 +52,17 @@ class BetterTrades(DefaultOnToggle):
 class SellCheckAmount(Range):
     """
     How many sell checks will each item have?
-    Please note there are 131 items.
     """
     display_name = "Sell Check Amount"
-    range_start = 1
+    range_start = 2
     range_end = 16
     default = 2
 
-# class Deathlink(Toggle):
-#     """
-#     Enable Deathlink
-#     """
-#     display_name = "Deathlink"
+class Deathlink(Toggle):
+    """
+    Enable Deathlink. Pay your bills or send a death!
+    """
+    display_name = "Deathlink"
 
 class CardSanity(Choice):
     """
@@ -191,16 +190,37 @@ class PoltergeistTrap(Range):
     range_end = 100
     default = 50
 
-# class MarketChangeTrap(Range):
-#     """
-#     Causes prices to randomize
-#     Determines the percentage of Traps are Market Change Traps.
-#     Traps must be enabled for this to have any effect.
-#     """
-#     display_name = "Market Change Trap"
-#     range_start = 0
-#     range_end = 100
-#     default = 50
+class MarketChangeTrap(Range):
+    """
+    Causes prices to randomize
+    Determines the percentage of Traps are Market Change Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Market Change Trap"
+    range_start = 0
+    range_end = 100
+    default = 50
+class CurrencyTrap(Range):
+    """
+    Causes Currency to Randomize
+    Determines the percentage of Traps are Market Change Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Currency Trap"
+    range_start = 0
+    range_end = 100
+    default = 20
+
+class DecreaseCardLuckTrap(Range):
+    """
+    Lowers your card luck
+    Determines the percentage of Traps are Market Change Traps.
+    Traps must be enabled for this to have any effect.
+    """
+    display_name = "Reduce Card Luck Trap"
+    range_start = 0
+    range_end = 100
+    default = 20
 
 class CreditCardFailureTrap(Range):
     """
@@ -224,7 +244,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("General", [
         BetterTrades,
         SellCheckAmount,
-        # Deathlink
+        Deathlink
     ]),
     OptionGroup("Sanity", [
         CardSanity,
@@ -242,7 +262,9 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         StinkTrap,
         PoltergeistTrap,
         CreditCardFailureTrap,
-        # MarketChangeTrap
+        MarketChangeTrap,
+        CurrencyTrap,
+        DecreaseCardLuckTrap
     ])
     
 @dataclass
@@ -253,7 +275,7 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     ghost_goal_amount: GhostGoalAmount
     better_trades: BetterTrades
     sell_check_amount: SellCheckAmount
-    # deathlink: Deathlink
+    deathlink: Deathlink
     card_sanity: CardSanity
     foil_sanity: FoilInSanity
     border_sanity: BorderInSanity
@@ -267,4 +289,6 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     stink_trap: StinkTrap
     poltergeist_trap: PoltergeistTrap
     credit_card_failure_trap: CreditCardFailureTrap
-    # market_change_trap: MarketChangeTrap
+    market_change_trap: MarketChangeTrap
+    currency_trap: CurrencyTrap
+    decrease_card_luck_trap: DecreaseCardLuckTrap

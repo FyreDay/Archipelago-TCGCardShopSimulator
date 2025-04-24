@@ -21,44 +21,49 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
 
 
 def create_items(world, starting_names, ignored_items):
-    total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    print(f"total locs at start {total_location_count}")
-    print(f"total Itempool at start {len(world.itempool)}")
-    print(f"info {world.player} : {world.options.goal.value}")
+    # Ignored Items are actually location names
+    pattern = re.compile(r'^Sell (.*?)(?: \d+)?$')
+    ignored_item_names = [re.sub(pattern, r'\1', s) if s.startswith('Sell') else s for s in ignored_items]
 
-    print(f"total items at before forloop {len(world.itempool)}")
+    total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
+    # print(f"total locs at start {total_location_count}")
+    # print(f"total Itempool at start {len(world.itempool)}")
+    # print(f"info {world.player} : {world.options.goal.value}")
+    #
+    # print(f"total items at before forloop {len(world.itempool)}")
     starting_items: List[Item] = []
     num  = 0
     for item_name, item_data in item_dict.items():
         #starting item should not be shuffled
         if item_name in starting_names:
+            # print(f"starting is {item_name}")
             starting_items.append(Item(item_name, item_data.classification, world.item_name_to_id[item_name], world.player))
             continue
-        if item_name in ignored_items:
+        if re.sub(r' \(\d+\)$', '', item_name) in ignored_item_names:
             continue
         num = num +1
         create_item(world, item_name, item_data.classification, item_data.amount)
-    print(f"total items at before progressive {len(world.itempool)}")
+    # print(f"total items at before progressive {len(world.itempool)}")
     for item_name, item_data in progressive_dict.items():
         override = 0
 
         if item_name == "Progressive Shop Expansion A":
             if world.options.goal.value == 0:
-                override = world.options.shop_expansion_goal.value +3
+                override = world.options.shop_expansion_goal.value + world.options.shop_expansion_goal.value % 2
             else:
-                override = item_data.amount - sum(1 for item in ignored_items if re.search(r'^Shop A Expansion', item))
-            print(f"{override} Progressive A")
+                override = item_data.amount - sum(1 for item in ignored_item_names if re.search(r'^Shop A Expansion', item))
+            # print(f"{override} Progressive A")
 
         if item_name == "Progressive Shop Expansion B":
-            override = item_data.amount + 1 - sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item))
-            print(sum(1 for item in ignored_items if re.search(r'^Shop B Expansion', item)))
-            print(f"{override} Progressive B")
+            override = item_data.amount + 1 - sum(1 for item in ignored_item_names if re.search(r'^Shop B Expansion', item))
+            # print(sum(1 for item in ignored_item_names if re.search(r'^Shop B Expansion', item)))
+            # print(f"{override} Progressive B")
 
         if item_name == "Progressive Ghost Card" and world.options.goal.value == 2:
             override = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
-            print(f"in ghost goal? {world.options.goal.value == 2} count: {override}")
+            # print(f"in ghost goal? {world.options.goal.value == 2} count: {override}")
 
-        print(f"item : {item_name} with {item_data.amount} override: {override}")
+        # print(f"item : {item_name} with {item_data.amount} override: {override}")
         create_item(world, item_name, item_data.classification, item_data.amount if override == 0 else override)
 
     print(f"total locs at remaining {total_location_count}")
@@ -69,6 +74,7 @@ def create_items(world, starting_names, ignored_items):
 
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
 
+    # -1 on LevelGoal because I place a victory item at the goal level
     junk_count = remaining_locations - trap_count - (1 if world.options.goal == 1 else 0)
 
     print(f"junk count {junk_count + trap_count}")
@@ -77,7 +83,9 @@ def create_items(world, starting_names, ignored_items):
         "Stink Trap": world.options.stink_trap,
         "Poltergeist Trap": world.options.poltergeist_trap,
         "Credit Card Failure Trap": world.options.credit_card_failure_trap,
-        # "Market Change Trap":world.options.market_change_trap
+        "Market Change Trap":world.options.market_change_trap,
+        "Decrease Card Luck":world.options.decrease_card_luck_trap,
+        "Currency Trap":world.options.currency_trap
     }
 
     junk_weights["Small Xp"] = world.options.xp_boosts * 0.5
@@ -379,7 +387,7 @@ trap_dict: Dict[str, ItemData] = {
     "Poltergeist Trap": ItemData(0x1F2800D6, ItemClassification.trap),
     "Credit Card Failure Trap": ItemData(0x1F2800F8, ItemClassification.trap),
     "Decrease Card Luck": ItemData(0x1F2800FB, ItemClassification.trap),
-    # "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
+    "Market Change Trap": ItemData(0x1F2800F9, ItemClassification.trap),
     "Currency Trap": ItemData(0x1F2800FA, ItemClassification.trap),
 }
 

@@ -10,6 +10,18 @@ def create_region(world, name: str, hint: str):
     world.multiworld.regions.append(region)
     return region
 
+def create_pack_region(world, name: str, hint: str, options, final_region):
+    smallest_region_id = 110
+    for reg in options:
+        match = re.search(r'\d+', reg)
+        if match and smallest_region_id > int(match.group()):
+            smallest_region_id = int(match.group())
+    if smallest_region_id > final_region:
+        print(f"{name} is Beyond Level {final_region}")
+        region = Region(name, world.player, world.multiworld)
+        world.multiworld.regions.append(region)
+    else:
+        create_region(world, name, hint)
 
 def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> Entrance:
     entrance_region = world.get_region(from_name)
@@ -17,7 +29,7 @@ def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> 
     return entrance_region.connect(exit_region, entrance_name)
 
 
-def create_regions(world, loc_dict, card_locs):
+def create_regions(world, loc_dict, card_locs, final_region):
     global location_dict, card_dict
     location_dict = loc_dict.copy()
     card_dict = card_locs.copy()
@@ -49,18 +61,18 @@ def create_regions(world, loc_dict, card_locs):
     create_region(world, "Level 105-109", "Level 105-109")
     create_region(world, "Level 110-115", "Level 110-115")
 
-    create_region(world, "Common Card Pack", "Common Card Pack")
-    create_region(world, "Rare Card Pack", "Rare Card Pack")
-    create_region(world, "Epic Card Pack", "Epic Card Pack")
-    create_region(world, "Legendary Card Pack", "Legendary Card Pack")
-    create_region(world, "Destiny Common Card Pack", "Common Card Pack")
-    create_region(world, "Destiny Rare Card Pack", "Rare Card Pack")
-    create_region(world, "Destiny Epic Card Pack", "Epic Card Pack")
-    create_region(world, "Destiny Legendary Card Pack", "Legendary Card Pack")
+    create_pack_region(world, "Common Card Pack", "Common Card Pack", [loc_dict["Sell Basic Card Pack 1"].region, loc_dict["Sell Basic Card Box 1"].region], final_region)
+    create_pack_region(world, "Rare Card Pack", "Rare Card Pack", [loc_dict["Sell Rare Card Pack 1"].region, loc_dict["Sell Rare Card Box 1"].region], final_region)
+    create_pack_region(world, "Epic Card Pack", "Epic Card Pack", [loc_dict["Sell Epic Card Pack 1"].region, loc_dict["Sell Epic Card Box 1"].region], final_region)
+    create_pack_region(world, "Legendary Card Pack", "Legendary Card Pack", [loc_dict["Sell Legendary Card Pack 1"].region, loc_dict["Sell Legendary Card Box 1"].region], final_region)
+    create_pack_region(world, "Destiny Common Card Pack", "Common Card Pack", [loc_dict["Sell Basic Destiny Pack 1"].region, loc_dict["Sell Basic Destiny Box 1"].region], final_region)
+    create_pack_region(world, "Destiny Rare Card Pack", "Rare Card Pack", [loc_dict["Sell Rare Destiny Pack 1"].region, loc_dict["Sell Rare Destiny Box 1"].region], final_region)
+    create_pack_region(world, "Destiny Epic Card Pack", "Epic Card Pack", [loc_dict["Sell Epic Destiny Pack 1"].region, loc_dict["Sell Epic Destiny Box 1"].region], final_region)
+    create_pack_region(world, "Destiny Legendary Card Pack", "Legendary Card Pack", [loc_dict["Sell Legendary Destiny Pack 1"].region, loc_dict["Sell Legendary Destiny Box 1"].region], final_region)
 
     return get_excluded()
 
-def connectPackRegion(world,card_region, options):
+def connect_pack_region(world, card_region, options, loc_dict, final_region):
     smallest_region = "Menu"
     smallest_region_id = 110
     for reg in options:
@@ -68,18 +80,26 @@ def connectPackRegion(world,card_region, options):
         if match and smallest_region_id > int(match.group()):
             smallest_region_id = int(match.group())
             smallest_region = reg
+    if smallest_region_id > final_region:
+        for key, value in list(loc_dict.items()):
+            if value.region == card_region:
+                del loc_dict[key]
+
     connect_regions(world, smallest_region, card_region, card_region)
 
 
-def connect_entrances(world, loc_dict: Dict[str, LocData]):
-    connectPackRegion(world,"Common Card Pack",[loc_dict["Sell Basic Card Pack 1"].region,loc_dict["Sell Basic Card Box 1"].region])
-    connectPackRegion(world,"Rare Card Pack",[loc_dict["Sell Rare Card Pack 1"].region,loc_dict["Sell Rare Card Box 1"].region])
-    connectPackRegion(world,"Epic Card Pack",[loc_dict["Sell Epic Card Pack 1"].region,loc_dict["Sell Epic Card Box 1"].region])
-    connectPackRegion(world,"Legendary Card Pack",[loc_dict["Sell Legendary Card Pack 1"].region,loc_dict["Sell Legendary Card Box 1"].region])
-    connectPackRegion(world,"Destiny Common Card Pack",[loc_dict["Sell Basic Destiny Pack 1"].region,loc_dict["Sell Basic Destiny Box 1"].region])
-    connectPackRegion(world,"Destiny Rare Card Pack",[loc_dict["Sell Rare Destiny Pack 1"].region,loc_dict["Sell Rare Destiny Box 1"].region])
-    connectPackRegion(world,"Destiny Epic Card Pack",[loc_dict["Sell Epic Destiny Pack 1"].region,loc_dict["Sell Epic Destiny Box 1"].region])
-    connectPackRegion(world,"Destiny Legendary Card Pack",[loc_dict["Sell Legendary Destiny Pack 1"].region,loc_dict["Sell Legendary Destiny Box 1"].region])
+def connect_entrances(world, loc_dict: Dict[str, LocData], final_region):
+    global location_dict
+    location_dict = loc_dict.copy()
+
+    connect_pack_region(world, "Common Card Pack", [loc_dict["Sell Basic Card Pack 1"].region, loc_dict["Sell Basic Card Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Rare Card Pack", [loc_dict["Sell Rare Card Pack 1"].region, loc_dict["Sell Rare Card Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Epic Card Pack", [loc_dict["Sell Epic Card Pack 1"].region, loc_dict["Sell Epic Card Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Legendary Card Pack", [loc_dict["Sell Legendary Card Pack 1"].region, loc_dict["Sell Legendary Card Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Destiny Common Card Pack", [loc_dict["Sell Basic Destiny Pack 1"].region, loc_dict["Sell Basic Destiny Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Destiny Rare Card Pack", [loc_dict["Sell Rare Destiny Pack 1"].region, loc_dict["Sell Rare Destiny Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Destiny Epic Card Pack", [loc_dict["Sell Epic Destiny Pack 1"].region, loc_dict["Sell Epic Destiny Box 1"].region], location_dict, final_region)
+    connect_pack_region(world, "Destiny Legendary Card Pack", [loc_dict["Sell Legendary Destiny Pack 1"].region, loc_dict["Sell Legendary Destiny Box 1"].region], location_dict, final_region)
 
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     connect_regions(world, "Level 1-4", "Level 5-9", "Level 5")
@@ -104,3 +124,5 @@ def connect_entrances(world, loc_dict: Dict[str, LocData]):
     connect_regions(world, "Level 95-99", "Level 100-104", "Level 100")
     connect_regions(world, "Level 100-104", "Level 105-109", "Level 105")
     connect_regions(world, "Level 105-109", "Level 110-115", "Level 110")
+
+    return location_dict

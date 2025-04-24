@@ -47,6 +47,7 @@ class TCGSimulatorWorld(World):
     pg2_ids = []
     pg3_ids = []
     tt_ids = []
+    lastRegion = -1
 
     def swap_within_n(self, lst, target, n, invalid_indexes):
         if target not in lst:
@@ -129,20 +130,24 @@ class TCGSimulatorWorld(World):
     def generate_early(self) -> None:
         if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
             raise OptionError("All Junk Weights are Zero")
-        if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0:
+        if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0 and self.options.decrease_card_luck_trap == 0 and self.options.market_change_trap == 0 and self.options.currency_trap == 0:
             raise OptionError("All Trap Weights are Zero")
 
         self.randomize_shops()
-        loc_dict, card_locs, starting_str, starting_l = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
+        loc_dict, card_locs, starting_str, starting_l, final_level = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
         self.location_dict = loc_dict.copy()
         self.card_dict = card_locs.copy()
         self.starting_names = starting_str[:]
         self.startingLocs = starting_l[:]
+        self.lastRegion = final_level
 
     def create_regions(self):
-        excluded = create_regions(self, self.location_dict , self.card_dict)
+        excluded = create_regions(self, self.location_dict , self.card_dict, self.lastRegion)
         self.excludedKeys = excluded[:]
-        connect_entrances(self,self.location_dict)
+
+        loc_dict = connect_entrances(self,self.location_dict, self.lastRegion)
+        self.location_dict = loc_dict
+        print(location_dict)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
@@ -167,7 +172,7 @@ class TCGSimulatorWorld(World):
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.1.0",
+            "ModVersion": "0.2.0",
             "ShopPg1Mapping": self.pg1_ids,
             "ShopPg2Mapping": self.pg2_ids,
             "ShopPg3Mapping": self.pg3_ids,
@@ -175,7 +180,7 @@ class TCGSimulatorWorld(World):
             "Goal": self.options.goal.value,
             "ShopExpansionGoal": self.options.shop_expansion_goal.value,
             "LevelGoal": self.options.level_goal.value,
-            # "Deathlink": self.options.deathlink.value,
+            "Deathlink": self.options.deathlink.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
@@ -183,4 +188,5 @@ class TCGSimulatorWorld(World):
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
             "BetterTrades": self.options.better_trades.value,
             "TrapFill": self.options.trap_fill.value,
+            "FinalLevelRequirement": self.lastRegion
         }
