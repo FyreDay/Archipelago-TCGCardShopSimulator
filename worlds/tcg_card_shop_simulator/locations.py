@@ -448,7 +448,7 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
     if world.options.goal.value == 1:
         finish_level = world.options.level_goal.value + 1
     if world.options.goal.value == 2:
-        finish_level = 75
+        finish_level = world.options.ghost_level_limit
 
     for level in range(2, finish_level):
         loc_id = 0x1A5 + level - 2

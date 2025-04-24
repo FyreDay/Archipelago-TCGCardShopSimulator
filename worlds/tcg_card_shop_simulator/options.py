@@ -36,12 +36,24 @@ class LevelGoal(Range):
 class GhostGoalAmount(Range):
     """
     If on Ghost cards Goal, How many do you need to find?
+    Max is 40 to Bandaid Generation. Rework of this goal soon
     """
 
     display_name = "GhostGoalAmount"
     range_start = 1
-    range_end = 80
+    range_end = 40
     default = 40
+
+class GhostGoalLevelLimit(Range):
+    """
+    If on Ghost Goal, What Shop Level Limits which Licenses are in the multiworld?
+    You will be expected to be able to reach this level to win.
+    """
+
+    display_name = "Ghost Level Limit"
+    range_start = 25
+    range_end = 115
+    default = 25
 
 class BetterTrades(DefaultOnToggle):
     """
@@ -239,7 +251,8 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         Goal,
         ShopExpansionGoal,
         LevelGoal,
-        GhostGoalAmount
+        GhostGoalAmount,
+        GhostGoalLevelLimit
     ]),
     OptionGroup("General", [
         BetterTrades,
@@ -273,6 +286,7 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     shop_expansion_goal: ShopExpansionGoal
     level_goal: LevelGoal
     ghost_goal_amount: GhostGoalAmount
+    ghost_level_limit: GhostGoalLevelLimit
     better_trades: BetterTrades
     sell_check_amount: SellCheckAmount
     deathlink: Deathlink
