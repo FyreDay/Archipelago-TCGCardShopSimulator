@@ -385,7 +385,7 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                 state.has("Single Sided Shelf", world.player) and state.has("Progressive Card Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 1),
+                 state.has("Single Sided Shelf", world.player) and state.has("Progressive Card Table", world.player),
             "Level 10":
                 lambda state:
                  state.has("Worker - Zachery", world.player) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Shop Expansion A", world.player, 2),
@@ -394,10 +394,10 @@ def get_rules(world):
                   (state.has("Cleanser (8)", world.player) or state.has("Cleanser (16)", world.player)),
             "Level 20":
                 lambda state:
-                 has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 5),
+                 has_card_pack(world, state, "Basic Card") and state.has("Play Table", world.player) and state.has("Progressive Shop Expansion A", world.player, 4),
             "Level 25":
                 lambda state:
-                state.has("Small Cabinet", world.player) and state.has("Progressive Shop Expansion A", world.player, 8),
+                state.has("Small Cabinet", world.player) and state.has("Progressive Shop Expansion A", world.player, 6),
             "Level 30":
                 lambda state:
                 state.has("Checkout Counter", world.player) and state.has("Progressive Shop Expansion A", world.player, 10),
@@ -473,13 +473,16 @@ def get_rules(world):
             "Destiny Legendary Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Legendary Destiny"),
+            "Play Table":
+                lambda state:
+                state.has("Play Table", world.player, 1),
 
         }
     }
     return rules
 
 
-def set_rules(world, excluded_locs, starting_locs):
+def set_rules(world, excluded_locs, starting_locs, final_region):
 
 
 
@@ -488,14 +491,14 @@ def set_rules(world, excluded_locs, starting_locs):
     #     finish_level = 35 + world.options.ghost_goal_amount.value # 72
     #     for i in range(finish_level, 116):
     #         print(f"Level {i}")
-    #         world.get_location(f"Level {i}").progress_type = LocationProgressType.EXCLUDED
+    #         world.get_location(f"Level {i}")
 
     rules_lookup = get_rules(world)
 
     for entrance_name, rule in rules_lookup["entrances"].items():
         try:
             match = re.search(r'Level (\d+)', entrance_name)
-            if match and lastRegion < int(match.group(1)):
+            if match and final_region < int(match.group(1)):
                 continue
             world.get_entrance(entrance_name).access_rule = rule
         except KeyError as e:

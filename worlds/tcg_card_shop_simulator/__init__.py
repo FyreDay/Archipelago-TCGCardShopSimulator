@@ -40,9 +40,15 @@ class TCGSimulatorWorld(World):
 
     location_dict = {}
     card_dict = {}
+
+    local_items = {}
+    local_locations = {}
+
     starting_names = []
-    excludedKeys = []
+    excluded_items = []
+    excluded_locs = []
     startingLocs = []
+
     pg1_ids = []
     pg2_ids = []
     pg3_ids = []
@@ -124,7 +130,8 @@ class TCGSimulatorWorld(World):
         self.pg2_ids = []
         self.pg3_ids = []
         self.tt_ids = []
-        self.excludedKeys = []
+        self.excluded_items = []
+        self.excluded_locs = []
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
@@ -134,20 +141,19 @@ class TCGSimulatorWorld(World):
             raise OptionError("All Trap Weights are Zero")
 
         self.randomize_shops()
-        loc_dict, card_locs, starting_str, starting_l, final_level = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
+        loc_dict, card_locs, starting_str, starting_l, final_level, excludedItems = generate_locations(self, self.pg1_ids,self.pg2_ids,self.pg3_ids,self.tt_ids)
         self.location_dict = loc_dict.copy()
         self.card_dict = card_locs.copy()
         self.starting_names = starting_str[:]
         self.startingLocs = starting_l[:]
         self.lastRegion = final_level
+        self.excluded_items = excludedItems[:]
 
     def create_regions(self):
-        excluded = create_regions(self, self.location_dict , self.card_dict, self.lastRegion)
-        self.excludedKeys = excluded[:]
-
+        excludedLocs = create_regions(self, self.location_dict , self.card_dict, self.lastRegion)
+        self.excluded_locs = excludedLocs[:]
         loc_dict = connect_entrances(self,self.location_dict, self.lastRegion)
         self.location_dict = loc_dict
-        print(location_dict)
 
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
@@ -155,14 +161,14 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        starting_items = create_items(self, self.starting_names, self.excludedKeys)
+        starting_items = create_items(self, self.starting_names, self.excluded_items, self.excluded_locs)
 
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])
         self.push_precollected(starting_items[2])
 
     def set_rules(self):
-        set_rules(self, self.excludedKeys, self.startingLocs)
+        set_rules(self, self.excluded_locs, self.startingLocs, self.lastRegion)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
@@ -182,6 +188,10 @@ class TCGSimulatorWorld(World):
             "LevelGoal": self.options.level_goal.value,
             "Deathlink": self.options.deathlink.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
+            "ChecksPerPack": self.options.checks_per_pack.value,
+            "CardCollectPercentage": self.options.card_collect_percent.value,
+            "NumberOfGameChecks": self.options.game_check_count.value,
+            "GamesPerCheck": self.options.games_per_check.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
             "BorderInSanity": self.options.border_sanity.value,

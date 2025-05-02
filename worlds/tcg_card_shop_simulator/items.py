@@ -20,10 +20,7 @@ def create_item(world, name: str, classification: ItemClassification, amount: Op
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
 
 
-def create_items(world, starting_names, ignored_items):
-    # Ignored Items are actually location names
-    pattern = re.compile(r'^Sell (.*?)(?: \d+)?$')
-    ignored_item_names = [re.sub(pattern, r'\1', s) if s.startswith('Sell') else s for s in ignored_items]
+def create_items(world, starting_names, ignored_items, ignored_locs):
 
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
     # print(f"total locs at start {total_location_count}")
@@ -39,7 +36,8 @@ def create_items(world, starting_names, ignored_items):
             # print(f"starting is {item_name}")
             starting_items.append(Item(item_name, item_data.classification, world.item_name_to_id[item_name], world.player))
             continue
-        if re.sub(r' \(\d+\)$', '', item_name) in ignored_item_names:
+        if re.sub(r' \(\d+\)$', '', item_name) in ignored_items:
+            print(item_name)
             continue
         num = num +1
         create_item(world, item_name, item_data.classification, item_data.amount)
@@ -51,11 +49,11 @@ def create_items(world, starting_names, ignored_items):
             if world.options.goal.value == 0:
                 override = world.options.shop_expansion_goal.value + world.options.shop_expansion_goal.value % 2
             else:
-                override = item_data.amount - sum(1 for item in ignored_item_names if re.search(r'^Shop A Expansion', item))
+                override = item_data.amount - sum(1 for item in ignored_locs if re.search(r'^Shop A Expansion', item))
             # print(f"{override} Progressive A")
 
         if item_name == "Progressive Shop Expansion B":
-            override = item_data.amount + 1 - sum(1 for item in ignored_item_names if re.search(r'^Shop B Expansion', item))
+            override = item_data.amount + 1 - sum(1 for item in ignored_locs if re.search(r'^Shop B Expansion', item))
             # print(sum(1 for item in ignored_item_names if re.search(r'^Shop B Expansion', item)))
             # print(f"{override} Progressive B")
 
@@ -100,6 +98,7 @@ def create_items(world, starting_names, ignored_items):
     junk_weights["Increase Card Luck"] = world.options.card_luck
 
     junk = get_junk_item_names(world.multiworld.random, junk_count)
+
     for name in junk:
         create_item(world, name, ItemClassification.filler)
 
@@ -273,6 +272,18 @@ item_dict: Dict[str, ItemData] = {
     "Deck Box Blue (16)": ItemData(0x1F2800F3, ItemClassification.progression),
     "Deck Box Yellow (8)": ItemData(0x1F28001F, ItemClassification.progression),
     "Deck Box Yellow (16)": ItemData(0x1F2800F4, ItemClassification.progression),
+    "FormatStandard": ItemData(0x1F2800FC, ItemClassification.useful),
+    "FormatPauper": ItemData(0x1F2800FD, ItemClassification.useful),
+    "FormatFireCup": ItemData(0x1F2800FE, ItemClassification.useful),
+    "FormatEarthCup": ItemData(0x1F2800FF, ItemClassification.useful),
+    "FormatWaterCup": ItemData(0x1F280100, ItemClassification.useful),
+    "FormatWindCup": ItemData(0x1F280101, ItemClassification.useful),
+    "FormatFirstEditionVintage": ItemData(0x1F280102, ItemClassification.useful),
+    "FormatSilverBorder": ItemData(0x1F280103, ItemClassification.useful),
+    "FormatGoldBorder": ItemData(0x1F280104, ItemClassification.useful),
+    "FormatExBorder": ItemData(0x1F280105, ItemClassification.useful),
+    "FormatFullArtBorder": ItemData(0x1F280106, ItemClassification.useful),
+    "FormatFoil": ItemData(0x1F280107, ItemClassification.useful)
 }
 
 progressive_dict: Dict[str, ItemData] = {

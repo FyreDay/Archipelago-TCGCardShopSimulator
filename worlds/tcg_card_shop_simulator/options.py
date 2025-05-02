@@ -70,49 +70,47 @@ class SellCheckAmount(Range):
     range_end = 16
     default = 2
 
+class ChecksPerPack(Range):
+    """
+    How many checks are in each of the 8 packs
+    """
+    display_name = "Checks Per Pack"
+    range_start = 1
+    range_end = 30
+    default = 10
+
+class CardCollectPercentage(Range):
+    """
+    How much of a pack do you need to collect to get all card checks
+    """
+    display_name = "Card Collection Percentage"
+    range_start = 10
+    range_end = 100
+    default = 33
+
+class NumberOfGameChecks(Range):
+    """
+    How many checks are there for play tables
+    """
+    display_name = "Number of Game Checks"
+    range_start = 0
+    range_end = 50
+    default = 10
+
+class GamesPerCheck(Range):
+    """
+    How many play table games are needed per game check
+    """
+    display_name = "Games Per Check"
+    range_start = 1
+    range_end = 10
+    default = 2
+
 class Deathlink(Toggle):
     """
     Enable Deathlink. Pay your bills or send a death!
     """
     display_name = "Deathlink"
-
-class CardSanity(Choice):
-    """
-    Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations. At destiny Legendary you are adding 2904 checks
-    Basic is recommended if you wish this to be on
-    """
-    display_name = "Card Sanity"
-    option_disabled = 0
-    option_basic = 1
-    option_rare = 2
-    option_epic = 3
-    option_legendary = 4
-    option_destiny_basic = 5
-    option_destiny_rare = 6
-    option_destiny_epic = 7
-    option_destiny_legendary = 8
-    default = 0
-
-class FoilInSanity(DefaultOnToggle):
-    """
-    Adds Foil cards to Card sanity
-    Halves the amount of checks in card sanity
-    """
-    display_name = "Foil Cards in Sanity"
-
-class BorderInSanity(Choice):
-    """
-    Adds the borders up to the selected border to Card Sanity.
-    There are ~30 cards in each set of that border.
-    """
-    display_name = "Card Borders in Sanity"
-    option_Base = 0
-    option_FirstEdition = 1
-    option_Silver = 2
-    option_Gold = 3
-    option_EX = 4
-    option_FullArt = 5
-    default = 0
 
 class MoneyBags(Range):
     """
@@ -170,6 +168,44 @@ class CardLuck(Range):
     range_start = 0
     range_end = 100
     default = 25
+
+class CardSanity(Choice):
+    """
+    Overrides Checks per pack and makes each card a unique check
+    Enables new Cards from that rarity and below to be checks. For each level you add 360 locations. at legendary it is 1452 locations. At destiny Legendary you are adding 2904 checks
+    """
+    display_name = "Card Sanity"
+    option_disabled = 0
+    option_basic = 1
+    option_rare = 2
+    option_epic = 3
+    option_legendary = 4
+    option_destiny_basic = 5
+    option_destiny_rare = 6
+    option_destiny_epic = 7
+    option_destiny_legendary = 8
+    default = 0
+
+class FoilInSanity(DefaultOnToggle):
+    """
+    Adds Foil cards to Card sanity
+    Halves the amount of checks in card sanity
+    """
+    display_name = "Foil Cards in Sanity"
+
+class BorderInSanity(Choice):
+    """
+    Adds the borders up to the selected border to Card Sanity.
+    There are ~30 cards in each set of that border.
+    """
+    display_name = "Card Borders in Sanity"
+    option_Base = 0
+    option_FirstEdition = 1
+    option_Silver = 2
+    option_Gold = 3
+    option_EX = 4
+    option_FullArt = 5
+    default = 0
 
 class TrapFill(Range):
     """
@@ -257,6 +293,10 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("General", [
         BetterTrades,
         SellCheckAmount,
+        ChecksPerPack,
+        CardCollectPercentage,
+        NumberOfGameChecks,
+        GamesPerCheck,
         Deathlink
     ]),
     OptionGroup("Sanity", [
@@ -289,6 +329,10 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     ghost_level_limit: GhostGoalLevelLimit
     better_trades: BetterTrades
     sell_check_amount: SellCheckAmount
+    checks_per_pack: ChecksPerPack
+    card_collect_percent: CardCollectPercentage
+    game_check_count: NumberOfGameChecks
+    games_per_check: GamesPerCheck
     deathlink: Deathlink
     card_sanity: CardSanity
     foil_sanity: FoilInSanity
