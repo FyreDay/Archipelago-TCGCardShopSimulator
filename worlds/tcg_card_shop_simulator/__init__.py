@@ -55,6 +55,8 @@ class TCGSimulatorWorld(World):
     tt_ids = []
     lastRegion = -1
 
+    ghost_item_counts = {}
+
     def swap_within_n(self, lst, target, n, invalid_indexes):
         if target not in lst:
             return invalid_indexes  # Return unchanged invalid list if target not found
@@ -161,14 +163,16 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        starting_items = create_items(self, self.starting_names, self.excluded_items, self.excluded_locs)
+        starting_items, ghost_counts = create_items(self, self.starting_names, self.excluded_items, self.excluded_locs)
 
         self.push_precollected(starting_items[0])
         self.push_precollected(starting_items[1])
         self.push_precollected(starting_items[2])
 
+        self.ghost_item_counts = ghost_counts
+
     def set_rules(self):
-        set_rules(self, self.excluded_locs, self.startingLocs, self.lastRegion)
+        set_rules(self, self.excluded_locs, self.startingLocs, self.lastRegion, self.ghost_item_counts)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
@@ -192,6 +196,8 @@ class TCGSimulatorWorld(World):
             "CardCollectPercentage": self.options.card_collect_percent.value,
             "NumberOfGameChecks": self.options.game_check_count.value,
             "GamesPerCheck": self.options.games_per_check.value,
+            "NumberOfSellCardChecks": self.options.sell_card_check_count.value,
+            "SellCardsPerCheck": self.options.sell_cards_per_check.value,
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
             "BorderInSanity": self.options.border_sanity.value,

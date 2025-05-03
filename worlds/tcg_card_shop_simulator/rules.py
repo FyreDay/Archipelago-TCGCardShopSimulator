@@ -482,7 +482,7 @@ def get_rules(world):
     return rules
 
 
-def set_rules(world, excluded_locs, starting_locs, final_region):
+def set_rules(world, excluded_locs, starting_locs, final_region, ghost_counts):
 
 
 
@@ -525,6 +525,17 @@ def set_rules(world, excluded_locs, starting_locs, final_region):
             print(f"Key error, {e}")
             pass
 
+    for expansion in Expansion:
+        for rarity in Rarity:
+            for i in range(world.options.sell_card_check_count.value):
+                name = f"Sell {expansion.name} {rarity.name} cards #{i + 1}"
+                try:
+                    loc = world.get_location(name)
+                except KeyError:
+                    continue
+                world.get_location(name).access_rule = lambda state: state.has(
+                    "Progressive Card Table", world.player, 1)
+
     for pA in range(2, 31):
         try:
             if f"Shop A Expansion {pA}" in excluded_locs:
@@ -543,4 +554,9 @@ def set_rules(world, excluded_locs, starting_locs, final_region):
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
 
     if world.options.goal.value == 2:
-        world.multiworld.completion_condition[world.player] = lambda state: state.has("Progressive Ghost Card", world.player, world.options.ghost_goal_amount.value)
+        lambdas = {}
+        for bagsize, amount in ghost_counts.items():
+            plural = "s" if bagsize > 1 else ""
+            item_name = f"{bagsize} Ghost Card{plural}"
+            lambdas[bagsize] = (lambda state, item=item_name, count=amount: state.has(item, world.player, count))
+        world.multiworld.completion_condition[world.player] = lambda state: all(check(state) for check in lambdas.values())

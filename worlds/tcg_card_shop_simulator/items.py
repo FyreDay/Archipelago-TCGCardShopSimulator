@@ -1,8 +1,10 @@
 import re
+from collections import Counter
 from dataclasses import dataclass
 from typing import Optional, Dict, List
 
 from BaseClasses import Item, ItemClassification
+from Options import OptionError
 
 
 class TCGSimulatorItem(Item):
@@ -18,6 +20,26 @@ class ItemData:
 def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
     for i in range(amount):
         world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
+
+
+def generate_ghost_card_items(world, ghost_goal_amount, locs_available):
+    if locs_available * 5 < ghost_goal_amount:
+        raise OptionError("Not enough locations for ghost goal")
+
+    result = []
+    remaining = ghost_goal_amount
+    remaining_slots = locs_available
+
+    while remaining > 0 and remaining_slots > 0:
+        max_size = min(5 if remaining_slots < 50 else 2, remaining)
+        min_size = max(1, remaining - (remaining_slots - 1) * 5)
+        size = world.random.randint(min_size, max_size)
+
+        result.append(size)
+        remaining -= size
+        remaining_slots -= 1
+
+    return result
 
 
 def create_items(world, starting_names, ignored_items, ignored_locs):
@@ -42,6 +64,9 @@ def create_items(world, starting_names, ignored_items, ignored_locs):
         num = num +1
         create_item(world, item_name, item_data.classification, item_data.amount)
     # print(f"total items at before progressive {len(world.itempool)}")
+
+
+
     for item_name, item_data in progressive_dict.items():
         override = 0
 
@@ -57,9 +82,9 @@ def create_items(world, starting_names, ignored_items, ignored_locs):
             # print(sum(1 for item in ignored_item_names if re.search(r'^Shop B Expansion', item)))
             # print(f"{override} Progressive B")
 
-        if item_name == "Progressive Ghost Card" and world.options.goal.value == 2:
-            override = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
-            # print(f"in ghost goal? {world.options.goal.value == 2} count: {override}")
+        # if item_name == "Progressive Ghost Card" and world.options.goal.value == 2:
+        #     override = 80 if world.options.ghost_goal_amount.value > 75 else world.options.ghost_goal_amount.value + 5
+        #     # print(f"in ghost goal? {world.options.goal.value == 2} count: {override}")
 
         # print(f"item : {item_name} with {item_data.amount} override: {override}")
         create_item(world, item_name, item_data.classification, item_data.amount if override == 0 else override)
@@ -67,6 +92,18 @@ def create_items(world, starting_names, ignored_items, ignored_locs):
     print(f"total locs at remaining {total_location_count}")
     print(f"total items at remaining {len(world.itempool)}")
     remaining_locations: int = total_location_count - len(world.itempool)
+    ghost_counts = 0
+    if world.options.goal.value == 2:
+        ghost_items = generate_ghost_card_items(world, world.options.ghost_goal_amount.value, remaining_locations)
+
+        ghost_counts = Counter(ghost_items)
+        print(f"ghost counts: {ghost_counts} from {ghost_items}")
+        for bagsize, amount in ghost_counts.items():
+            plural = "s" if bagsize > 1 else ""
+            item_name = f"{bagsize} Ghost Card{plural}"
+            create_item(world, item_name, ItemClassification.progression, amount)
+
+        remaining_locations = remaining_locations - len(ghost_items)
 
     print(f"Remaining locations here: {remaining_locations}")
 
@@ -106,7 +143,7 @@ def create_items(world, starting_names, ignored_items, ignored_locs):
     for name in trap:
         create_item(world, name, ItemClassification.trap)
     world.multiworld.itempool += world.itempool
-    return starting_items
+    return starting_items, ghost_counts
 
 def get_junk_item_names(rand, k: int) -> str:
     junk = rand.choices(
@@ -294,9 +331,15 @@ progressive_dict: Dict[str, ItemData] = {
     "Progressive Warehouse Shelf": ItemData(0x1F28004D, ItemClassification.progression, 2),
     "Progressive Shop Expansion A": ItemData(0x1F2800C0, ItemClassification.progression, 30),
     "Progressive Shop Expansion B": ItemData(0x1F2800C1, ItemClassification.progression, 14),
-    "Progressive Ghost Card": ItemData(0x1F2800D7, ItemClassification.progression_skip_balancing, 0)
 }
-
+# unused 0x1F2800D7
+random_ghost_dict: Dict[str, ItemData] = {
+    "1 Ghost Card": ItemData(0x1F280108, ItemClassification.progression, 0),
+    "2 Ghost Cards": ItemData(0x1F280109, ItemClassification.progression, 0),
+    "3 Ghost Cards": ItemData(0x1F28010A, ItemClassification.progression, 0),
+    "4 Ghost Cards": ItemData(0x1F28010B, ItemClassification.progression, 0),
+    "5 Ghost Cards": ItemData(0x1F28010C, ItemClassification.progression, 0),
+}
 ghost_dict: Dict[str, ItemData] = {
     "Ghost Blazoar (white)": ItemData(0x1F280062, ItemClassification.progression_skip_balancing),
     "Ghost Blazoar (Black)": ItemData(0x1F280063, ItemClassification.progression_skip_balancing),
@@ -415,4 +458,4 @@ junk_weights = {
     "Increase Card Luck": 0
 }
 
-full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_dict, **trap_dict, **ghost_dict}
+full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_dict, **trap_dict, **ghost_dict, **random_ghost_dict}

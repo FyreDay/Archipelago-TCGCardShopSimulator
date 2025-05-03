@@ -35,13 +35,13 @@ class LevelGoal(Range):
 
 class GhostGoalAmount(Range):
     """
-    If on Ghost cards Goal, How many do you need to find?
-    Max is 40 to Bandaid Generation. Rework of this goal soon
+    If on Ghost cards Goal, How many do you need to sell?
+    This causes ghost card items to be seeded in the multiworld
     """
 
     display_name = "GhostGoalAmount"
     range_start = 1
-    range_end = 40
+    range_end = 80
     default = 40
 
 class GhostGoalLevelLimit(Range):
@@ -87,6 +87,24 @@ class CardCollectPercentage(Range):
     range_start = 10
     range_end = 100
     default = 33
+
+class NumberOfSellCardChecks(Range):
+    """
+    How many checks are there for selling cards for each 8 card pack types
+    """
+    display_name = "Number of Sell Card Checks"
+    range_start = 0
+    range_end = 50
+    default = 20
+
+class SellCardsPerCheck(Range):
+    """
+    How many cards do you need to sell per check
+    """
+    display_name = "Cards to sell per check"
+    range_start = 1
+    range_end = 10
+    default = 2
 
 class NumberOfGameChecks(Range):
     """
@@ -297,6 +315,8 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         CardCollectPercentage,
         NumberOfGameChecks,
         GamesPerCheck,
+        NumberOfSellCardChecks,
+        SellCardsPerCheck,
         Deathlink
     ]),
     OptionGroup("Sanity", [
@@ -333,6 +353,8 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     card_collect_percent: CardCollectPercentage
     game_check_count: NumberOfGameChecks
     games_per_check: GamesPerCheck
+    sell_card_check_count: NumberOfSellCardChecks
+    sell_cards_per_check: SellCardsPerCheck
     deathlink: Deathlink
     card_sanity: CardSanity
     foil_sanity: FoilInSanity
