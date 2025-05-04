@@ -9,7 +9,7 @@ class Goal(Choice):
     display_name = "Goal"
     option_shop_Expansion_A = 0
     option_level = 1
-    option_collect_Ghosts = 2
+    option_sell_ghost_cards = 2
     default = 0
 
 
@@ -95,7 +95,7 @@ class NumberOfSellCardChecks(Range):
     display_name = "Number of Sell Card Checks"
     range_start = 0
     range_end = 50
-    default = 20
+    default = 25
 
 class SellCardsPerCheck(Range):
     """
@@ -104,7 +104,7 @@ class SellCardsPerCheck(Range):
     display_name = "Cards to sell per check"
     range_start = 1
     range_end = 10
-    default = 2
+    default = 1
 
 class NumberOfGameChecks(Range):
     """
@@ -122,7 +122,7 @@ class GamesPerCheck(Range):
     display_name = "Games Per Check"
     range_start = 1
     range_end = 10
-    default = 2
+    default = 1
 
 class Deathlink(Toggle):
     """

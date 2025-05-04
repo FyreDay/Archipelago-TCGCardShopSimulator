@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
 from BaseClasses import Location, LocationProgressType
-from worlds.stardew_valley.stardew_rule import false_
 
 
 class TCGSimulatorLocation(Location):
