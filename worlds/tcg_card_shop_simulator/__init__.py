@@ -182,7 +182,7 @@ class TCGSimulatorWorld(World):
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.2.0",
+            "ModVersion": "0.3.0",
             "ShopPg1Mapping": self.pg1_ids,
             "ShopPg2Mapping": self.pg2_ids,
             "ShopPg3Mapping": self.pg3_ids,

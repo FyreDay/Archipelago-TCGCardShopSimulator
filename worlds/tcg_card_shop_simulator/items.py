@@ -123,9 +123,9 @@ def create_items(world, starting_names, ignored_items, ignored_locs):
         "Currency Trap":world.options.currency_trap
     }
 
-    junk_weights["Small Xp"] = world.options.xp_boosts * 0.5
-    junk_weights["Medium Xp"] = world.options.xp_boosts * 0.3
-    junk_weights["Large Xp"] = world.options.xp_boosts * 0.2
+    junk_weights["Small Xp"] =  world.options.xp_boosts * 0.5 if world.options.goal.value != 1 else 0
+    junk_weights["Medium Xp"] = world.options.xp_boosts * 0.3 if world.options.goal.value != 1 else 0
+    junk_weights["Large Xp"] = world.options.xp_boosts * 0.2 if world.options.goal.value != 1 else 0
     junk_weights["Small Money"] = world.options.money_bags * 0.5
     junk_weights["Medium Money"] = world.options.money_bags * 0.3
     junk_weights["Large Money"] = world.options.money_bags * 0.2

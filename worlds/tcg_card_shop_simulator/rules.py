@@ -324,7 +324,19 @@ def get_rules(world):
                 state.has("Card Holder", world.player),
             "Sell Collectors Album":
                 lambda state:
-                state.has("Collectors Album", world.player)
+                state.has("Collectors Album", world.player),
+            "Sell Playmat (Dracunix2)":
+                lambda state:
+                state.has("Playmat (Dracunix2)", world.player),
+            "Sell Playmat (GigatronX)":
+                lambda state:
+                state.has("Playmat (GigatronX)", world.player),
+            "Sell Playmat (Katengu Black)":
+                lambda state:
+                state.has("Playmat (Katengu Black)", world.player),
+            "Sell Playmat (Katengu White)":
+                lambda state:
+                state.has("Playmat (Katengu White)", world.player),
         },
         "locations": {
             "Shop B Expansion 1": lambda state:

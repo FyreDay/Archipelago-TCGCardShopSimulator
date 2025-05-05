@@ -708,11 +708,14 @@ def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():
         if data.region != region.name:
             continue
-        create_location(world, region, key, data.code)
+        excluded = False
+        if world.random.random() > 0.04:
+            excluded = True
+        create_location(world, region, key, data.code, excluded)
 
-def create_location(world, region, name: str, code: int):
+def create_location(world, region, name: str, code: int, excluded: bool = False):
     location = Location(world.player, name, code, region)
-    if "Foil" in name:
+    if excluded:
         location.progress_type = LocationProgressType.EXCLUDED
     region.locations.append(location)
 

@@ -142,6 +142,7 @@ class MoneyBags(Range):
 class XpBoosts(Range):
     """
     Determines the percentage of Filler contain Shop Xp
+    If your goal is Level goal, these are disabled
     """
     display_name = "XP Filler"
     range_start = 0
