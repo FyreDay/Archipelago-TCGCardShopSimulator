@@ -642,7 +642,7 @@ def generate_locations(world, pg1_ids,pg2_ids,pg3_ids,tt_ids):
 
 
     #print(f"Removed All Locations After Goal, Which is At Level {last_region}")
-    if world.options.border_sanity.value > 0:
+    if world.options.card_sanity.value > 0:
         for index, data in enumerate(card_rarity):
             data = cast(MonsterData, data)
             for border in Border:
