@@ -174,11 +174,11 @@ class TCGSimulatorWorld(World):
     def set_rules(self):
         set_rules(self, self.excluded_locs, self.startingLocs, self.lastRegion, self.ghost_item_counts)
 
-    def generate_output(self, output_directory: str):
-        visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
-                          show_entrance_names=False,
-                          regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
-                              self.player])
+    # def generate_output(self, output_directory: str):
+        # visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
+        #                   show_entrance_names=False,
+        #                   regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
+        #                       self.player])
 
     def fill_slot_data(self) -> id:
         return {

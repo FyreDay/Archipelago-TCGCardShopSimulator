@@ -95,7 +95,7 @@ class NumberOfSellCardChecks(Range):
     display_name = "Number of Sell Card Checks"
     range_start = 0
     range_end = 50
-    default = 25
+    default = 0
 
 class SellCardsPerCheck(Range):
     """
@@ -270,18 +270,18 @@ class MarketChangeTrap(Range):
 class CurrencyTrap(Range):
     """
     Causes Currency to Randomize
-    Determines the percentage of Traps are Market Change Traps.
+    Determines the percentage of Traps are Currency Traps.
     Traps must be enabled for this to have any effect.
     """
     display_name = "Currency Trap"
     range_start = 0
     range_end = 100
-    default = 20
+    default = 0
 
 class DecreaseCardLuckTrap(Range):
     """
     Lowers your card luck
-    Determines the percentage of Traps are Market Change Traps.
+    Determines the percentage of Traps are Decrease Card Luck Traps.
     Traps must be enabled for this to have any effect.
     """
     display_name = "Reduce Card Luck Trap"
