@@ -709,8 +709,8 @@ def create_card_locations(world, card_locs, region):
         if data.region != region.name:
             continue
         excluded = False
-        if world.random.random() > 0.04:
-            excluded = True
+        if world.random.random() > 0.6:
+            excluded = False
         create_location(world, region, key, data.code, excluded)
 
 def create_location(world, region, name: str, code: int, excluded: bool = False):
