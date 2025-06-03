@@ -154,9 +154,6 @@ def get_rules(world):
             "Sell Playmat (Dracunix1)":
                 lambda state:
                 state.has("Playmat (Dracunix1)", world.player),
-            "Sell Playmat (Dracunix2)":
-                lambda state:
-                state.has("Playmat (Dracunix2)", world.player),
             "Sell Playmat (The Four Dragons)":
                 lambda state:
                 state.has("Playmat (The Four Dragons)", world.player),
@@ -338,62 +335,6 @@ def get_rules(world):
                 lambda state:
                 state.has("Playmat (Katengu White)", world.player),
         },
-        "locations": {
-            "Shop B Expansion 1": lambda state:
-                state.has("Progressive Shop Expansion B", world.player, 1) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 2": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 2) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 3": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 3) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 4": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 4) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 5": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 5) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 6": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 6) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 7": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 7) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 8": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 8) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 9": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 9) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 10": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 10) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 11": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 11) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 12": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 12) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 13": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 13) and state.has("Warehouse Key", world.player),
-
-            "Shop B Expansion 14": lambda state:
-
-                state.has("Progressive Shop Expansion B", world.player, 14) and state.has("Warehouse Key", world.player),
-        },
         "entrances": {
             "Level 5":
                 lambda state:
@@ -455,12 +396,6 @@ def get_rules(world):
             "Level 100":
                 lambda state:
                 state.has("Progressive Shop Expansion B", world.player, 5),
-            "Level 105":
-                lambda state:
-                state.has("Progressive Shop Expansion B", world.player, 6),
-            "Level 110":
-                lambda state:
-                state.has("Progressive Shop Expansion B", world.player, 7),
             "Common Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Basic Card"),
@@ -488,6 +423,14 @@ def get_rules(world):
             "Play Table":
                 lambda state:
                 state.has("Play Table", world.player, 1),
+            "Sell Tetramon":
+                lambda state:
+                has_card_pack(world, state, "Basic Card") or has_card_pack(world, state, "Rare Card")
+                or has_card_pack(world, state, "Epic Card") or has_card_pack(world, state, "Legendary Card"),
+            "Sell Destiny":
+                lambda state:
+                has_card_pack(world, state, "Basic Destiny") or has_card_pack(world, state, "Rare Destiny")
+                or has_card_pack(world, state, "Epic Destiny") or has_card_pack(world, state, "Legendary Destiny"),
 
         }
     }

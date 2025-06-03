@@ -458,4 +458,4 @@ junk_weights = {
     "Increase Card Luck": 0
 }
 
-full_item_dict: Dict[str, ItemData] = {**item_dict, **progressive_dict, **junk_dict, **trap_dict, **ghost_dict, **random_ghost_dict}
+
