@@ -9,6 +9,7 @@ PLAY_TABLE_START_ID = 300
 LEVEL_START_ID = 200
 CARD_OPEN_START_ID = 1000
 CARD_SELL_START_ID = 500
+SELL_CHECK_START_ID=2000
 
 
 class TCGSimulatorLocation(Location):
@@ -32,7 +33,7 @@ class NamedItem:
 
 
 pg1_locations: dict[str,ShopLocation] = {
-    "Basic Card Pack": ShopLocation(0),
+    "Basic Card Pack": ShopLocation(190),#game id 0
     "Basic Card Box": ShopLocation(1),
     "Rare Card Pack": ShopLocation(2),
     "Rare Card Box": ShopLocation(3),
@@ -151,18 +152,20 @@ tt_locations: dict[str,ShopLocation] = {
 def get_shop_locations(world):
     return [pg1_locations.copy(), pg2_locations.copy(), pg3_locations.copy(), tt_locations.copy()]
 
-def get_license_checks(world,item_key:str ,item_code:int, is_starting_item:bool = False):
+def get_license_checks(world,item_key:str ,loc: ShopLocation, is_starting_item:bool = False):
+    if item_key is None or loc is None:
+        return {}
     return get_license_checks_internal(world.options.sell_check_amount,world.options.extra_starting_item_checks.value,
-                                item_key, item_code, is_starting_item)
+                                item_key, loc, is_starting_item)
 
-def get_license_checks_internal(check_amount, starting_num, item_key:str ,item_code:int, is_starting_item:bool = False):
+def get_license_checks_internal(check_amount, starting_num, item_key:str ,loc: ShopLocation, is_starting_item:bool = False):
     sell_item_locs = {}
     for n in range(1, check_amount + (starting_num if is_starting_item else 0) + 1):
-        sell_item_locs[f"Sell {n} {"Boxes" if n>1 else "Box"} of {item_key}"] = item_code + (n-1)
+        sell_item_locs[f"Sell {n} {"Boxes" if n>1 else "Box"} of {item_key}"] = SELL_CHECK_START_ID + (loc.code * 16) + (n-1)
     return sell_item_locs
 
 def get_play_table_checks(world):
-    return get_play_table_checks_internal(world.options.game_check_count.value)
+    return get_play_table_checks_internal(world.options.play_table_checks.value)
 
 def get_play_table_checks_internal(game_check_count: int):
     play_table_locs = {}
@@ -174,18 +177,21 @@ def get_play_table_checks_internal(game_check_count: int):
 
     return play_table_locs
 
-def get_level_checks(world, region_level):
-    return get_level_checks_internal(world.options.all_level_checks.value, region_level)
+def get_level_checks(world, region_level, final_region: bool = False):
+    return get_level_checks_internal(world.options.all_level_checks.value, region_level, final_region)
 
-def get_level_checks_internal(all_level_checks, region_level):
+def get_level_checks_internal(all_level_checks, region_level, final_region: bool = False):
     level_locs = {}
+    if final_region:
+        level_locs[f"Level {region_level}"] = None
+        return level_locs
 
     end_level = region_level + 1
 
     if all_level_checks:
         end_level = region_level+5
         if region_level == 1:
-            end_level = 4
+            end_level = 5
 
     if region_level == 100:
         end_level = 101
@@ -389,17 +395,15 @@ def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, checks_per
                     name, code = generate_card(data.name, index, border, 1, expansion, rarity)
                     card_locs[name] = code
     else:
-        for expansion in Expansion:
-            for rarity in Rarity:
-                for i in range(checks_per_pack):
-                    name = f"Open {expansion.name} {rarity.name} cards {i+1}"
+        for i in range(checks_per_pack):
+            name = f"Open {expansion.name} {rarity.name} cards {i+1}"
 
-                    card_locs[name] = CARD_OPEN_START_ID + i + (((rarity.value - 1) + (expansion.value * 4))*30)
+            card_locs[name] = CARD_OPEN_START_ID + i + (((rarity.value - 1) + (expansion.value * 4))*30)
 
     return card_locs
 
 def get_sell_card_checks(world, is_destiny: bool):
-    return get_sell_card_checks(world.options.sell_card_check_count.value,is_destiny)
+    return get_sell_card_checks_internal(world.options.sell_card_check_count.value,is_destiny)
 
 def get_sell_card_checks_internal(sell_card_check_count, is_destiny):
     sell_card_locs = {}
@@ -418,7 +422,10 @@ def get_all_locations():
         all_locations.update(get_card_checks_internal(8, 5, True, 0, card_region_id))
         all_locations.update(get_card_checks_internal(0, 0, False, 30, card_region_id))
 
-    for l in range(1, 105, 5):
+    for l in range(0, 105, 5):
+        if l == 0:
+            all_locations.update(get_level_checks_internal(True, 1))
+            continue
         all_locations.update(get_level_checks_internal(True, l))
 
     all_locations.update(get_play_table_checks_internal(50))
@@ -426,19 +433,19 @@ def get_all_locations():
     all_locations.update(get_sell_card_checks_internal(50, True))
 
     for item_key, item_data in pg1_locations.items():
-        license_checks = get_license_checks_internal(16, 2, item_key, item_data.code)
+        license_checks = get_license_checks_internal(16, 2, item_key, item_data)
         all_locations.update(license_checks)
 
     for item_key, item_data in pg2_locations.items():
-        license_checks = get_license_checks_internal(16, 2, item_key, item_data.code)
+        license_checks = get_license_checks_internal(16, 2, item_key, item_data)
         all_locations.update(license_checks)
 
     for item_key, item_data in pg3_locations.items():
-        license_checks = get_license_checks_internal(16, 2, item_key, item_data.code)
+        license_checks = get_license_checks_internal(16, 2, item_key, item_data)
         all_locations.update(license_checks)
 
     for item_key, item_data in tt_locations.items():
-        license_checks = get_license_checks_internal(16, 2, item_key, item_data.code)
+        license_checks = get_license_checks_internal(16, 2, item_key, item_data)
         all_locations.update(license_checks)
 
     return all_locations

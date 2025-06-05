@@ -14,6 +14,20 @@ class MaxLevel(Range):
     range_end = 100
     default = 20
 
+class RequiredLicenses(Range):
+    """
+    Every 5 levels, you will stop leveling up until you have a certain number of licences.
+    Every 5 levels how many licenses will be required?
+
+    The host can limit this setting to 50
+    """
+
+    display_name = "Required licenses"
+    range_start = 2
+    range_end = 6
+    default = 4
+
+
 class Goal(Choice):
     """
     The victory condition for your run.
@@ -40,7 +54,7 @@ class GhostGoalAmount(Range):
 
 class CollectionGoalPercentage(Range):
     """
-    What percentage of the collection should you collect?
+    If on CollectionGoal, What percentage of the collection should you collect?
     the host can limit this setting to 50%
     """
 
@@ -396,6 +410,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
 @dataclass
 class TCGSimulatorOptions(PerGameCommonOptions):
     max_level: MaxLevel
+    required_licenses: RequiredLicenses
     goal: Goal
     collection_goal_percentage: CollectionGoalPercentage
     ghost_goal_amount: GhostGoalAmount

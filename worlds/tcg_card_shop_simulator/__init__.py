@@ -1,4 +1,4 @@
-from typing import ClassVar, Union
+from typing import ClassVar, Union, Set
 
 import settings
 from Options import OptionError
@@ -36,6 +36,9 @@ class TCGSimulatorSettings(settings.Group):
     allow_card_sanity: Union[AllowCardSanity, bool] = True
 
 
+
+
+
 class TCGSimulatorWorld(World):
 
     game = "TCG Card Shop Simulator"
@@ -48,7 +51,18 @@ class TCGSimulatorWorld(World):
     settings: ClassVar[TCGSimulatorSettings]
 
     item_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_data.code for item_name, item_data in full_item_dict.items()}
+
     location_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_code for item_name, item_code in locations.get_all_locations().items()}
+
+    item_name_groups = {
+        "licenses": set(item_dict.keys()),
+    }
+
+    def get_item_name_by_id(self,target_id: int) -> Optional[str]:
+        for name, id_ in self.item_name_to_id.items():
+            if id_ == target_id:
+                return name
+        return None
 
     def __init__(self, multiworld, player):
         self.itempool = []
@@ -59,7 +73,9 @@ class TCGSimulatorWorld(World):
         self.pg1_licenses = {}
         self.pg2_licenses = {}
         self.pg3_licenses = {}
-        self.pg4_licenses = {}
+        self.tt_licenses = {}
+
+        self.ghost_item_counts = 0
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
@@ -85,9 +101,10 @@ class TCGSimulatorWorld(World):
         self.pg1_licenses = level_grouped_locs[0]
         self.pg2_licenses = level_grouped_locs[1]
         self.pg3_licenses = level_grouped_locs[2]
-        self.pg4_licenses = level_grouped_locs[3]
+        self.tt_licenses = level_grouped_locs[3]
 
-        connect_entrances(self,level_grouped_locs)
+        connect_entrances(self)
+
 
     def create_item(self, item: str) -> TCGSimulatorItem:
         if item in junk_weights.keys():
@@ -95,46 +112,50 @@ class TCGSimulatorWorld(World):
         return TCGSimulatorItem(item, ItemClassification.progression, self.item_name_to_id[item], self.player)
 
     def create_items(self):
-        starting_items, ghost_counts = create_items(self, self.starting_names, self.excluded_items, self.excluded_locs)
-
-        self.push_precollected(starting_items[0])
-        self.push_precollected(starting_items[1])
-        self.push_precollected(starting_items[2])
+        starting_items, ghost_counts = create_items(self)
+        for item in starting_items:
+            self.push_precollected(item)
 
         self.ghost_item_counts = ghost_counts
 
     def set_rules(self):
-        set_rules(self, self.excluded_locs, self.startingLocs, self.lastRegion, self.ghost_item_counts)
+        set_rules(self)
 
     def generate_output(self, output_directory: str):
         visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
-                          show_entrance_names=False,
+                          show_entrance_names=True,
                           regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
                               self.player])
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.3.2",
+            "ModVersion": "0.4.0",
+            "StartingIds": self.starting_item_ids,
             "ShopPg1Mapping": self.pg1_licenses,
             "ShopPg2Mapping": self.pg2_licenses,
             "ShopPg3Mapping": self.pg3_licenses,
             "ShopTTMapping": self.tt_licenses,
+
+            "MaxLevel": self.options.max_level.value,
+            "RequiredLicenses": self.options.required_licenses.value,
             "Goal": self.options.goal.value,
-            "ShopExpansionGoal": self.options.shop_expansion_goal.value,
-            "LevelGoal": self.options.level_goal.value,
-            "Deathlink": self.options.deathlink.value,
+            "CollectionGoalPercent": self.options.collection_goal_percentage.value,
+            "GhostGoalAmount": self.options.ghost_goal_amount.value,
+
+            "BetterTrades": self.options.better_trades.value,
+            "ExtraStartingItemChecks": self.options.extra_starting_item_checks.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
             "ChecksPerPack": self.options.checks_per_pack.value,
             "CardCollectPercentage": self.options.card_collect_percent.value,
-            "NumberOfGameChecks": self.options.game_check_count.value,
+            "PlayTableChecks": self.options.play_table_checks.value,
             "GamesPerCheck": self.options.games_per_check.value,
             "NumberOfSellCardChecks": self.options.sell_card_check_count.value,
             "SellCardsPerCheck": self.options.sell_cards_per_check.value,
+
             "CardSanity": self.options.card_sanity.value,
             "FoilInSanity": self.options.foil_sanity.value,
             "BorderInSanity": self.options.border_sanity.value,
-            "GhostGoalAmount": self.options.ghost_goal_amount.value,
-            "BetterTrades": self.options.better_trades.value,
+
             "TrapFill": self.options.trap_fill.value,
-            "FinalLevelRequirement": self.lastRegion
+            "Deathlink": self.options.deathlink.value,
         }
