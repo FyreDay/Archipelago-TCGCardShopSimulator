@@ -447,7 +447,7 @@ def set_rules(world):
                 continue
             world.get_entrance(entrance_name).access_rule = rule
         except KeyError as e:
-            print(f"Entrance Key error, {e}")
+            # print(f"Entrance Key error, {e}")
             pass
 
     for location_name, rule in rules_lookup["sell_locations"].items():

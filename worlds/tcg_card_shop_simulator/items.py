@@ -1,3 +1,4 @@
+import copy
 import re
 from collections import Counter
 from dataclasses import dataclass
@@ -70,10 +71,11 @@ def create_items(world):
         for item_name, item_data in not_sellable_dict.items():
             create_item(world, item_name, item_data.classification, item_data.amount)
     else:
-        remaining_items = not_sellable_dict.copy()
+        remaining_items = copy.deepcopy(not_sellable_dict)
         # Add one of each progression item
         for item_name, item_data in remaining_items.items():
             if item_data.classification == ItemClassification.progression and item_data.amount > 0:
+                print(item_name)
                 create_item(world, item_name, item_data.classification, 1)
                 item_data.amount -= 1
 

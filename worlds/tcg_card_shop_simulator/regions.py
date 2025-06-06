@@ -144,7 +144,6 @@ def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> 
 
 def connect_pack_region(world, card_region, level):
     if level is None:
-        print("level is none")
         return
     end_level = level+4 if level != 1 else 4
 
