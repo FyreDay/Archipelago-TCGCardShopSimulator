@@ -6,6 +6,20 @@ from .locations import *
 def has_card_pack(world, state, rarity):
     return state.has(f"Progressive {rarity} Pack", world.player) or state.has(f"Progressive {rarity} Box", world.player)
 
+def has_useful_items(world, state):
+    return (state.has("Progressive Warehouse Shelf", world.player) and state.has("Single Sided Shelf", world.player)
+            and state.has("Progressive Card Table", world.player) and state.has("Checkout Counter", world.player) and state.has("Progressive Auto Scent", world.player))
+
+def has_worker(world, state):
+    return (state.has("Worker - Zachery", world.player)
+    or state.has("Worker - Terence", world.player)
+    or state.has("Worker - Dennis", world.player)
+    or state.has("Worker - Clark", world.player)
+    or state.has("Worker - Angus", world.player)
+    or state.has("Worker - Benji", world.player)
+    or state.has("Worker - Lauren", world.player)
+    or state.has("Worker - Axel", world.player))
+
 def get_rules(world):
     rules = {
         "sell_locations": {
@@ -340,7 +354,8 @@ def get_rules(world):
                 state.has_group_unique("licenses", world.player, 1 * world.options.required_licenses.value),
             "Level 10":
                 lambda state:
-                 state.has_group_unique("licenses", world.player, 2 * world.options.required_licenses.value),
+                (state.has_group_unique("licenses", world.player, 2 * world.options.required_licenses.value) and
+                    has_worker(world,state) and has_useful_items(world, state)), #Soft logic rules
             "Level 15":
                 lambda state:
                   state.has_group_unique("licenses", world.player, 3 * world.options.required_licenses.value),
@@ -424,12 +439,12 @@ def get_rules(world):
                 state.has("Play Table", world.player),
             "Sell Tetramon":
                 lambda state:
-                has_card_pack(world, state, "Basic Card") or has_card_pack(world, state, "Rare Card")
-                or has_card_pack(world, state, "Epic Card") or has_card_pack(world, state, "Legendary Card"),
+                (has_card_pack(world, state, "Basic Card") or has_card_pack(world, state, "Rare Card")
+                or has_card_pack(world, state, "Epic Card") or has_card_pack(world, state, "Legendary Card")) and state.has("Progressive Card Table", world.player),
             "Sell Destiny":
                 lambda state:
-                has_card_pack(world, state, "Basic Destiny") or has_card_pack(world, state, "Rare Destiny")
-                or has_card_pack(world, state, "Epic Destiny") or has_card_pack(world, state, "Legendary Destiny"),
+                (has_card_pack(world, state, "Basic Destiny") or has_card_pack(world, state, "Rare Destiny")
+                or has_card_pack(world, state, "Epic Destiny") or has_card_pack(world, state, "Legendary Destiny")) and state.has("Progressive Card Table", world.player),
 
         }
     }

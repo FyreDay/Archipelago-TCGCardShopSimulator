@@ -51,7 +51,8 @@ def create_items(world):
 
     #grab starting items for precollection
     starting_items: List[Item] = []
-
+    #add starting format
+    #add starting shelf
     for item_id in world.starting_item_ids:
         starting_items.append(Item(world.get_item_name_by_id(item_id), ItemClassification.progression, item_id, world.player))
 
@@ -300,7 +301,7 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Progressive Card Table": ItemData(200, ItemClassification.progression, 2),
     "Progressive Card Display": ItemData(201, ItemClassification.useful, 3),
     "Progressive Personal Shelf": ItemData(202, ItemClassification.useful, 3),
-    "Progressive Auto Scent": ItemData(203, ItemClassification.useful, 3),
+    "Progressive Auto Scent": ItemData(203, ItemClassification.progression, 3),
     "Progressive Warehouse Shelf": ItemData(204, ItemClassification.progression, 2),
     "Progressive Shop Expansion A": ItemData(205, ItemClassification.progression, 30),
     "Progressive Shop Expansion B": ItemData(206, ItemClassification.progression, 15),

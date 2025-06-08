@@ -14,6 +14,19 @@ class MaxLevel(Range):
     range_end = 100
     default = 20
 
+class LicensesPerLevelGroup(Range):
+    """
+    Every 5 levels, more licenses will be available to find.
+    Every 5 levels how many licenses will be required?
+
+    The host can limit this setting to 50
+    """
+
+    display_name = "Required licenses"
+    range_start = 2
+    range_end = 6
+    default = 4
+
 class RequiredLicenses(Range):
     """
     Every 5 levels, you will stop leveling up until you have a certain number of licences.
