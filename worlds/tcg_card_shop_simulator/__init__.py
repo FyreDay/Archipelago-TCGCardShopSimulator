@@ -52,17 +52,13 @@ class TCGSimulatorWorld(World):
 
     item_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_data.code for item_name, item_data in full_item_dict.items()}
 
+
+
     location_name_to_id: ClassVar[Dict[str, int]] = {item_name: item_code for item_name, item_code in locations.get_all_locations().items()}
 
     item_name_groups = {
         "licenses": set(item_dict.keys()),
     }
-
-    def get_item_name_by_id(self,target_id: int) -> Optional[str]:
-        for name, id_ in self.item_name_to_id.items():
-            if id_ == target_id:
-                return name
-        return None
 
     def __init__(self, multiworld, player):
         self.itempool = []
@@ -70,20 +66,27 @@ class TCGSimulatorWorld(World):
         self.max_level = 10
 
         self.starting_item_ids = []
-        self.pg1_licenses = {}
-        self.pg2_licenses = {}
-        self.pg3_licenses = {}
-        self.tt_licenses = {}
+        self.pg1_licenses: dict[int, int] = {}
+        self.pg2_licenses: dict[int, int] = {}
+        self.pg3_licenses: dict[int, int] = {}
+        self.tt_licenses: dict[int, int] = {}
 
         self.ghost_item_counts = 0
+        self.required_licenses = 0
+
+        self.tcg_item_id_to_name: ClassVar[Dict[int, str]] = {item_data.code: item_name for item_name, item_data in full_item_dict.items()}
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-
+        self.required_licenses = int(
+            self.options.licenses_per_region.value * (50/100)
+        )
+        if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
+            self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
         if self.settings.limit_checks_for_syncs:
             if self.options.max_level.value > 50:
                 print(f"The Max Level {self.options.sell_check_amount.value} is too high for sync mode. Lowering to 50.")
-                self.option.max_level = 50
+                self.options.max_level.value = 50
 
 
         if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
@@ -92,7 +95,7 @@ class TCGSimulatorWorld(World):
             raise OptionError("All Trap Weights are Zero")
 
         if self.options.max_level.value % 5 != 0:
-            self.options.max_level.value = self.options.max_level.value + self.options.max_level.value % 5
+            self.options.max_level.value += 5 - (self.options.max_level.value % 5)
 
 
     def create_regions(self):
@@ -137,7 +140,8 @@ class TCGSimulatorWorld(World):
             "ShopTTMapping": self.tt_licenses,
 
             "MaxLevel": self.options.max_level.value,
-            "RequiredLicenses": self.options.required_licenses.value,
+            "LicensesPerRegion": self.options.licenses_per_region.value,
+            "RequiredLicenses": self.required_licenses,
             "Goal": self.options.goal.value,
             "CollectionGoalPercent": self.options.collection_goal_percentage.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,

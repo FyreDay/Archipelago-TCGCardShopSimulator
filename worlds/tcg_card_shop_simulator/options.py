@@ -16,29 +16,25 @@ class MaxLevel(Range):
 
 class LicensesPerLevelGroup(Range):
     """
-    Every 5 levels, more licenses will be available to find.
-    Every 5 levels how many licenses will be required?
-
-    The host can limit this setting to 50
+    For 5 levels, across all 4 shop pages, how many licenses will be available?
+    these are spread evenly as possible across all 4 shops
     """
 
-    display_name = "Required licenses"
-    range_start = 2
-    range_end = 6
-    default = 4
+    display_name = "Licenses Per Level Group"
+    range_start = 4
+    range_end = 10
+    default = 6
 
-class RequiredLicenses(Range):
+class RequiredLicensesPercentage(Range):
     """
     Every 5 levels, you will stop leveling up until you have a certain number of licences.
-    Every 5 levels how many licenses will be required?
-
-    The host can limit this setting to 50
+    Every 5 levels what percentage of licenses do you need to find to progress?
     """
 
     display_name = "Required licenses"
-    range_start = 2
-    range_end = 6
-    default = 4
+    range_start = 50
+    range_end = 100
+    default = 75
 
 
 class Goal(Choice):
@@ -50,7 +46,7 @@ class Goal(Choice):
 
     display_name = "Goal"
     option_reach_max_level = 0
-    option_collection_builder = 1
+    # option_collection_builder = 1
     option_sell_ghost_cards = 2
     default = 0
 
@@ -105,7 +101,7 @@ class ExtraStartingItemChecks(Range):
     The maximum checks per item are capped to 16 regardless of this setting
     """
 
-    display_name = "GhostGoalAmount"
+    display_name = "Extra Starting Item Checks"
     range_start = 2
     range_end = 8
     default = 4
@@ -378,6 +374,8 @@ class CreditCardFailureTrap(Range):
 class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("Goal Options", [
         MaxLevel,
+        LicensesPerLevelGroup,
+        RequiredLicensesPercentage,
         Goal,
         CollectionGoalPercentage,
         GhostGoalAmount,
@@ -423,7 +421,8 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
 @dataclass
 class TCGSimulatorOptions(PerGameCommonOptions):
     max_level: MaxLevel
-    required_licenses: RequiredLicenses
+    licenses_per_region: LicensesPerLevelGroup
+    required_licenses: RequiredLicensesPercentage
     goal: Goal
     collection_goal_percentage: CollectionGoalPercentage
     ghost_goal_amount: GhostGoalAmount

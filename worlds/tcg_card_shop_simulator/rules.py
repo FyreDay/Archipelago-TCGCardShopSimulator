@@ -6,19 +6,41 @@ from .locations import *
 def has_card_pack(world, state, rarity):
     return state.has(f"Progressive {rarity} Pack", world.player) or state.has(f"Progressive {rarity} Box", world.player)
 
-def has_useful_items(world, state):
-    return (state.has("Progressive Warehouse Shelf", world.player) and state.has("Single Sided Shelf", world.player)
-            and state.has("Progressive Card Table", world.player) and state.has("Checkout Counter", world.player) and state.has("Progressive Auto Scent", world.player))
+def can_sell_ghost(world, state):
+    return True if world.options.goal.value != 2 else state.has("Progressive Card Table", world.player)
 
 def has_worker(world, state):
-    return (state.has("Worker - Zachery", world.player)
-    or state.has("Worker - Terence", world.player)
-    or state.has("Worker - Dennis", world.player)
-    or state.has("Worker - Clark", world.player)
-    or state.has("Worker - Angus", world.player)
-    or state.has("Worker - Benji", world.player)
-    or state.has("Worker - Lauren", world.player)
-    or state.has("Worker - Axel", world.player))
+    workers = [
+        "Worker - Zachery",
+        # "Worker - Terence",
+        # "Worker - Dennis",
+        # "Worker - Clark",
+        # "Worker - Angus",
+        # "Worker - Benji",
+        # "Worker - Lauren",
+        # "Worker - Axel"
+    ]
+    return any(state.has(worker, world.player) for worker in workers)
+
+def has_required_licenses(world, state, current_level_start: int):
+    # Gather all relevant licenses from the dicts, filtering by level < current_level_start
+    all_licenses = {}
+    for lic_dict in [world.pg1_licenses, world.pg2_licenses, world.pg3_licenses, world.tt_licenses]:
+        for item_id, level in lic_dict.items():
+            if level < current_level_start:
+                #print(f"{current_level_start} : {item_id}")
+                all_licenses[item_id] = level
+
+    # Get item names
+    item_names = [world.item_id_to_name[item_id] for item_id in all_licenses]
+    if not item_names:
+        # If no requirements, always True
+        return True
+
+    required_count = int((current_level_start / 5) * world.required_licenses)
+    owned_count = sum(1 for name in item_names if state.has(name, world.player))
+    #print(f"{owned_count} / {required_count}")
+    return owned_count >= required_count
 
 def get_rules(world):
     rules = {
@@ -351,65 +373,66 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 1 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 5),
             "Level 10":
                 lambda state:
-                (state.has_group_unique("licenses", world.player, 2 * world.options.required_licenses.value) and
-                    has_worker(world,state) and has_useful_items(world, state)), #Soft logic rules
+                    has_required_licenses(world, state, 10) and can_sell_ghost(world, state)\
+                    and state.has("Single Sided Shelf", world.player),
             "Level 15":
                 lambda state:
-                  state.has_group_unique("licenses", world.player, 3 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 15) \
+                    and has_worker(world, state) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Auto Scent", world.player),
             "Level 20":
                 lambda state:
-                 state.has_group_unique("licenses", world.player, 4 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 20) and state.has("Checkout Counter", world.player),
             "Level 25":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 5 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 25),
             "Level 30":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 6 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 30),
             "Level 35":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 7 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 35),
             "Level 40":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 8 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 40),
             "Level 45":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 9 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 45),
             "Level 50":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 10 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 50),
             "Level 55":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 11 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 55),
             "Level 60":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 12 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 60),
             "Level 65":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 13 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 65),
             "Level 70":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 1 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 70),
             "Level 75":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 15 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 75),
             "Level 80":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 16 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 80),
             "Level 85":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 17 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 85),
             "Level 90":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 18 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 90),
             "Level 95":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 19 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 95),
             "Level 100":
                 lambda state:
-                state.has_group_unique("licenses", world.player, 20 * world.options.required_licenses.value),
+                    has_required_licenses(world, state, 100),
             "Common Card Pack":
                 lambda state:
                 has_card_pack(world, state, "Basic Card"),

@@ -9,7 +9,7 @@ PLAY_TABLE_START_ID = 300
 LEVEL_START_ID = 200
 CARD_OPEN_START_ID = 1000
 CARD_SELL_START_ID = 500
-SELL_CHECK_START_ID=2000
+SELL_CHECK_START_ID=3000
 
 
 class TCGSimulatorLocation(Location):
@@ -155,7 +155,7 @@ def get_shop_locations(world):
 def get_license_checks(world,item_key:str ,loc: ShopLocation, is_starting_item:bool = False):
     if item_key is None or loc is None:
         return {}
-    return get_license_checks_internal(world.options.sell_check_amount,world.options.extra_starting_item_checks.value,
+    return get_license_checks_internal(world.options.sell_check_amount.value,world.options.extra_starting_item_checks.value,
                                 item_key, loc, is_starting_item)
 
 def get_license_checks_internal(check_amount, starting_num, item_key:str ,loc: ShopLocation, is_starting_item:bool = False):

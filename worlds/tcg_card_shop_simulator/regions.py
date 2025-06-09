@@ -24,9 +24,15 @@ card_region_names = {
     CardRegion.DESTINY_EPIC: "Destiny Epic Card Pack",
     CardRegion.DESTINY_LEGENDARY: "Destiny Legendary Card Pack",
 }
+created = {}
 
 def create_location(world, region, name: str, code: int, excluded: bool = False):
     location = Location(world.player, name, code, region)
+    if f"{world.player},{code}" in created:
+        print(f"{name} from {world.player} collided with id {code}.")
+        print(f"old value {created[f"{world.player},{code}"]}")
+    else:
+        created[f"{world.player},{code}"] = name
     if excluded:
         location.progress_type = LocationProgressType.EXCLUDED
     region.locations.append(location)
@@ -50,38 +56,53 @@ def create_region(world, name: str, hint: str, locations_dict):
     world.multiworld.regions.append(region)
     return region
 
-def assign_random_level_location(world, region, shop_locs, level_grouped_locs, shop_id, level):
+def assign_random_level_location(world, region, shop_locs: list[dict[str, ShopLocation]], level_grouped_locs, shop_id, level):
     available_keys = list(shop_locs[shop_id].keys())
     if len(available_keys) == 0:
         return None, None
-    random_key = random.choice(available_keys)
+    random_key = world.random.choice(available_keys)
+    #force cleanser to be in or before level 10
+    if shop_id == 1 and level < 10 and "Cleanser" in shop_locs[shop_id]:
+        if world.random.random() < 0.44:
+            random_key = "Cleanser"
+    else:
+        if shop_id == 1 and "Cleanser" in shop_locs[shop_id]:
+            random_key = "Cleanser"
+    #if Card shop, reroll if key is a deck for shits and giggles to increase odds of card packs
+    if shop_id == 0 and pg1_locations["Fire Battle Deck"].code <=shop_locs[shop_id][random_key].code <= pg1_locations["Wind Destiny Deck"].code:
+        random_key = world.random.choice(available_keys)
+
     loc:ShopLocation = shop_locs[shop_id].pop(random_key)
     level_grouped_locs[shop_id][loc.code] = level
     return random_key, loc
 
-def create_level_region(world, name: str, hint: str, shop_locs, level_grouped_locs, starting_region:bool = False, final_region:bool = False):
+def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, ShopLocation]], level_grouped_locs, starting_region:bool = False, final_region:bool = False):
     region = Region(name, world.player, world.multiworld)
     match = re.search(r'\d+', name)
+    level_number = int(match.group(0))
 
     if not final_region:
-        s1_key1, s1_loc1 = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 0, int(match.group(0)))
-        s1_key2, s1_loc2 = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 0, int(match.group(0)))
-        s2_key1, s2_loc1 = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 1, int(match.group(0)))
-        s2_key2, s2_loc2 = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 1, int(match.group(0)))
-        s3_key, s3_loc = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 2, int(match.group(0)))
-        tt_key, tt_loc = assign_random_level_location(world, region, shop_locs, level_grouped_locs, 3, int(match.group(0)))
+        licenses_per_region = world.options.licenses_per_region.value
+        shop_order = [0, 1, 2, 3]  # shop 3 is TT
+        assigned_locations = []
 
-        add_locations(world, region, locations.get_license_checks(world, s1_key1, s1_loc1, starting_region))
-        add_locations(world, region, locations.get_license_checks(world, s1_key2, s1_loc2))
-        add_locations(world, region, locations.get_license_checks(world, s2_key1, s2_loc1, starting_region))
-        add_locations(world, region, locations.get_license_checks(world, s2_key2, s2_loc2))
-        add_locations(world, region, locations.get_license_checks(world, s3_key, s3_loc, starting_region))
-        add_locations(world, region, locations.get_license_checks(world, tt_key, tt_loc))
+        shop_index = 0
+        for i in range(licenses_per_region):
+            shop_id = shop_order[shop_index % len(shop_order)]
+            key, loc = assign_random_level_location(world, region, shop_locs, level_grouped_locs, shop_id, level_number)
+            if key is not None and loc is not None:
+                assigned_locations.append((key, loc, shop_id))
+            shop_index += 1
 
-        if starting_region:
-            world.starting_item_ids = [s1_loc1.code, s2_loc1.code, s3_loc.code]
+        # Add assigned locations to the region
+        for idx, (key, loc, shop_id) in enumerate(assigned_locations):
+            is_starting = starting_region and shop_id in [0, 1, 2] and len(world.starting_item_ids) < 3
+            print(f"Adding location {key} with code {loc.code} in region {region.name}")
+            add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
+            if is_starting:
+                world.starting_item_ids.append(loc.code)
 
-    add_locations(world, region, locations.get_level_checks(world, int(match.group(0)), final_region))
+    add_locations(world, region, locations.get_level_checks(world, level_number, final_region))
 
     world.multiworld.regions.append(region)
     return region
@@ -96,7 +117,7 @@ def create_pack_region(world, card_region: CardRegion, hint: str, level):
 
 
 def create_regions(world):
-    shop_locs: list[dict[int, ShopLocation]] = locations.get_shop_locations(world)
+    shop_locs: list[dict[str, ShopLocation]] = locations.get_shop_locations(world)
     level_grouped_locs: [list[dict[int, int]]] = [{},{},{},{}]
 
     create_region(world, "Menu", "Menu Region", {})

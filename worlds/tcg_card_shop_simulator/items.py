@@ -54,12 +54,13 @@ def create_items(world):
     #add starting format
     #add starting shelf
     for item_id in world.starting_item_ids:
-        starting_items.append(Item(world.get_item_name_by_id(item_id), ItemClassification.progression, item_id, world.player))
+        starting_items.append(Item(world.item_id_to_name[item_id], ItemClassification.progression, item_id, world.player))
 
     if world.options.start_with_worker.value > 0:
         starting_items.append(
-            Item(world.get_item_name_by_id(218 + world.start_with_worker.value), ItemClassification.progression, (218 + world.start_with_worker.value), world.player))
-
+            Item(world.item_id_to_name[218 + world.options.start_with_worker.value], ItemClassification.progression, (218 + world.options.start_with_worker.value), world.player))
+    starting_items.append(Item("FormatStandard", ItemClassification.useful, not_sellable_dict["FormatStandard"].code ,world.player))
+    starting_items.append(Item("Small Cabinet", ItemClassification.useful, not_sellable_dict["Small Cabinet"].code ,world.player))
     #create all items except ghosts and junk
     num = 0
     for item_name, item_data in item_dict.items():
@@ -68,17 +69,25 @@ def create_items(world):
         item_data.code in world.pg3_licenses or
         item_data.code in world.tt_licenses) and item_data.code not in world.starting_item_ids:
             create_item(world, item_name, item_data.classification, item_data.amount)
+
     if total_location_count > 125:
         for item_name, item_data in not_sellable_dict.items():
+            amount = item_data.amount
+            if item_name in (item.name for item in starting_items):
+                amount -= 1
             create_item(world, item_name, item_data.classification, item_data.amount)
     else:
         remaining_items = copy.deepcopy(not_sellable_dict)
+
+        for item in starting_items:
+            if item.name in remaining_items:
+                remaining_items[item.name].amount -= 1
         # Add one of each progression item
         for item_name, item_data in remaining_items.items():
             if item_data.classification == ItemClassification.progression and item_data.amount > 0:
-                print(item_name)
-                create_item(world, item_name, item_data.classification, 1)
-                item_data.amount -= 1
+                if item_name not in (item.name for item in starting_items):
+                    create_item(world, item_name, item_data.classification, 1)
+                    item_data.amount -= 1
 
         worker_items = [name for name, data in remaining_items.items()
                         if name.startswith("Worker - ") and data.amount > 0]
@@ -305,7 +314,7 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Progressive Warehouse Shelf": ItemData(204, ItemClassification.progression, 2),
     "Progressive Shop Expansion A": ItemData(205, ItemClassification.progression, 30),
     "Progressive Shop Expansion B": ItemData(206, ItemClassification.progression, 15),
-    "Worker - Zachery": ItemData(219, ItemClassification.useful),
+    "Worker - Zachery": ItemData(219, ItemClassification.progression),
     "Worker - Terence": ItemData(220, ItemClassification.useful),
     "Worker - Dennis": ItemData(221, ItemClassification.useful),
     "Worker - Clark": ItemData(222, ItemClassification.useful),
