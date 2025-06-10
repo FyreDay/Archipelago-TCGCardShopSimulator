@@ -24,22 +24,16 @@ card_region_names = {
     CardRegion.DESTINY_EPIC: "Destiny Epic Card Pack",
     CardRegion.DESTINY_LEGENDARY: "Destiny Legendary Card Pack",
 }
-created = {}
 
 def create_location(world, region, name: str, code: int, excluded: bool = False):
     location = Location(world.player, name, code, region)
-    if f"{world.player},{code}" in created:
-        print(f"{name} from {world.player} collided with id {code}.")
-        print(f"old value {created[f"{world.player},{code}"]}")
-    else:
-        created[f"{world.player},{code}"] = name
     if excluded:
         location.progress_type = LocationProgressType.EXCLUDED
     region.locations.append(location)
 
 def add_locations(world, region, locations_dict):
     for (key, code) in locations_dict.items():
-        create_location(world, region, key, code)
+        create_location(world, region, key, code, check_card_exclude(code) or is_sell_excluded(key, code))
 
 def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():
@@ -150,11 +144,6 @@ def create_regions(world):
         create_region(world, "Sell Destiny", "Sell Destiny", locations.get_sell_card_checks(world, True))
 
     return level_grouped_locs
-
-
-
-
-
 
 
 

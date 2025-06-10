@@ -164,6 +164,24 @@ def get_license_checks_internal(check_amount, starting_num, item_key:str ,loc: S
         sell_item_locs[f"Sell {n} {"Boxes" if n>1 else "Box"} of {item_key}"] = SELL_CHECK_START_ID + (loc.code * 16) + (n-1)
     return sell_item_locs
 
+def is_sell_excluded(name,loc_id):
+    if not loc_id:
+        return False
+    if loc_id < SELL_CHECK_START_ID:
+        return False
+    if name.startswith("Sell ") and " Boxes" in name:
+        try:
+            # Remove "Sell " prefix and " Boxes" suffix, then convert to int
+            n_str = name[len("Sell "):name.index(" Boxes")]
+            n = int(n_str)
+            if n > 8:
+                return True
+        except ValueError:
+            # If conversion fails, skip
+            pass
+    return False
+
+
 def get_play_table_checks(world):
     return get_play_table_checks_internal(world.options.play_table_checks.value)
 
@@ -367,6 +385,29 @@ int_to_card_region = {
     6:"Destiny Epic Card Pack",
     7:"Destiny Legendary Card Pack"
 }
+def decode_card(num):
+    if not num:
+        return None
+    if (num & 0x10000) == 0:
+        return None
+
+    # Extract values
+    expansion = (num >> 12) & 0xF
+    border = (num >> 8) & 0xF
+    foil = (num >> 7) & 0x1
+    index = (num & 0x7F) - 1
+
+    return expansion, border, foil, index
+
+def check_card_exclude(num):
+    decoded = decode_card(num)
+    if decoded:
+        exp, bord, foil, idx = decoded
+        if bord >= Border.Silver.value:
+            return True
+        if foil:
+            return True
+    return False
 
 def generate_card(name, index, border, foil, expansion, rarity):
     return f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", 0x10000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)

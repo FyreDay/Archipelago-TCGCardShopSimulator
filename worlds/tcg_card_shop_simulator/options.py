@@ -21,14 +21,16 @@ class LicensesPerLevelGroup(Range):
     """
 
     display_name = "Licenses Per Level Group"
-    range_start = 4
-    range_end = 10
+    range_start = 6
+    range_end = 14
     default = 6
 
 class RequiredLicensesPercentage(Range):
     """
-    Every 5 levels, you will stop leveling up until you have a certain number of licences.
+    Every 5 levels, you will stop leveling up until you have a certain number of licenses unlocked for items that you can sell.
     Every 5 levels what percentage of licenses do you need to find to progress?
+
+    A high level goal will change this percentage at later levels for better generation
     """
 
     display_name = "Required licenses"
@@ -102,7 +104,7 @@ class ExtraStartingItemChecks(Range):
     """
 
     display_name = "Extra Starting Item Checks"
-    range_start = 2
+    range_start = 4
     range_end = 8
     default = 4
 

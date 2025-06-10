@@ -79,8 +79,11 @@ class TCGSimulatorWorld(World):
 
     def generate_early(self) -> None:
         self.required_licenses = int(
-            self.options.licenses_per_region.value * (50/100)
+            self.options.licenses_per_region.value * (self.options.required_licenses.value/100)
         )
+        if self.required_licenses < 3:
+            self.required_licenses = 3
+
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
         if self.settings.limit_checks_for_syncs:
