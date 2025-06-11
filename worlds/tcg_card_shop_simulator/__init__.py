@@ -149,9 +149,10 @@ class TCGSimulatorWorld(World):
             "LicensesPerRegion": self.options.licenses_per_region.value,
             "RequiredLicenses": self.required_licenses,
             "Goal": self.options.goal.value,
-            "CollectionGoalPercent": self.options.collection_goal_percentage.value,
+            # "CollectionGoalPercent": self.options.collection_goal_percentage.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
 
+            "AutoRenovate": self.options.auto_renovate.value,
             "BetterTrades": self.options.better_trades.value,
             "ExtraStartingItemChecks": self.options.extra_starting_item_checks.value,
             "SellCheckAmount": self.options.sell_check_amount.value,

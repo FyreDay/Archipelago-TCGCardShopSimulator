@@ -6,7 +6,7 @@ class MaxLevel(Range):
     What is the maximum level you would like to reach?
     This will be rounded up to the nearest multiple of 5
 
-    The host can limit this setting to 50
+    The host can limit this setting to 50 for syncs
     """
 
     display_name = "Max Level"
@@ -16,7 +16,7 @@ class MaxLevel(Range):
 
 class LicensesPerLevelGroup(Range):
     """
-    For 5 levels, across all 4 shop pages, how many licenses will be available?
+    Every 5 levels, across all 4 shop pages, how many licenses will be available?
     these are spread evenly as possible across all 4 shops
     """
 
@@ -63,16 +63,16 @@ class GhostGoalAmount(Range):
     range_end = 80
     default = 40
 
-class CollectionGoalPercentage(Range):
-    """
-    If on CollectionGoal, What percentage of the collection should you collect?
-    the host can limit this setting to 50%
-    """
-
-    display_name = "Collection Goal Percentage"
-    range_start = 10
-    range_end = 100
-    default = 20
+# class CollectionGoalPercentage(Range):
+#     """
+#     If on CollectionGoal, What percentage of the collection should you collect?
+#     the host can limit this setting to 50%
+#     """
+#
+#     display_name = "Collection Goal Percentage"
+#     range_start = 10
+#     range_end = 100
+#     default = 20
 
 class StartWithWorker(Choice):
     """
@@ -90,6 +90,12 @@ class StartWithWorker(Choice):
     option_lauren = 7
     option_axel = 8
     default = 0
+
+class AutoRenovate(DefaultOnToggle):
+    """
+    This automatically renovates shop expansions for you when you receive expansions. never look at RENO BIGG again!
+    """
+    display_name = "Auto Renovate"
 
 class BetterTrades(DefaultOnToggle):
     """
@@ -379,11 +385,12 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         LicensesPerLevelGroup,
         RequiredLicensesPercentage,
         Goal,
-        CollectionGoalPercentage,
+        # CollectionGoalPercentage,
         GhostGoalAmount,
     ]),
     OptionGroup("General", [
         StartWithWorker,
+        AutoRenovate,
         BetterTrades,
         ExtraStartingItemChecks,
         SellCheckAmount,
@@ -426,9 +433,10 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     licenses_per_region: LicensesPerLevelGroup
     required_licenses: RequiredLicensesPercentage
     goal: Goal
-    collection_goal_percentage: CollectionGoalPercentage
+    # collection_goal_percentage: CollectionGoalPercentage
     ghost_goal_amount: GhostGoalAmount
     start_with_worker: StartWithWorker
+    auto_renovate: AutoRenovate
     better_trades: BetterTrades
     extra_starting_item_checks: ExtraStartingItemChecks
     sell_check_amount: SellCheckAmount
