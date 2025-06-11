@@ -388,18 +388,20 @@ def get_rules(world):
         "entrances": {
             "Level 5":
                 lambda state:
-                    has_required_licenses(world, state, 5),
+                    has_required_licenses(world, state, 5) \
+                    and has_worker(world, state) and state.has("Single Sided Shelf", world.player),
             "Level 10":
                 lambda state:
-                    has_required_licenses(world, state, 10) and can_sell_ghost(world, state)\
-                    and state.has("Single Sided Shelf", world.player),
+                    has_required_licenses(world, state, 10) and can_sell_ghost(world, state) \
+                     and state.has("Progressive Warehouse Shelf", world.player),
             "Level 15":
                 lambda state:
                     has_required_licenses(world, state, 15) \
-                    and has_worker(world, state) and state.has("Progressive Warehouse Shelf", world.player) and state.has("Progressive Auto Scent", world.player),
+                    and state.has("Checkout Counter", world.player) and state.has("Progressive Auto Scent", world.player),
+
             "Level 20":
                 lambda state:
-                    has_required_licenses(world, state, 20) and state.has("Checkout Counter", world.player),
+                    has_required_licenses(world, state, 20),
             "Level 25":
                 lambda state:
                     has_required_licenses(world, state, 25),

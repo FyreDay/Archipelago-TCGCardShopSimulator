@@ -1,3 +1,4 @@
+import re
 from enum import IntEnum
 
 from BaseClasses import Region, Entrance
