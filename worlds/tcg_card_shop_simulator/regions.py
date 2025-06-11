@@ -34,7 +34,7 @@ def create_location(world, region, name: str, code: int, excluded: bool = False)
 
 def add_locations(world, region, locations_dict):
     for (key, code) in locations_dict.items():
-        create_location(world, region, key, code, check_card_exclude(code) or is_sell_excluded(key, code))
+        create_location(world, region, key, code, check_card_exclude(world,code) or is_sell_excluded(key, code))
 
 def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():

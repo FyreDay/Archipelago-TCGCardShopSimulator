@@ -397,13 +397,15 @@ def decode_card(num):
 
     return expansion, border, foil, index
 
-def check_card_exclude(num):
+def check_card_exclude(world, num):
     decoded = decode_card(num)
     if decoded:
         exp, bord, foil, idx = decoded
         if bord >= Border.Silver.value:
             return True
         if foil:
+            return True
+        if world.random.random() > 0.5:
             return True
     return False
 
