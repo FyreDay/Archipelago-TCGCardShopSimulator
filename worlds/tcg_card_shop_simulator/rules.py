@@ -38,13 +38,21 @@ def has_required_licenses(world, state, current_level_start: int):
         return True
 
     num_required =world.required_licenses
-    if current_level_start > 30:
-        num_required = 3
+    level_1 = current_level_start
+    level_2 = 0
+    level_3 = 0
+    if current_level_start > 25:
+        level_1 = 25
+        level_2 = current_level_start - 25
 
-    if current_level_start > 60:
-        num_required = 2
+    if current_level_start > 50:
+        level_2 = 25
+        level_3 = current_level_start - 50
 
-    required_count = int((current_level_start / 5) * num_required)
+
+    required_count = int((level_1 / 5) * num_required)
+    required_count = required_count + int((level_2 / 5) * 3)
+    required_count = required_count + int((level_3 / 5) * 2)
     owned_count = sum(1 for name in item_names if state.has(name, world.player))
     #print(f"{owned_count} / {required_count}")
     return owned_count >= required_count

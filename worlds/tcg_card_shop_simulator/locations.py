@@ -1,5 +1,3 @@
-import random
-import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, NamedTuple, List, cast, Optional
@@ -414,9 +412,9 @@ def generate_card(name, index, border, foil, expansion, rarity):
 
 def get_card_checks(world, card_region: int):
     return get_card_checks_internal(world.options.card_sanity.value, world.options.border_sanity.value, world.options.foil_sanity.value,
-                                    world.options.checks_per_pack.value, card_region)
+                                    world.options.checks_per_pack.value, card_region, True, world)
 
-def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, checks_per_pack, card_region: int):
+def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, checks_per_pack, card_region: int, create_hints:bool = False, world = None):
     card_locs = {}
     expansion = Expansion(1 if card_region >= 4 else 0)
     rarity = Rarity((card_region % 4) + 1)
@@ -432,9 +430,13 @@ def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, checks_per
 
                 name, code = generate_card(data.name, index, border, 0, expansion, rarity)
                 card_locs[name] = code
+                if create_hints and world:
+                    world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
                 if foil_sanity:
                     name, code = generate_card(data.name, index, border, 1, expansion, rarity)
                     card_locs[name] = code
+                    if create_hints and world:
+                        world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
     else:
         for i in range(checks_per_pack):
             name = f"Open {expansion.name} {rarity.name} cards {i+1}"

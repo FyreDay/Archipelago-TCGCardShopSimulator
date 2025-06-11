@@ -74,7 +74,8 @@ class TCGSimulatorWorld(World):
         self.ghost_item_counts = 0
         self.required_licenses = 0
 
-        self.tcg_item_id_to_name: ClassVar[Dict[int, str]] = {item_data.code: item_name for item_name, item_data in full_item_dict.items()}
+        self.hints = {}
+
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
@@ -83,6 +84,8 @@ class TCGSimulatorWorld(World):
         )
         if self.required_licenses < 3:
             self.required_licenses = 3
+        if self.required_licenses > 10:
+            self.required_licenses = 10
 
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
@@ -166,3 +169,6 @@ class TCGSimulatorWorld(World):
             "TrapFill": self.options.trap_fill.value,
             "Deathlink": self.options.deathlink.value,
         }
+
+    def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
+        hint_data[self.player] = self.hints

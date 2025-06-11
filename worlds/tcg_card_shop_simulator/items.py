@@ -92,7 +92,7 @@ def create_items(world):
         worker_items = [name for name, data in remaining_items.items()
                         if name.startswith("Worker - ") and data.amount > 0]
         if worker_items:
-            worker_name = world.multiworld.random.choice(worker_items)
+            worker_name = world.random.choice(worker_items)
             worker_data = remaining_items[worker_name]
             create_item(world, worker_name, worker_data.classification, 1)
             worker_data.amount -= 1
@@ -101,7 +101,7 @@ def create_items(world):
             eligible_items = [name for name, data in remaining_items.items() if data.amount > 0]
             if not eligible_items:
                 break  # Nothing left to add
-            item_name = world.multiworld.random.choice(eligible_items)
+            item_name = world.random.choice(eligible_items)
             item_data = remaining_items[item_name]
             if item_data.amount > 0:
                 create_item(world, item_name, item_data.classification, 1)

@@ -57,7 +57,7 @@ def assign_random_level_location(world, region, shop_locs: list[dict[str, ShopLo
     random_key = world.random.choice(available_keys)
     #force cleanser to be in or before level 10
     if shop_id == 1 and level < 10 and "Cleanser" in shop_locs[shop_id]:
-        if world.random.random() < 0.44:
+        if world.random.random() < 0.40:
             random_key = "Cleanser"
     else:
         if shop_id == 1 and "Cleanser" in shop_locs[shop_id]:
