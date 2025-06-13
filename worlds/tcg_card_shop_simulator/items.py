@@ -51,8 +51,7 @@ def create_items(world):
 
     #grab starting items for precollection
     starting_items: List[Item] = []
-    #add starting format
-    #add starting shelf
+
     for item_id in world.starting_item_ids:
         starting_items.append(Item(world.item_id_to_name[item_id], ItemClassification.progression, item_id, world.player))
 
@@ -219,8 +218,8 @@ item_dict: Dict[str, ItemData] = {
     "Playmat (GigatronX Evo)": ItemData(76, ItemClassification.progression),
     "Playmat (Fire)": ItemData(79, ItemClassification.progression),
     "Playmat (Earth)": ItemData(80, ItemClassification.progression),
-    "Playmat (Water)": ItemData(81, ItemClassification.progression),
-    "Playmat (Wind)": ItemData(82, ItemClassification.progression),
+    "Playmat (Water)": ItemData(82, ItemClassification.progression),
+    "Playmat (Wind)": ItemData(81, ItemClassification.progression),
     "Playmat (Tetramon)": ItemData(77, ItemClassification.progression),
     "Playmat (Dracunix2)": ItemData(109, ItemClassification.progression),
     "Playmat (GigatronX)": ItemData(110, ItemClassification.progression),

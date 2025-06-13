@@ -168,7 +168,7 @@ def get_rules(world):
                 state.has("Progressive Deck Box Red", world.player),
             "Deck Box Green":
                 lambda state:
-                state.has("DProgressive Deck Box Green", world.player),
+                state.has("Progressive Deck Box Green", world.player),
             "Deck Box Blue":
                 lambda state:
                 state.has("Progressive Deck Box Blue", world.player),
@@ -530,7 +530,6 @@ def set_rules(world):
         try:
             for n in range(1, world.options.sell_check_amount.value + 1):
                 world.get_location(f"Sell {n} {"Boxes" if n>1 else "Box"} of {location_name}").access_rule = rule
-                print(f"Sell {n} {"Boxes" if n>1 else "Box"} of {location_name}")
         except KeyError as e:
             # print(f"Not in multiworld: {location_name}")
             continue

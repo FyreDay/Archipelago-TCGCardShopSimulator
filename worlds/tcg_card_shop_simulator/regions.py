@@ -73,7 +73,6 @@ def assign_random_level_location(world, region, shop_locs: list[dict[str, ShopLo
         level_grouped_locs[shop_id][loc.code] = level
 
         return random_key, loc
-    print(f"{random_key} is already added. my guess is my box added me")
     level_grouped_locs[shop_id].pop(loc.code)
     level_grouped_locs[shop_id][loc.code] = level
     return None, None
@@ -95,14 +94,12 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
             key, loc = assign_random_level_location(world, region, shop_locs, level_grouped_locs, shop_id, level_number)
 
             if key is not None and loc is not None:
-                print(f"Adding {key}")
                 assigned_locations.append((key, loc, shop_id))
                 if key.endswith(" Box"):
                     key2 = key[:-4] + " Pack"
 
                     loc2 = get_sell_loc(key2)
                     if loc2 is not None and loc2.code not in level_grouped_locs[shop_id]:
-                        print(f"Adding {key2}")
                         # shop_locs[shop_id].pop(key2, None)
                         level_grouped_locs[shop_id][loc2.code] = level_number
                         assigned_locations.append((key2, loc2, shop_id))
@@ -125,11 +122,6 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
 def create_pack_region(world, card_region: CardRegion, hint: str, level):
     if level is not None:
         create_region(world, card_region_names[card_region], hint, get_card_checks(world, card_region))
-
-        #else
-        # print(f"{card_region_names[card_region]} is not in the world")
-        # region = Region(card_region_names[card_region], world.player, world.multiworld)
-        # world.multiworld.regions.append(region)
 
 def create_regions(world):
     shop_locs: list[dict[str, ShopLocation]] = locations.get_shop_locations(world)
@@ -184,6 +176,11 @@ def connect_pack_region(world, card_region, itemids):
         entrance_name = item_name.replace("Progressive ", "")
         connect_regions(world, f"Level {level}-{end_level}", card_region_names[card_region], entrance_name)
 
+def connect_sell_region(world, region_name, level):
+    if level is None:
+        return
+    end_level = level + 4 if level != 1 else 4
+    connect_regions(world, f"Level {level}-{end_level}", region_name, region_name)
 
 def connect_entrances(world):
     connect_pack_region(world, CardRegion.BASIC, [item_id for item_id in [190,1] if item_id in world.pg1_licenses])
@@ -199,8 +196,8 @@ def connect_entrances(world):
     if world.options.play_table_checks.value > 0:
         connect_regions(world, "Level 1-4", "Play Tables", "Play Table Found")
     if world.options.sell_card_check_count.value > 0:
-        connect_regions(world, "Level 1-4", "Sell Tetramon", "Sell Tetramon")
-        connect_regions(world, "Level 1-4", "Sell Destiny", "Sell Destiny")
+        connect_sell_region(world,  "Sell Tetramon", min([world.pg1_licenses[item_id] for item_id in [190, 1, 2, 3, 4, 5, 6, 7] if item_id in world.pg1_licenses], default=None))
+        connect_sell_region(world, "Sell Destiny", min([world.pg1_licenses[item_id] for item_id in [8,9,10,11,12,13,14,15] if item_id in world.pg1_licenses], default=None))
 
     for l in range(0,world.options.max_level.value, 5):
         if l == 0:

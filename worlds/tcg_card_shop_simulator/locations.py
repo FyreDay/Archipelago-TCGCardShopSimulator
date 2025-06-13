@@ -86,8 +86,8 @@ pg2_locations: dict[str,ShopLocation] = {
     "Playmat (GigatronX Evo)": ShopLocation(76),
     "Playmat (Fire)": ShopLocation(79),
     "Playmat (Earth)": ShopLocation(80),
-    "Playmat (Water)": ShopLocation(81),
-    "Playmat (Wind)": ShopLocation(82),
+    "Playmat (Water)": ShopLocation(82),
+    "Playmat (Wind)": ShopLocation(81),
     "Playmat (Tetramon)": ShopLocation(77),
     "Playmat (Dracunix2)": ShopLocation(109),
     "Playmat (GigatronX)": ShopLocation(110),
@@ -217,12 +217,10 @@ def get_level_checks_internal(all_level_checks, region_level, final_region: bool
 
     if region_level == 100:
         end_level = 101
-
     for l in range(region_level, end_level):
         if l == 1:
             continue
-        level_locs[f"Level {region_level}"] = LEVEL_START_ID+region_level-1
-
+        level_locs[f"Level {l}"] = LEVEL_START_ID+l-1
     return level_locs
 
 class Rarity(Enum):
