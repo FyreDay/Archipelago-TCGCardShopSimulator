@@ -36,7 +36,7 @@ class RequiredLicensesPercentage(Range):
     display_name = "Required licenses"
     range_start = 50
     range_end = 100
-    default = 75
+    default = 50
 
 
 class Goal(Choice):

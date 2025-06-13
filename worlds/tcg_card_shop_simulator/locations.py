@@ -147,6 +147,12 @@ tt_locations: dict[str,ShopLocation] = {
     "Claim!": ShopLocation(85),
 }
 
+def get_sell_loc(key):
+    for d in (tt_locations, pg1_locations, pg2_locations, pg3_locations):
+        if key in d:
+            return d[key]
+    return None
+
 def get_shop_locations(world):
     return [pg1_locations.copy(), pg2_locations.copy(), pg3_locations.copy(), tt_locations.copy()]
 

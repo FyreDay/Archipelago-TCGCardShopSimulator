@@ -63,13 +63,21 @@ def assign_random_level_location(world, region, shop_locs: list[dict[str, ShopLo
     else:
         if shop_id == 1 and "Cleanser" in shop_locs[shop_id]:
             random_key = "Cleanser"
+
     #if Card shop, reroll if key is a deck for shits and giggles to increase odds of card packs
     if shop_id == 0 and pg1_locations["Fire Battle Deck"].code <=shop_locs[shop_id][random_key].code <= pg1_locations["Wind Destiny Deck"].code:
         random_key = world.random.choice(available_keys)
 
     loc:ShopLocation = shop_locs[shop_id].pop(random_key)
+    if loc.code not in level_grouped_locs[shop_id]:
+        level_grouped_locs[shop_id][loc.code] = level
+
+        return random_key, loc
+    print(f"{random_key} is already added. my guess is my box added me")
+    level_grouped_locs[shop_id].pop(loc.code)
     level_grouped_locs[shop_id][loc.code] = level
-    return random_key, loc
+    return None, None
+
 
 def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, ShopLocation]], level_grouped_locs, starting_region:bool = False, final_region:bool = False):
     region = Region(name, world.player, world.multiworld)
@@ -85,14 +93,26 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
         for i in range(licenses_per_region):
             shop_id = shop_order[shop_index % len(shop_order)]
             key, loc = assign_random_level_location(world, region, shop_locs, level_grouped_locs, shop_id, level_number)
+
             if key is not None and loc is not None:
+                print(f"Adding {key}")
                 assigned_locations.append((key, loc, shop_id))
+                if key.endswith(" Box"):
+                    key2 = key[:-4] + " Pack"
+
+                    loc2 = get_sell_loc(key2)
+                    if loc2 is not None and loc2.code not in level_grouped_locs[shop_id]:
+                        print(f"Adding {key2}")
+                        # shop_locs[shop_id].pop(key2, None)
+                        level_grouped_locs[shop_id][loc2.code] = level_number
+                        assigned_locations.append((key2, loc2, shop_id))
             shop_index += 1
 
         # Add assigned locations to the region
+        starting_assigned = []
         for idx, (key, loc, shop_id) in enumerate(assigned_locations):
-            is_starting = starting_region and shop_id in [0, 1, 2] and len(world.starting_item_ids) < 3
-            print(f"Adding location {key} with code {loc.code} in region {region.name}")
+            is_starting = starting_region and shop_id in [0, 1, 2] and len(world.starting_item_ids) < 3 and shop_id not in starting_assigned
+            starting_assigned.append(shop_id)
             add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
             if is_starting:
                 world.starting_item_ids.append(loc.code)
@@ -103,13 +123,13 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
     return region
 
 def create_pack_region(world, card_region: CardRegion, hint: str, level):
-    if level is None:
-        print(f"{card_region_names[card_region]} is not in the world")
-        # region = Region(card_region_names[card_region], world.player, world.multiworld)
-        # world.multiworld.regions.append(region)
-    else:
+    if level is not None:
         create_region(world, card_region_names[card_region], hint, get_card_checks(world, card_region))
 
+        #else
+        # print(f"{card_region_names[card_region]} is not in the world")
+        # region = Region(card_region_names[card_region], world.player, world.multiworld)
+        # world.multiworld.regions.append(region)
 
 def create_regions(world):
     shop_locs: list[dict[str, ShopLocation]] = locations.get_shop_locations(world)
@@ -153,23 +173,27 @@ def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> 
     exit_region = world.get_region(to_name)
     return entrance_region.connect(exit_region, entrance_name)
 
-def connect_pack_region(world, card_region, level):
-    if level is None:
+def connect_pack_region(world, card_region, itemids):
+    if len(itemids) == 0:
         return
-    end_level = level+4 if level != 1 else 4
 
-    connect_regions(world, f"Level {level}-{end_level}", card_region_names[card_region], card_region_names[card_region])
+    for id in itemids:
+        level = world.pg1_licenses[id]
+        end_level = level+4 if level != 1 else 4
+        item_name = world.item_id_to_name[id]
+        entrance_name = item_name.replace("Progressive ", "")
+        connect_regions(world, f"Level {level}-{end_level}", card_region_names[card_region], entrance_name)
 
 
 def connect_entrances(world):
-    connect_pack_region(world, CardRegion.BASIC, min([world.pg1_licenses[item_id] for item_id in [190,1] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.RARE, min([world.pg1_licenses[item_id] for item_id in [2,3] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.EPIC, min([world.pg1_licenses[item_id] for item_id in [4,5] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.LEGENDARY, min([world.pg1_licenses[item_id] for item_id in [6,7] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.DESTINY_BASIC, min([world.pg1_licenses[item_id] for item_id in [8,9] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.DESTINY_RARE, min([world.pg1_licenses[item_id] for item_id in [10,11] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.DESTINY_EPIC, min([world.pg1_licenses[item_id] for item_id in [12,13] if item_id in world.pg1_licenses], default=None))
-    connect_pack_region(world, CardRegion.DESTINY_LEGENDARY, min([world.pg1_licenses[item_id] for item_id in [14,15] if item_id in world.pg1_licenses], default=None))
+    connect_pack_region(world, CardRegion.BASIC, [item_id for item_id in [190,1] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.RARE, [item_id for item_id in [2,3] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.EPIC, [item_id for item_id in [4,5] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.LEGENDARY, [item_id for item_id in [6,7] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.DESTINY_BASIC, [item_id for item_id in [8,9] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.DESTINY_RARE, [item_id for item_id in [10,11] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.DESTINY_EPIC, [item_id for item_id in [12,13] if item_id in world.pg1_licenses])
+    connect_pack_region(world, CardRegion.DESTINY_LEGENDARY, [item_id for item_id in [14,15] if item_id in world.pg1_licenses])
 
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     if world.options.play_table_checks.value > 0:

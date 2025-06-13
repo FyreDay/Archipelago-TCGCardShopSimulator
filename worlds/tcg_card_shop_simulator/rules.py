@@ -28,7 +28,6 @@ def has_required_licenses(world, state, current_level_start: int):
     for lic_dict in [world.pg1_licenses, world.pg2_licenses, world.pg3_licenses, world.tt_licenses]:
         for item_id, level in lic_dict.items():
             if level < current_level_start:
-                #print(f"{current_level_start} : {item_id}")
                 all_licenses[item_id] = level
 
     # Get item names
@@ -54,7 +53,6 @@ def has_required_licenses(world, state, current_level_start: int):
     required_count += int((level_2 / 5) * 3)
     required_count += int((level_3 / 5) * 2)
     owned_count = sum(1 for name in item_names if state.has(name, world.player))
-    #print(f"{owned_count} / {required_count}")
     return owned_count >= required_count
 
 def get_rules(world):
@@ -170,7 +168,7 @@ def get_rules(world):
                 state.has("Progressive Deck Box Red", world.player),
             "Deck Box Green":
                 lambda state:
-                state.has("DProgressive eck Box Green", world.player),
+                state.has("DProgressive Deck Box Green", world.player),
             "Deck Box Blue":
                 lambda state:
                 state.has("Progressive Deck Box Blue", world.player),
@@ -450,30 +448,54 @@ def get_rules(world):
             "Level 100":
                 lambda state:
                     has_required_licenses(world, state, 100),
-            "Common Card Pack":
+            "Basic Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Basic Card"),
+                state.has("Progressive Basic Card Pack", world.player),
             "Rare Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Rare Card"),
+                state.has("Progressive Rare Card Pack", world.player),
             "Epic Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Epic Card"),
+                state.has("Progressive Epic Card Pack", world.player),
             "Legendary Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Legendary Card"),
-            "Destiny Common Card Pack":
+                state.has("Progressive Legendary Card Pack", world.player),
+            "Basic Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Basic Destiny"),
-            "Destiny Rare Card Pack":
+                state.has("Progressive Basic Destiny Pack", world.player),
+            "Rare Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Rare Destiny"),
-            "Destiny Epic Card Pack":
+                state.has("Progressive Rare Destiny Pack", world.player),
+            "Epic Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Epic Destiny"),
-            "Destiny Legendary Card Pack":
+                state.has("Progressive Epic Destiny Pack", world.player),
+            "Legendary Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Legendary Destiny"),
+                state.has("Progressive Legendary Destiny Pack", world.player),
+            "Basic Card Box":
+                lambda state:
+                state.has("Progressive Basic Card Box", world.player),
+            "Rare Card Box":
+                lambda state:
+                state.has("Progressive Rare Card Box", world.player),
+            "Epic Card Box":
+                lambda state:
+                state.has("Progressive Epic Card Box", world.player),
+            "Legendary Card Box":
+                lambda state:
+                state.has("Progressive Legendary Card Box", world.player),
+            "Basic Destiny Box":
+                lambda state:
+                state.has("Progressive Basic Destiny Box", world.player),
+            "Rare Destiny Box":
+                lambda state:
+                state.has("Progressive Rare Destiny Box", world.player),
+            "Epic Destiny Box":
+                lambda state:
+                state.has("Progressive Epic Destiny Box", world.player),
+            "Legendary Destiny Box":
+                lambda state:
+                state.has("Progressive Legendary Destiny Box", world.player),
             "Play Table Found":
                 lambda state:
                 state.has("Play Table", world.player),
@@ -502,21 +524,16 @@ def set_rules(world):
                 continue
             world.get_entrance(entrance_name).access_rule = rule
         except KeyError as e:
-            # print(f"Entrance Key error, {e}")
             pass
 
     for location_name, rule in rules_lookup["sell_locations"].items():
         try:
-            location_id = world.location_name_to_id.get(f"Sell 1 Box of {location_name}")
-            if (location_id in world.pg1_licenses or
-                    location_id in world.pg2_licenses or
-                    location_id in world.pg3_licenses or
-                    location_id in world.tt_licenses) and (location_id not in world.starting_item_ids):
-                for n in range(1, world.options.sell_check_amount.value + 1):
-                    world.get_location(f"Sell {n} {"Boxes" if n>1 else "Box"} of {location_name}").access_rule = rule
+            for n in range(1, world.options.sell_check_amount.value + 1):
+                world.get_location(f"Sell {n} {"Boxes" if n>1 else "Box"} of {location_name}").access_rule = rule
+                print(f"Sell {n} {"Boxes" if n>1 else "Box"} of {location_name}")
         except KeyError as e:
-            print(f"Sell Key error, {e}")
-            pass
+            # print(f"Not in multiworld: {location_name}")
+            continue
 
     for expansion in Expansion:
         for i in range(world.options.sell_card_check_count.value):

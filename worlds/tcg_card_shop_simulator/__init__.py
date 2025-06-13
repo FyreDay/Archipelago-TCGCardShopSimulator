@@ -91,9 +91,8 @@ class TCGSimulatorWorld(World):
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
         if self.settings.limit_checks_for_syncs:
             if self.options.max_level.value > 50:
-                print(f"The Max Level {self.options.sell_check_amount.value} is too high for sync mode. Lowering to 50.")
+                print(f"The Max Level {self.options.max_level.value} is too high for sync mode. Lowering to 50.")
                 self.options.max_level.value = 50
-
 
         if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
             raise OptionError("All Junk Weights are Zero")

@@ -46,8 +46,8 @@ def generate_ghost_card_items(world, ghost_goal_amount, locs_available):
 def create_items(world):
 
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    print(f"total locs at start {total_location_count}")
-    print(f"total Itempool at start {len(world.itempool)}")
+    # print(f"total locs at start {total_location_count}")
+    # print(f"total Itempool at start {len(world.itempool)}")
 
     #grab starting items for precollection
     starting_items: List[Item] = []
@@ -117,7 +117,7 @@ def create_items(world):
         ghost_items = generate_ghost_card_items(world, world.options.ghost_goal_amount.value, remaining_locations)
 
         ghost_counts = Counter(ghost_items)
-        print(f"ghost counts: {ghost_counts} from {ghost_items}")
+        # print(f"ghost counts: {ghost_counts} from {ghost_items}")
         for bagsize, amount in ghost_counts.items():
             plural = "s" if bagsize > 1 else ""
             item_name = f"{bagsize} Ghost Card{plural}"
@@ -125,7 +125,7 @@ def create_items(world):
 
         remaining_locations = remaining_locations - len(ghost_items)
 
-    print(f"Remaining locations here: {remaining_locations}")
+    # print(f"Remaining locations here: {remaining_locations}")
 
     #traps and junk
     trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
@@ -133,7 +133,7 @@ def create_items(world):
     # -1 on LevelGoal because I place a victory item at the goal level
     junk_count = remaining_locations - trap_count - (1 if world.options.goal == 0 else 0)
 
-    print(f"junk count {junk_count + trap_count}")
+    # print(f"junk count {junk_count + trap_count}")
 
     trap_weights = {
         "Stink Trap": world.options.stink_trap,
@@ -268,7 +268,7 @@ item_dict: Dict[str, ItemData] = {
     "Playmat Yellow": ItemData(122, ItemClassification.progression),
     "Pocket Pages": ItemData(115, ItemClassification.progression),
     "Card Holder": ItemData(116, ItemClassification.progression),
-    "Collectors Album": ItemData(123, ItemClassification.useful),
+    "Collectors Album": ItemData(123, ItemClassification.progression),
     "System Gate #1": ItemData(87, ItemClassification.progression),
     "System Gate #2": ItemData(88, ItemClassification.progression),
     "Mafia Works": ItemData(86, ItemClassification.progression),
