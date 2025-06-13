@@ -200,12 +200,15 @@ def get_play_table_checks_internal(game_check_count: int):
     return play_table_locs
 
 def get_level_checks(world, region_level, final_region: bool = False):
-    return get_level_checks_internal(world.options.all_level_checks.value, region_level, final_region)
+    return get_level_checks_internal(world.options.all_level_checks.value, region_level, final_region, world.options.goal.value)
 
-def get_level_checks_internal(all_level_checks, region_level, final_region: bool = False):
+def get_level_checks_internal(all_level_checks, region_level, final_region: bool = False, goal = 3):
     level_locs = {}
     if final_region:
-        level_locs[f"Level {region_level}"] = None
+        if goal == 0:
+            level_locs[f"Level {region_level}"] = None
+        else:
+            level_locs[f"Level {region_level}"] = LEVEL_START_ID+region_level-1
         return level_locs
 
     end_level = region_level + 1
