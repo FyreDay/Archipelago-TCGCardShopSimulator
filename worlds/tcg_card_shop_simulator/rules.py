@@ -1,10 +1,26 @@
 from BaseClasses import LocationProgressType, CollectionState
+from . import CardRegion
 from .items import *
 from .locations import *
 
+card_region_rarity = {
+    CardRegion.BASIC: "Basic Card",
+    CardRegion.RARE: "Rare Card",
+    CardRegion.EPIC: "Epic Card",
+    CardRegion.LEGENDARY: "Legendary Card",
+    CardRegion.DESTINY_BASIC: "Basic Destiny",
+    CardRegion.DESTINY_RARE: "Rare Destiny",
+    CardRegion.DESTINY_EPIC: "Epic Destiny",
+    CardRegion.DESTINY_LEGENDARY: "Legendary Destiny",
+}
 
-def has_card_pack(world, state, rarity):
-    return state.has(f"Progressive {rarity} Pack", world.player) or state.has(f"Progressive {rarity} Box", world.player)
+
+def has_card_pack(world, state, card_region):
+    card_level = world.pg1_licenses.get((card_region.value * 2), None)
+    box_level = world.pg1_licenses.get((card_region.value * 2) + 1, None)
+
+    return (card_level is not None and state.has(f"Progressive {card_region_rarity[card_region]} Pack", world.player) and (card_level == 1 or state.can_reach_location(f"Level {card_level}", world.player)))  \
+        or (box_level is not None and state.has(f"Progressive {card_region_rarity[card_region]} Box", world.player) and (box_level == 1 or state.can_reach_location(f"Level {box_level}", world.player)))
 
 def can_sell_ghost(world, state):
     return True if world.options.goal.value != 2 else state.has("Progressive Card Table", world.player)
@@ -60,25 +76,25 @@ def get_rules(world):
         "sell_locations": {
             "Basic Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Basic Card"),
+                has_card_pack(world, state, CardRegion.BASIC),
             "Basic Card Box":
                 lambda state:
                 state.has("Progressive Basic Card Box", world.player),
             "Rare Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Rare Card"),
+                has_card_pack(world, state, CardRegion.RARE),
             "Rare Card Box":
                 lambda state:
                 state.has("Progressive Rare Card Box", world.player),
             "Epic Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Epic Card"),
+                has_card_pack(world, state, CardRegion.EPIC),
             "Epic Card Box":
                 lambda state:
                 state.has("Progressive Epic Card Box", world.player),
             "Legendary Card Pack":
                 lambda state:
-                has_card_pack(world, state, "Legendary Card"),
+                has_card_pack(world, state, CardRegion.LEGENDARY),
             "Legendary Card Box":
                 lambda state:
                 state.has("Progressive Legendary Card Box", world.player),
@@ -96,25 +112,25 @@ def get_rules(world):
                 state.has("Wind Battle Deck", world.player),
             "Basic Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Basic Destiny"),
+                has_card_pack(world, state, CardRegion.DESTINY_BASIC),
             "Basic Destiny Box":
                 lambda state:
                 state.has("Progressive Basic Destiny Box", world.player),
             "Rare Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Rare Destiny"),
+                has_card_pack(world, state, CardRegion.DESTINY_RARE),
             "Rare Destiny Box":
                 lambda state:
                 state.has("Progressive Rare Destiny Box", world.player),
             "Epic Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Epic Destiny"),
+                has_card_pack(world, state, CardRegion.DESTINY_EPIC),
             "Epic Destiny Box":
                 lambda state:
                 state.has("Progressive Epic Destiny Box", world.player),
             "Legendary Destiny Pack":
                 lambda state:
-                has_card_pack(world, state, "Legendary Destiny"),
+                has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY),
             "Legendary Destiny Box":
                 lambda state:
                 state.has("Progressive Legendary Destiny Box", world.player),
@@ -501,12 +517,12 @@ def get_rules(world):
                 state.has("Play Table", world.player),
             "Sell Tetramon":
                 lambda state:
-                (has_card_pack(world, state, "Basic Card") or has_card_pack(world, state, "Rare Card")
-                or has_card_pack(world, state, "Epic Card") or has_card_pack(world, state, "Legendary Card")) and state.has("Progressive Card Table", world.player),
+                (has_card_pack(world, state, CardRegion.BASIC) or has_card_pack(world, state, CardRegion.RARE)
+                or has_card_pack(world, state, CardRegion.EPIC) or has_card_pack(world, state, CardRegion.LEGENDARY)) and state.has("Progressive Card Table", world.player),
             "Sell Destiny":
                 lambda state:
-                (has_card_pack(world, state, "Basic Destiny") or has_card_pack(world, state, "Rare Destiny")
-                or has_card_pack(world, state, "Epic Destiny") or has_card_pack(world, state, "Legendary Destiny")) and state.has("Progressive Card Table", world.player),
+                (has_card_pack(world, state, CardRegion.DESTINY_BASIC) or has_card_pack(world, state, CardRegion.DESTINY_RARE)
+                or has_card_pack(world, state, CardRegion.DESTINY_EPIC) or has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY)) and state.has("Progressive Card Table", world.player),
 
         }
     }
