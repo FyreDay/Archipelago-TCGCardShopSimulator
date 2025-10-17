@@ -14,7 +14,7 @@ class MaxLevel(Range):
     range_end = 100
     default = 20
 
-class RequiredLicensesPercentage(Range):
+class RequiredLicensesForProgress(Range):
     """
     How many More Product Licenses are required to unlock the next 5 levels? low numbers are easier.
 
@@ -23,7 +23,7 @@ class RequiredLicensesPercentage(Range):
 
     """
 
-    display_name = "Required licenses"
+    display_name = "Required licenses Per Level Group"
     range_start = 0
     range_end = 10
     default = 5
@@ -327,10 +327,9 @@ class CreditCardFailureTrap(Range):
 class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("Goal Options", [
         MaxLevel,
-        LicensesPerLevelGroup,
-        RequiredLicensesPercentage,
+        RequiredLicensesForProgress,
         Goal,
-        # CollectionGoalPercentage,
+        CollectionGoalPercentage,
         GhostGoalAmount,
     ]),
     OptionGroup("General", [
@@ -338,30 +337,19 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         AutoRenovate,
         ExtraStartingItemChecks,
         SellCheckAmount,
-        ChecksPerPack,
-        CardCollectPercentage,
+        CardOpeningCheckDifficulty,
+        CardSellingCheckDifficulty,
+        CardGradingCheckDifficulty,
         PlayTableChecks,
-        GamesPerCheck,
-        NumberOfSellCardChecks,
-        SellCardsPerCheck,
-        AllLevelsAreChecks,
-        # DecoShop
+        DecoShop,
     ]),
     OptionGroup("Sanity", [
         CardSanity,
-        FoilInSanity,
-        BorderInSanity
     ]),
     OptionGroup("Death Link", [
         DeathLink
     ])
     OptionGroup("Filler and Traps", [
-        MoneyBags,
-        XpBoosts,
-        RandomCard,
-        RandomNewCard,
-        ProgressiveCustomerWealth,
-        CardLuck,
         TrapFill,
         StinkTrap,
         PoltergeistTrap,
@@ -374,33 +362,21 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
 @dataclass
 class TCGSimulatorOptions(PerGameCommonOptions):
     max_level: MaxLevel
-    licenses_per_region: LicensesPerLevelGroup
-    required_licenses: RequiredLicensesPercentage
+    required_licenses: RequiredLicensesForProgress
     goal: Goal
-    # collection_goal_percentage: CollectionGoalPercentage
+    collection_goal_percentage: CollectionGoalPercentage
     ghost_goal_amount: GhostGoalAmount
     start_with_worker: StartWithWorker
     auto_renovate: AutoRenovate
     extra_starting_item_checks: ExtraStartingItemChecks
     sell_check_amount: SellCheckAmount
-    checks_per_pack: ChecksPerPack
-    card_collect_percent: CardCollectPercentage
+    checks_opening_difficulty: CardOpeningCheckDifficulty
+    checks_selling_difficulty: CardSellingCheckDifficulty
+    checks_grading_difficulty: CardGradingCheckDifficulty
     play_table_checks: PlayTableChecks
-    games_per_check: GamesPerCheck
-    sell_card_check_count: NumberOfSellCardChecks
-    sell_cards_per_check: SellCardsPerCheck
-    all_level_checks: AllLevelsAreChecks
-    # deco_shop: DecoShop
+    deco_shop: DecoShop
     deathlink: DeathLink
     card_sanity: CardSanity
-    foil_sanity: FoilInSanity
-    border_sanity: BorderInSanity
-    money_bags: MoneyBags
-    xp_boosts: XpBoosts
-    random_card: RandomCard
-    random_new_card: RandomNewCard
-    customer_wealth: ProgressiveCustomerWealth
-    card_luck: CardLuck
     trap_fill: TrapFill
     stink_trap: StinkTrap
     poltergeist_trap: PoltergeistTrap
