@@ -51,7 +51,7 @@ def has_required_licenses(world, state, current_level_start: int):
     if not item_names:
         # If no requirements, always True
         return True
-
+    #todo: this is no longer a percentage
     num_required =world.required_licenses
     level_1 = current_level_start
     level_2 = 0

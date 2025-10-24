@@ -14,6 +14,17 @@ class MaxLevel(Range):
     range_end = 100
     default = 20
 
+class LicensesPerLevelGroup(Range):
+    """
+    Every 5 levels, across all 4 shop pages, how many licenses will be available?
+    these are spread evenly as possible across all 4 shops
+    """
+
+    display_name = "Licenses Per Level Group"
+    range_start = 6
+    range_end = 14
+    default = 6
+
 class RequiredLicensesForProgress(Range):
     """
     How many More Product Licenses are required to unlock the next 5 levels? low numbers are easier.
@@ -156,10 +167,11 @@ class CardSellingCheckDifficulty(Choice):
         "sell 50 foil full arts" is impossible
     """
     display_name = "Card Selling Check Difficulty"
-    option_easy = 0
-    option_medium = 1
-    option_hard = 2
-    option_impossible = 3
+    option_disabled = 0
+    option_easy = 1
+    option_medium = 2
+    option_hard = 3
+    option_impossible = 4
     default = 1
 
 class CardGradingCheckDifficulty(Choice):
@@ -169,10 +181,11 @@ class CardGradingCheckDifficulty(Choice):
     examples of checks:
     """
     display_name = "Card Grading Check Difficulty"
-    option_easy = 0
-    option_medium = 1
-    option_hard = 2
-    option_impossible = 3
+    option_disabled = 0
+    option_easy = 1
+    option_medium = 2
+    option_hard = 3
+    option_impossible = 4
     default = 1
 
 class PlayTableChecks(Range):
@@ -190,64 +203,6 @@ class DecoShop(Toggle):
     """
     display_name = "Decoration Shop"
 
-
-class MoneyBags(Range):
-    """
-    Determines the percentage of Filler contain money
-    """
-    display_name = "Money Filler"
-    range_start = 0
-    range_end = 100
-    default = 50
-
-class XpBoosts(Range):
-    """
-    Determines the percentage of Filler contain Shop Xp
-    If your goal is Level goal, these are disabled
-    """
-    display_name = "XP Filler"
-    range_start = 0
-    range_end = 100
-    default = 50
-
-class RandomCard(Range):
-    """
-    Determines the percentage of Filler are random cards. Watch out for repeats!
-    """
-    display_name = "Random Card"
-    range_start = 0
-    range_end = 100
-    default = 50
-
-class RandomNewCard(Range):
-    """
-    Determines the percentage of Filler are random cards that will always be new
-    if card sanity is checked, these cards will always be a check
-    """
-    display_name = "New Card"
-    range_start = 0
-    range_end = 100
-    default = 50
-
-class ProgressiveCustomerWealth(Range):
-    """
-    Determines the percentage of Filler
-    increases how much money your customers have
-    """
-    display_name = "Progressive Customer Wealth"
-    range_start = 0
-    range_end = 100
-    default = 25
-
-class CardLuck(Range):
-    """
-    Determines the percentage of Filler
-    increases your chances to find better cards in packs
-    """
-    display_name = "Card Luck"
-    range_start = 0
-    range_end = 100
-    default = 25
 
 class TrapFill(Range):
     """
@@ -327,6 +282,7 @@ class CreditCardFailureTrap(Range):
 class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
     OptionGroup("Goal Options", [
         MaxLevel,
+        LicensesPerLevelGroup,
         RequiredLicensesForProgress,
         Goal,
         CollectionGoalPercentage,
@@ -362,6 +318,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
 @dataclass
 class TCGSimulatorOptions(PerGameCommonOptions):
     max_level: MaxLevel
+    licenses_per_region: LicensesPerLevelGroup
     required_licenses: RequiredLicensesForProgress
     goal: Goal
     collection_goal_percentage: CollectionGoalPercentage

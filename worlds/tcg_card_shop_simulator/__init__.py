@@ -27,12 +27,12 @@ class TCGSimulatorWeb(WebWorld):
     tutorials = [setup_en]
 
 class TCGSimulatorSettings(settings.Group):
-    class LimitChecksForSyncs(settings.Bool):
-        """This limits goals to a reasonable number and sets all excessive settings to local_fill or Excluded for better sync experiences."""
+    class LimitChecksDifficultyToHard(settings.Bool):
+        """This removes the Impossible level checks from your multiworlds."""
     class AllowCardSanity(settings.Bool):
-        """Card Sanity adds pure randomness to card checks. This option disables this sanity in your multiworlds"""
+        """Card Sanity adds thousands of pure randomness checks. This option disables this sanity in your multiworlds"""
 
-    limit_checks_for_syncs: Union[LimitChecksForSyncs, bool] = False
+    limit_impossible_checks: Union[LimitChecksDifficultyToHard, bool] = False
     allow_card_sanity: Union[AllowCardSanity, bool] = True
 
 
@@ -89,13 +89,13 @@ class TCGSimulatorWorld(World):
 
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
-        if self.settings.limit_checks_for_syncs:
-            if self.options.max_level.value > 50:
-                print(f"The Max Level {self.options.max_level.value} is too high for sync mode. Lowering to 50.")
-                self.options.max_level.value = 50
+        if self.settings.limit_impossible_checks:
+            print("limiting checks to hard")
+            #todo: change to set difficulty to hard
+            # if self.options.max_level.value > 50:
+            #     print(f"The Max Level {self.options.max_level.value} is too high for sync mode. Lowering to 50.")
+            #     self.options.max_level.value = 50
 
-        if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
-            raise OptionError("All Junk Weights are Zero")
         if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0 and self.options.decrease_card_luck_trap == 0 and self.options.market_change_trap == 0 and self.options.currency_trap == 0:
             raise OptionError("All Trap Weights are Zero")
 
@@ -148,23 +148,18 @@ class TCGSimulatorWorld(World):
             "LicensesPerRegion": self.options.licenses_per_region.value,
             "RequiredLicenses": self.required_licenses,
             "Goal": self.options.goal.value,
-            # "CollectionGoalPercent": self.options.collection_goal_percentage.value,
+            "CollectionGoalPercent": self.options.collection_goal_percentage.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
 
             "AutoRenovate": self.options.auto_renovate.value,
-            "BetterTrades": self.options.better_trades.value,
             "ExtraStartingItemChecks": self.options.extra_starting_item_checks.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
-            "ChecksPerPack": self.options.checks_per_pack.value,
-            "CardCollectPercentage": self.options.card_collect_percent.value,
+            "CardOpeningCheckDifficulty": self.options.checks_opening_difficulty.value,
+            "CardSellingCheckDifficulty": self.options.checks_selling_difficulty.value,
+            "CardGradingCheckDifficulty": self.options.checks_grading_difficulty.value,
             "PlayTableChecks": self.options.play_table_checks.value,
-            "GamesPerCheck": self.options.games_per_check.value,
-            "NumberOfSellCardChecks": self.options.sell_card_check_count.value,
-            "SellCardsPerCheck": self.options.sell_cards_per_check.value,
 
             "CardSanity": self.options.card_sanity.value,
-            "FoilInSanity": self.options.foil_sanity.value,
-            "BorderInSanity": self.options.border_sanity.value,
 
             "TrapFill": self.options.trap_fill.value,
             "Deathlink": self.options.deathlink.value,
