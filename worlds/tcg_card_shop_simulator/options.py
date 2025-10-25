@@ -35,7 +35,7 @@ class RequiredLicensesForProgress(Range):
     """
 
     display_name = "Required licenses Per Level Group"
-    range_start = 0
+    range_start = 2
     range_end = 10
     default = 5
 
@@ -105,9 +105,9 @@ class ExtraStartingItemChecks(Range):
     """
 
     display_name = "Extra Starting Item Checks"
-    range_start = 5
+    range_start = 4
     range_end = 8
-    default = 5
+    default = 4
 
 class SellCheckAmount(Range):
     """
@@ -131,11 +131,12 @@ class CardOpeningCheckDifficulty(Choice):
         "Collect all full arts from a pack" is impossible
     """
     display_name = "Card Opening Check Difficulty"
-    option_easy = 0
-    option_medium = 1
-    option_hard = 2
-    option_impossible = 3
-    default = 1
+    option_disabled = 0
+    option_easy = 1
+    option_medium = 2
+    option_hard = 3
+    option_impossible = 4
+    default = 2
 
 class CardSanity(Choice):
     """
@@ -194,7 +195,7 @@ class PlayTableChecks(Range):
     """
     display_name = "Number of PlayTable Checks"
     range_start = 0
-    range_end = 50
+    range_end = 15
     default = 10
 
 class DecoShop(Toggle):

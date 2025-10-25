@@ -79,22 +79,22 @@ class TCGSimulatorWorld(World):
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        self.required_licenses = int(
-            self.options.licenses_per_region.value * (self.options.required_licenses.value/100)
-        )
-        if self.required_licenses < 3:
-            self.required_licenses = 3
-        if self.required_licenses > 10:
-            self.required_licenses = 10
+        if self.options.required_licenses.value >  self.options.licenses_per_region:
+            raise OptionError("License requirement is larger than the amount of licenses")
+        self.required_licenses = self.options.required_licenses.value
+
 
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
+
         if self.settings.limit_impossible_checks:
+            if self.options.checks_opening_difficulty.value > 3:
+                self.options.checks_opening_difficulty = CardOpeningCheckDifficulty.option_hard
+            if self.options.checks_selling_difficulty.value > 3:
+                self.options.checks_selling_difficulty_difficulty = CardSellingCheckDifficulty.option_hard
+            if self.options.checks_grading_difficulty.value > 3:
+                self.options.checks_grading_difficulty = CardGradingCheckDifficulty.option_hard
             print("limiting checks to hard")
-            #todo: change to set difficulty to hard
-            # if self.options.max_level.value > 50:
-            #     print(f"The Max Level {self.options.max_level.value} is too high for sync mode. Lowering to 50.")
-            #     self.options.max_level.value = 50
 
         if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0 and self.options.decrease_card_luck_trap == 0 and self.options.market_change_trap == 0 and self.options.currency_trap == 0:
             raise OptionError("All Trap Weights are Zero")

@@ -1,7 +1,7 @@
 import re
 from enum import IntEnum
 
-from BaseClasses import Region, Entrance
+from BaseClasses import Region, Entrance, LocationProgressType
 from . import locations
 from .locations import *
 
@@ -34,16 +34,13 @@ def create_location(world, region, name: str, code: int, excluded: bool = False)
 
 def add_locations(world, region, locations_dict):
     for (key, code) in locations_dict.items():
-        create_location(world, region, key, code, check_card_exclude(world,code) or is_sell_excluded(key, code))
+        create_location(world, region, key, code, False)
 
 def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():
         if data.region != region.name:
             continue
-        excluded = False
-        if world.random.random() > 0.6:
-            excluded = False
-        create_location(world, region, key, data.code, excluded)
+        create_location(world, region, key, data.code, False)
 
 def create_region(world, name: str, hint: str, locations_dict):
     region = Region(name, world.player, world.multiworld)
@@ -162,7 +159,19 @@ def create_regions(world):
 
     #todo: refactor to do formats
     if world.options.play_table_checks.value > 0:
-        create_region(world, "Play Tables", "Play Tables", locations.get_play_table_checks(world))
+        create_region(world, "Play Tables", "Play Tables", {})
+        create_region(world, "Standard Games", "Need Standard format", locations.get_play_table_checks(world, Format.Standard))
+        create_region(world, "Pauper Games", "Need Pauper format", locations.get_play_table_checks(world, Format.Pauper))
+        create_region(world, "FireCup Games", "Need FireCup format", locations.get_play_table_checks(world, Format.FireCup))
+        create_region(world, "EarthCup Games", "Need EarthCup format", locations.get_play_table_checks(world, Format.EarthCup))
+        create_region(world, "WaterCup Games", "Need WaterCup format", locations.get_play_table_checks(world, Format.WaterCup))
+        create_region(world, "WindCup Games", "Need WindCup format", locations.get_play_table_checks(world, Format.WindCup))
+        create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format", locations.get_play_table_checks(world, Format.FirstEditionVintage))
+        create_region(world, "Silver Border Games", "Need Silver Border format", locations.get_play_table_checks(world, Format.SilverBorder))
+        create_region(world, "Gold Border Games", "Need Gold Border format", locations.get_play_table_checks(world, Format.GoldBorder))
+        create_region(world, "Ex Border Games", "Need Ex Border format", locations.get_play_table_checks(world, Format.ExBorder))
+        create_region(world, "Full Art Border Games", "Need Full Art Border format", locations.get_play_table_checks(world, Format.FullArtBorder))
+        create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
 
 
     return level_grouped_locs
@@ -184,10 +193,10 @@ def connect_pack_region(world, card_region, itemids):
         item_name = world.item_id_to_name[itemid]
         entrance_name = item_name.replace("Progressive ", "")
         connect_regions(world, f"Level {level}-{end_level}", card_region_names[card_region], entrance_name)
-    if world.options.sell_card_check_count.value > 0:
+    if world.options.checks_selling_difficulty.value > 0:
         connect_regions(world,  card_region_names[card_region], f"Sell {card_region_names[card_region]}",f"Sell {card_region_names[card_region]}")
         connect_regions(world, card_region_names[card_region],"Sell Cards",  f"Generic Sell {card_region_names[card_region]}")
-    if world.options.grade_card_check_count.value > 0:
+    if world.options.checks_grading_difficulty.value > 0:
         connect_regions(world, card_region_names[card_region], f"Grade {card_region_names[card_region]}",f"Grade {card_region_names[card_region]}")
         connect_regions(world, card_region_names[card_region], "Grade Cards",f"Generic Grade {card_region_names[card_region]}")
 
@@ -210,6 +219,18 @@ def connect_entrances(world):
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     if world.options.play_table_checks.value > 0:
         connect_regions(world, "Level 1-4", "Play Tables", "Play Table Found")
+        connect_regions(world, "Play Tables", "Standard Games", "Standard Games")
+        connect_regions(world, "Play Tables", "Pauper Games", "Pauper Games")
+        connect_regions(world, "Play Tables", "FireCup Games", "FireCup Games")
+        connect_regions(world, "Play Tables", "EarthCup Games", "EarthCup Games")
+        connect_regions(world, "Play Tables", "WaterCup Games", "WaterCup Games")
+        connect_regions(world, "Play Tables", "WindCup Games", "WindCup Games")
+        connect_regions(world, "Play Tables", "First Edition Vintage Games", "First Edition Vintage Games")
+        connect_regions(world, "Play Tables", "Silver Border Games", "Silver Border Games")
+        connect_regions(world, "Play Tables", "Gold Border Games", "Gold Border Games")
+        connect_regions(world, "Play Tables", "Ex Border Games", "Ex Border Games")
+        connect_regions(world, "Play Tables", "Full Art Border Games", "Full Art Border Games")
+        connect_regions(world, "Play Tables", "Foil Games", "Foil Games")
 
     for l in range(0,world.options.max_level.value, 5):
         if l == 0:

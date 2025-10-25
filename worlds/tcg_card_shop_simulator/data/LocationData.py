@@ -182,6 +182,20 @@ class Foil(Enum):
     NonFoil = 0
     Foil = 1
 
+class Format(Enum):
+    Standard = 0
+    Pauper = 1
+    FireCup = 2
+    EarthCup = 3
+    WaterCup = 4
+    WindCup = 5
+    FirstEditionVintage = 6
+    SilverBorder = 7
+    GoldBorder = 8
+    ExBorder = 9
+    FullArtBorder = 10
+    Foil = 11
+
 
 card_rarity: List[MonsterData] = [
     MonsterData("Pigni", Rarity.Common),
@@ -383,10 +397,10 @@ def get_generic_sell_achievement(descriptor: str, rar: Rarity, easy_num: int, me
     return achievements
 
 def get_generic_sell_achievement_enum(descriptor: Enum, rar: Rarity, expansion:Expansion, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    return get_generic_open_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
+    return get_generic_sell_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
 
 
-def get_region_Sell_achievements(rar:Rarity, expansion: Expansion):
+def get_region_sell_achievements(rar:Rarity, expansion: Expansion):
     achievements: List[TCGAchievement] = []
     achievements.extend(get_generic_sell_achievement(expansion.name, rar, 50, 100, 500, 1000))
     achievements.extend(get_generic_sell_achievement_enum(Foil.Foil, rar, expansion, 20, 50, 200, 500))
@@ -428,7 +442,7 @@ def get_generic_grading_achievement(descriptor: str, rar: Rarity, easy_num: int,
     return achievements
 
 def get_generic_grading_achievement_enum(descriptor: Enum, rar: Rarity, expansion:Expansion, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    return get_generic_open_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
+    return get_generic_grading_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
 
 
 def get_region_grading_achievements(rar:Rarity, expansion: Expansion):

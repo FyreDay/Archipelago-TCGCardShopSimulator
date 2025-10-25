@@ -31,33 +31,15 @@ def get_license_checks_internal(check_amount, starting_num, item_key:str ,loc: S
         sell_item_locs[f"Sell {n} {"Boxes" if n>1 else "Box"} of {item_key}"] = SELL_CHECK_START_ID + (loc.code * 16) + (n-1)
     return sell_item_locs
 
-def is_sell_excluded(name,loc_id):
-    if not loc_id:
-        return False
-    if loc_id < SELL_CHECK_START_ID:
-        return False
-    if name.startswith("Sell ") and " Boxes" in name:
-        try:
-            # Remove "Sell " prefix and " Boxes" suffix, then convert to int
-            n_str = name[len("Sell "):name.index(" Boxes")]
-            n = int(n_str)
-            if n > 8:
-                return True
-        except ValueError:
-            # If conversion fails, skip
-            pass
-    return False
+def get_play_table_checks(world, format: Format):
+    return get_play_table_checks_internal(world.options.play_table_checks.value, format)
 
-
-def get_play_table_checks(world):
-    return get_play_table_checks_internal(world.options.play_table_checks.value)
-
-def get_play_table_checks_internal(game_check_count: int):
+def get_play_table_checks_internal(game_check_count: int, format: Format):
     play_table_locs = {}
     if game_check_count > 0:
         for i in range(game_check_count):
-            name = f"Customer Play Games #{i + 1}"
-            hex_id = PLAY_TABLE_START_ID + i
+            name = f"Play {i + 1} Format {format.name}"
+            hex_id = PLAY_TABLE_START_ID + format.value * 10 + i
             play_table_locs[name] = hex_id
 
     return play_table_locs
@@ -101,36 +83,28 @@ def decode_card(num):
 
     return expansion, border, foil, index
 
-def check_card_exclude(world, num):
-    decoded = decode_card(num)
-    if decoded:
-        exp, bord, foil, idx = decoded
-        if bord >= Border.Silver.value:
-            return True
-        if foil:
-            return True
-        if world.random.random() > 0.5:
-            return True
-    return False
-
-def get_in_difficulty_achievements(achievement_list, counter, difficulty):
+def get_in_difficulty_achievements(achievement_list, counter, difficulty: int):
     achievement_card_locs = {}
     for achievement in achievement_list:
-        if achievement.difficulty <= difficulty:
+        if achievement.difficulty.value <= difficulty:
             name = achievement.name
             achievement_card_locs[name] = counter
         counter = counter + 1
+    print(achievement_card_locs)
     return achievement_card_locs
 
 def generate_card(name, index, border, foil, expansion, rarity):
     return f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", 0x10000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
 
 def get_card_checks(world, card_region: int):
-    return get_card_checks_internal(world.options.card_sanity.value, world.options.border_sanity.value, world.options.foil_sanity.value,
+    return get_card_checks_internal(world.options.card_sanity.value,
                                     world.options.checks_opening_difficulty.value, card_region, True, world)
 
-def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, difficulty, card_region: int, create_hints:bool = False, world = None):
+def get_card_checks_internal(card_sanity, difficulty: int, card_region: int, create_hints:bool = False, world = None):
     card_locs = {}
+    if difficulty == 0:
+        return card_locs
+
     expansion = Expansion(1 if card_region >= 4 else 0)
     rarity = Rarity((card_region % 4) + 1)
 
@@ -141,14 +115,18 @@ def get_card_checks_internal(card_sanity, border_sanity, foil_sanity, difficulty
                 if data.rarity != rarity:
                     continue
                 for border in Border:
-                    if border_sanity < border.value:
+                    if difficulty == 1 and border.value > 0:
+                        continue
+                    if difficulty == 2 and border.value > 2:
+                        continue
+                    if difficulty == 3 and border.value > 3:
                         continue
 
                     name, code = generate_card(data.name, index, border, 0, expansion, rarity)
                     card_locs[name] = code
                     if create_hints and world:
                         world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
-                    if foil_sanity:
+                    if card_sanity == 2:
                         name, code = generate_card(data.name, index, border, 1, expansion, rarity)
                         card_locs[name] = code
                         if create_hints and world:
@@ -164,11 +142,11 @@ def get_sell_card_checks(difficulty: int, card_region: int):
     rarity = Rarity((card_region % 4) + 1)
 
     counter = CARD_SELL_START_ID + rarity.value * 50 + expansion.value * 250
-    return get_in_difficulty_achievements(get_region_Sell_achievements(rarity, expansion), counter,
-                                                           difficulty)
+    return get_in_difficulty_achievements(get_region_sell_achievements(rarity, expansion), counter,
+                                          difficulty)
 
 def get_generic_sell_card_checks(difficulty: int):
-    return get_in_difficulty_achievements(generic_sell_achievements, CARD_GRADE_START_ID, difficulty)
+    return get_in_difficulty_achievements(generic_sell_achievements, CARD_SELL_START_ID, difficulty)
 
 def get_grading_card_checks(difficulty: int, card_region: int):
     expansion = Expansion(1 if card_region >= 4 else 0)
@@ -199,8 +177,18 @@ def get_all_locations():
             continue
         all_locations.update(get_level_checks_internal(True, l))
 
-    all_locations.update(get_play_table_checks_internal(50))
-
+    all_locations.update(get_play_table_checks_internal(10, Format.Standard))
+    all_locations.update(get_play_table_checks_internal(10, Format.Pauper))
+    all_locations.update(get_play_table_checks_internal(10, Format.FireCup))
+    all_locations.update(get_play_table_checks_internal(10, Format.EarthCup))
+    all_locations.update(get_play_table_checks_internal(10, Format.WaterCup))
+    all_locations.update(get_play_table_checks_internal(10, Format.WindCup))
+    all_locations.update(get_play_table_checks_internal(10, Format.FirstEditionVintage))
+    all_locations.update(get_play_table_checks_internal(10, Format.SilverBorder))
+    all_locations.update(get_play_table_checks_internal(10, Format.GoldBorder))
+    all_locations.update(get_play_table_checks_internal(10, Format.ExBorder))
+    all_locations.update(get_play_table_checks_internal(10, Format.FullArtBorder))
+    all_locations.update(get_play_table_checks_internal(10, Format.Foil))
 
     for item_key, item_data in pg1_locations.items():
         license_checks = get_license_checks_internal(16, 2, item_key, item_data)

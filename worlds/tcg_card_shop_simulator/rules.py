@@ -14,6 +14,17 @@ card_region_rarity = {
     CardRegion.DESTINY_LEGENDARY: "Legendary Destiny",
 }
 
+card_region_names = {
+    CardRegion.BASIC: "Basic Card Pack",
+    CardRegion.RARE: "Rare Card Pack",
+    CardRegion.EPIC: "Epic Card Pack",
+    CardRegion.LEGENDARY: "Legendary Card Pack",
+    CardRegion.DESTINY_BASIC: "Destiny Basic Card Pack",
+    CardRegion.DESTINY_RARE: "Destiny Rare Card Pack",
+    CardRegion.DESTINY_EPIC: "Destiny Epic Card Pack",
+    CardRegion.DESTINY_LEGENDARY: "Destiny Legendary Card Pack",
+}
+
 
 def has_card_pack(world, state, card_region):
     card_level = world.pg1_licenses.get((card_region.value * 2), None)
@@ -51,8 +62,8 @@ def has_required_licenses(world, state, current_level_start: int):
     if not item_names:
         # If no requirements, always True
         return True
-    #todo: this is no longer a percentage
-    num_required =world.required_licenses
+
+    num_required = world.required_licenses
     level_1 = current_level_start
     level_2 = 0
     level_3 = 0
@@ -515,15 +526,90 @@ def get_rules(world):
             "Play Table Found":
                 lambda state:
                 state.has("Progressive Play Table", world.player),
-            "Sell Tetramon":
+            f"Generic Sell {card_region_names[CardRegion.BASIC]}":
                 lambda state:
-                (has_card_pack(world, state, CardRegion.BASIC) or has_card_pack(world, state, CardRegion.RARE)
-                or has_card_pack(world, state, CardRegion.EPIC) or has_card_pack(world, state, CardRegion.LEGENDARY)) and state.has("Progressive Card Table", world.player),
-            "Sell Destiny":
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.BASIC),
+            f"Generic Sell {card_region_names[CardRegion.RARE]}":
                 lambda state:
-                (has_card_pack(world, state, CardRegion.DESTINY_BASIC) or has_card_pack(world, state, CardRegion.DESTINY_RARE)
-                or has_card_pack(world, state, CardRegion.DESTINY_EPIC) or has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY)) and state.has("Progressive Card Table", world.player),
-
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.RARE),
+            f"Generic Sell {card_region_names[CardRegion.EPIC]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.EPIC),
+            f"Generic Sell {card_region_names[CardRegion.LEGENDARY]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.LEGENDARY),
+            f"Generic Sell {card_region_names[CardRegion.DESTINY_BASIC]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.DESTINY_BASIC),
+            f"Generic Sell {card_region_names[CardRegion.DESTINY_RARE]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.DESTINY_RARE),
+            f"Generic Sell {card_region_names[CardRegion.DESTINY_EPIC]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.DESTINY_EPIC),
+            f"Generic Sell {card_region_names[CardRegion.DESTINY_LEGENDARY]}":
+                lambda state:
+                state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY),
+            f"Generic Grade {card_region_names[CardRegion.BASIC]}":
+                lambda state:
+                has_card_pack(world, state, CardRegion.BASIC),
+            f"Generic Grade {card_region_names[CardRegion.RARE]}":
+                lambda state:
+                has_card_pack(world, state, CardRegion.RARE),
+            f"Generic Grade {card_region_names[CardRegion.EPIC]}":
+                lambda state:
+                has_card_pack(world, state, CardRegion.EPIC),
+            f"Generic Grade {card_region_names[CardRegion.LEGENDARY]}":
+                lambda state:
+                has_card_pack(world, state, CardRegion.LEGENDARY),
+            f"Generic Grade {card_region_names[CardRegion.DESTINY_BASIC]}":
+                lambda state:
+                has_card_pack(world, state,CardRegion.DESTINY_BASIC),
+            f"Generic Grade {card_region_names[CardRegion.DESTINY_RARE]}":
+                lambda state:
+                has_card_pack(world, state,CardRegion.DESTINY_RARE),
+            f"Generic Grade {card_region_names[CardRegion.DESTINY_EPIC]}":
+                lambda state:
+                has_card_pack(world, state,CardRegion.DESTINY_EPIC),
+            f"Generic Grade {card_region_names[CardRegion.DESTINY_LEGENDARY]}":
+                lambda state:
+                has_card_pack(world, state,CardRegion.DESTINY_LEGENDARY),
+            "Standard Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Pauper Games":
+                lambda state:
+                state.has("FormatPauper", world.player),
+            "FireCup Games":
+                lambda state:
+                state.has("FormatFireCup", world.player),
+            "EarthCup Games":
+                lambda state:
+                state.has("FormatEarthCup", world.player),
+            "WaterCup Games":
+                lambda state:
+                state.has("FormatWaterCup", world.player),
+            "WindCup Games":
+                lambda state:
+                state.has("FormatWindCup", world.player),
+            "First Edition Vintage Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Silver Border Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Gold Border Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Ex Border Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Full Art Border Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
+            "Foil Games":
+                lambda state:
+                state.has("FormatStandard", world.player),
         }
     }
     return rules
@@ -549,16 +635,6 @@ def set_rules(world):
         except KeyError as e:
             # print(f"Not in multiworld: {location_name}")
             continue
-
-    for expansion in Expansion:
-        for i in range(world.options.sell_card_check_count.value):
-            name = f"Sell {expansion.name} cards #{i + 1}"
-            try:
-                loc = world.get_location(name)
-            except KeyError:
-                continue
-            world.get_location(name).access_rule = lambda state: state.has(
-                "Progressive Card Table", world.player, 1)
 
     if world.options.goal.value == 0:
         world.multiworld.get_location(f"Level {world.options.max_level.value}", world.player).place_locked_item(
