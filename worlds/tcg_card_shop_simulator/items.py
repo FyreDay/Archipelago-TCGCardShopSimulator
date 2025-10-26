@@ -432,7 +432,7 @@ junk_dict: Dict[str, ItemData] = {
     "Large Xp": ItemData(304, ItemClassification.filler),
     "Large Money": ItemData(305, ItemClassification.filler),
     "Random Card": ItemData(306, ItemClassification.filler),
-    "Random New Card": ItemData(307, ItemClassification.filler),
+    # "Random New Card": ItemData(307, ItemClassification.filler),
     "Progressive Customer Money": ItemData(308, ItemClassification.filler),
     "Increase Card Luck": ItemData(309, ItemClassification.filler),
 }
@@ -454,7 +454,6 @@ junk_weights = {
     "Large Money": 10,
     "Large Xp": 10,
     "Random Card": 50,
-    "Random New Card": 50,
     "Progressive Customer Money": 50,
     "Increase Card Luck": 0
 }

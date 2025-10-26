@@ -31,15 +31,15 @@ def get_license_checks_internal(check_amount, starting_num, item_key:str ,loc: S
         sell_item_locs[f"Sell {n} {"Boxes" if n>1 else "Box"} of {item_key}"] = SELL_CHECK_START_ID + (loc.code * 16) + (n-1)
     return sell_item_locs
 
-def get_play_table_checks(world, format: Format):
-    return get_play_table_checks_internal(world.options.play_table_checks.value, format)
+def get_play_table_checks(world, game_format: Format):
+    return get_play_table_checks_internal(world.options.play_table_checks.value, game_format)
 
-def get_play_table_checks_internal(game_check_count: int, format: Format):
+def get_play_table_checks_internal(game_check_count: int, gameformat: Format):
     play_table_locs = {}
     if game_check_count > 0:
         for i in range(game_check_count):
-            name = f"Play {i + 1} Format {format.name}"
-            hex_id = PLAY_TABLE_START_ID + format.value * 10 + i
+            name = f"Play {i + 1} Format {gameformat.name}"
+            hex_id = PLAY_TABLE_START_ID + gameformat.value * 15 + i
             play_table_locs[name] = hex_id
 
     return play_table_locs
@@ -109,33 +109,35 @@ def get_card_checks_internal(card_sanity, difficulty: int, card_region: int, cre
     rarity = Rarity((card_region % 4) + 1)
 
     if card_sanity > 0:
-        if card_sanity > card_region:
-            for index, data in enumerate(card_rarity):
-                data = cast(MonsterData, data)
-                if data.rarity != rarity:
+        for index, data in enumerate(card_rarity):
+            data = cast(MonsterData, data)
+            if data.rarity != rarity:
+                continue
+            for border in Border:
+                if difficulty == 1 and border.value > 0:
                     continue
-                for border in Border:
-                    if difficulty == 1 and border.value > 0:
-                        continue
-                    if difficulty == 2 and border.value > 2:
-                        continue
-                    if difficulty == 3 and border.value > 3:
-                        continue
+                if difficulty == 2 and border.value > 2:
+                    continue
+                if difficulty == 3 and border.value > 3:
+                    continue
 
-                    name, code = generate_card(data.name, index, border, 0, expansion, rarity)
+                name, code = generate_card(data.name, index, border, 0, expansion, rarity)
+                card_locs[name] = code
+                if create_hints and world:
+                    world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
+                if card_sanity == 2:
+                    name, code = generate_card(data.name, index, border, 1, expansion, rarity)
                     card_locs[name] = code
                     if create_hints and world:
                         world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
-                    if card_sanity == 2:
-                        name, code = generate_card(data.name, index, border, 1, expansion, rarity)
-                        card_locs[name] = code
-                        if create_hints and world:
-                            world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
-    else:
-        counter = CARD_OPEN_START_ID + rarity.value * 50 + expansion.value * 500
-        card_locs = card_locs | get_in_difficulty_achievements(get_region_open_achievements(rarity, expansion), counter, difficulty)
+
+    counter = CARD_OPEN_START_ID + rarity.value * 50 + expansion.value * 250
+    card_locs = card_locs | get_in_difficulty_achievements(get_region_open_achievements(rarity, expansion), counter, difficulty)
 
     return card_locs
+
+def get_generic_open_card_checks(difficulty: int):
+    return get_in_difficulty_achievements(generic_open_achievements, CARD_SELL_START_ID + 500, difficulty)
 
 def get_sell_card_checks(difficulty: int, card_region: int):
     expansion = Expansion(1 if card_region >= 4 else 0)
@@ -163,8 +165,7 @@ def get_all_locations():
     all_locations = {}
 
     for card_region_id in range(8):
-        all_locations.update(get_card_checks_internal(8, 5, True, 0, card_region_id))
-        all_locations.update(get_card_checks_internal(0, 0, False, 30, card_region_id))
+        all_locations.update(get_card_checks_internal(2, 4,  card_region_id, True))
         all_locations.update(get_sell_card_checks(4, card_region_id))
         all_locations.update(get_grading_card_checks(4, card_region_id))
 
