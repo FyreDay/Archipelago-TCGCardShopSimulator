@@ -151,11 +151,12 @@ def create_regions(world):
     create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE], min([level_grouped_locs[0][item_id] for item_id in [10, 11] if item_id in level_grouped_locs[0]], default=None), True)
     create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC], min([level_grouped_locs[0][item_id] for item_id in [12, 13] if item_id in level_grouped_locs[0]], default=None), True)
     create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [14, 15] if item_id in level_grouped_locs[0]], default=None), True)
-    create_region(world, "Sell Cards", f"Sell Any Card",
-                  locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))
-
-    create_region(world, "Grade Cards", f"Grade Any Card",
-                  locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
+    if world.options.checks_selling_difficulty.value > 0:
+        create_region(world, "Sell Cards", f"Sell Any Card",
+                      locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))
+    if world.options.checks_grading_difficulty.value > 0:
+        create_region(world, "Grade Cards", f"Grade Any Card",
+                     locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
 
     #todo: refactor to do formats
     if world.options.play_table_checks.value > 0:

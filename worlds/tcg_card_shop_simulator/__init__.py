@@ -10,6 +10,7 @@ from .regions import *
 from .locations import *
 from .items import *
 from .rules import *
+from .data.LocationData import *
 
 
 class TCGSimulatorWeb(WebWorld):
@@ -60,6 +61,8 @@ class TCGSimulatorWorld(World):
         "licenses": set(item_dict.keys()),
     }
 
+
+
     def __init__(self, multiworld, player):
         self.itempool = []
 
@@ -75,6 +78,10 @@ class TCGSimulatorWorld(World):
         self.required_licenses = 0
 
         self.hints = {}
+
+        self.open_achievements: ClassVar[List[Dict[str, Any]]] = []
+        self.sell_achievements: ClassVar[List[Dict[str, Any]]] = []
+        self.grade_achievements: ClassVar[List[Dict[str, Any]]] = []
 
         super().__init__(multiworld, player)
 
@@ -101,6 +108,10 @@ class TCGSimulatorWorld(World):
 
         if self.options.max_level.value % 5 != 0:
             self.options.max_level.value += 5 - (self.options.max_level.value % 5)
+
+        self.open_achievements = build_achievement_objects(AchievementPrefix.Open, self.options.checks_opening_difficulty.value)
+        self.sell_achievements = build_achievement_objects(AchievementPrefix.Sell, self.options.checks_selling_difficulty.value)
+        self.grade_achievements = build_achievement_objects(AchievementPrefix.Grade, self.options.checks_grading_difficulty.value)
 
 
     def create_regions(self):
@@ -143,6 +154,9 @@ class TCGSimulatorWorld(World):
             "ShopPg2Mapping": self.pg2_licenses,
             "ShopPg3Mapping": self.pg3_licenses,
             "ShopTTMapping": self.tt_licenses,
+            "OpenAchievements": self.open_achievements,
+            "SellAchievements": self.sell_achievements,
+            "GradeAchievements": self.grade_achievements,
 
             "MaxLevel": self.options.max_level.value,
             "LicensesPerRegion": self.options.licenses_per_region.value,

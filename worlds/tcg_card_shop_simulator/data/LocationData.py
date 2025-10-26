@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import NamedTuple, List, Optional
+from typing import NamedTuple, List, Optional, Dict, Any
 from BaseClasses import Location
 
 class TCGSimulatorLocation(Location):
@@ -331,130 +331,86 @@ int_to_card_region = {
     7:"Destiny Legendary Card Pack"
 }
 
-#These are duplicated for Destiny
-generic_open_achievements: List[TCGAchievement] = [
-    TCGAchievement("Open a Ghost Card", Difficulty.Hard),
-    TCGAchievement("Open 5 Ghost Cards", Difficulty.Impossible),
-    TCGAchievement("Open all 6 borders for Monster", Difficulty.Hard),
-    TCGAchievement("Open all 12 card versions for Monster", Difficulty.Impossible),
+class AchievementPrefix(Enum):
+    Open = 0,
+    Sell = 1,
+    Grade = 2
 
-    TCGAchievement("Open Your First Base Foil Card", Difficulty.Easy),
-    TCGAchievement("Open Your First FirstEdition Foil Card", Difficulty.Easy),
-    TCGAchievement("Open Your First Silver Foil Card", Difficulty.Easy),
-    TCGAchievement("Open Your First Gold Foil Card", Difficulty.Medium),
-    TCGAchievement("Open Your First EX Foil Card", Difficulty.Medium),
-    TCGAchievement("Open Your First FullArt Foil Card", Difficulty.Medium),
-]
-def get_generic_open_achievement(descriptor: str, rar: Rarity, easy_num: int, med_num: int, hard_num: int, imp_num: int):
+def get_generic_action_achievement(prefix: AchievementPrefix, descriptor: str, rar: Rarity,
+                                   easy_num: int, med_num: int, hard_num: int, imp_num: int):
+    """Generalized version for open/sell/grade actions."""
+    return [
+        TCGAchievement(f"{prefix.name} {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy),
+        TCGAchievement(f"{prefix.name} {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium),
+        TCGAchievement(f"{prefix.name} {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard),
+        TCGAchievement(f"{prefix.name} {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible),
+    ]
+
+def get_region_action_achievements(prefix: AchievementPrefix, rar: Rarity, expansion: Expansion) -> List[TCGAchievement]:
+    """Generalized for open/sell/grade types — avoids duplication."""
     achievements: List[TCGAchievement] = []
 
-    achievements.append(
-        TCGAchievement(f"Open {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy)),
-    achievements.append(
-        TCGAchievement(f"Open {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium)),
-    achievements.append(
-        TCGAchievement(f"Open {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard)),
-    achievements.append(
-        TCGAchievement(f"Open {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible)),
-    return achievements
+    achievements.extend(get_generic_action_achievement(prefix, expansion.name, rar, 50, 100, 500, 1000))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Foil.Foil.name} {expansion.name}", rar, 20, 50, 200, 500))
 
-def get_generic_open_achievement_enum(descriptor: Enum, rar: Rarity, expansion:Expansion, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    return get_generic_open_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
-
-
-def get_region_open_achievements(rar:Rarity, expansion: Expansion):
-    achievements: List[TCGAchievement] = []
-    achievements.extend(get_generic_open_achievement(expansion.name, rar, 50, 100, 500, 1000))
-    achievements.extend(get_generic_open_achievement_enum(Foil.Foil, rar, expansion, 20, 50, 200, 500))
-
-    achievements.extend(get_generic_open_achievement_enum(Border.Base, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_open_achievement_enum(Border.FirstEdition, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_open_achievement_enum(Border.Silver, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_open_achievement_enum(Border.Gold, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_open_achievement_enum(Border.EX, rar, expansion,4, 10, 40, 100))
-    achievements.extend(get_generic_open_achievement_enum(Border.FullArt, rar, expansion, 2, 5, 20, 50))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.Base.name} {expansion.name}", rar, 20, 50, 200, 500))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.FirstEdition.name} {expansion.name}", rar, 20, 50, 200, 500))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.Silver.name} {expansion.name}", rar, 10, 25, 100, 250))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.Gold.name} {expansion.name}", rar, 10, 25, 100, 250))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.EX.name} {expansion.name}", rar, 4, 10, 40, 100))
+    achievements.extend(get_generic_action_achievement(prefix, f"{Border.FullArt.name} {expansion.name}", rar, 2, 5, 20, 50))
 
     return achievements
 
-#These are duplicated for Destiny
-generic_sell_achievements: List[TCGAchievement] = [
-    TCGAchievement("Sell a card for 2x its cost", Difficulty.Medium),
-    TCGAchievement("Sell a card for 4x its cost", Difficulty.Hard),
-    TCGAchievement("Sell a card for 10x its cost", Difficulty.Impossible),
-]
+def parse_foil_array_from_name(name: str) -> List[int]:
+    """
+    If the name contains 'NonFoil' (or common variants) -> [0]
+    If the name contains 'Foil' (and not 'NonFoil') -> [1]
+    Otherwise -> [0,1]
+    """
+    lower = name.lower()
+    if "nonfoil" in lower or "non-foil" in lower or "non foil" in lower:
+        return [0]
+    # "foil" should be matched only if it's not the 'nonfoil' case above
+    if "foil" in lower:
+        return [1]
+    return [0, 1]
 
-def get_generic_sell_achievement(descriptor: str, rar: Rarity, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    achievements: List[TCGAchievement] = []
-
-    achievements.append(
-        TCGAchievement(f"Sell {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy)),
-    achievements.append(
-        TCGAchievement(f"Sell {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium)),
-    achievements.append(
-        TCGAchievement(f"Sell {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard)),
-    achievements.append(
-        TCGAchievement(f"Sell {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible)),
-    return achievements
-
-def get_generic_sell_achievement_enum(descriptor: Enum, rar: Rarity, expansion:Expansion, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    return get_generic_sell_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
+def extract_threshold(name: str) -> int:
+    parts = name.split(" ")
+    for part in parts:
+        if part.isdigit():
+            return int(part)
+    return 0
 
 
-def get_region_sell_achievements(rar:Rarity, expansion: Expansion):
-    achievements: List[TCGAchievement] = []
-    achievements.extend(get_generic_sell_achievement(expansion.name, rar, 50, 100, 500, 1000))
-    achievements.extend(get_generic_sell_achievement_enum(Foil.Foil, rar, expansion, 20, 50, 200, 500))
+# --- JSON Conversion ---
+def build_achievement_objects(prefix: AchievementPrefix, difficulty: int) -> List[Dict[str, Any]]:
+    """
+    Creates all non-generic achievements for open/sell/grade actions,
+    """
+    achievements_json: List[Dict[str, Any]] = []
 
-    achievements.extend(get_generic_sell_achievement_enum(Border.Base, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_sell_achievement_enum(Border.FirstEdition, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_sell_achievement_enum(Border.Silver, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_sell_achievement_enum(Border.Gold, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_sell_achievement_enum(Border.EX, rar, expansion, 4, 10, 40, 100))
-    achievements.extend(get_generic_sell_achievement_enum(Border.FullArt, rar, expansion, 2, 5, 20, 50))
+    for expansion in Expansion:
+        for rar in Rarity:
+            region_achievements = get_region_action_achievements(prefix, rar, expansion)
+            for ach in region_achievements:
+                if ach.difficulty.value > difficulty:
+                    continue
+                entry = {
+                    "type": prefix.name,
+                    "name": ach.name,
+                    "difficulty": ach.difficulty.value,
+                    "threshold": extract_threshold(ach.name),
+                    "rarity": [rar.value],
+                    "border": list(range(len(Border))),  # all borders valid by default
+                    "expansion": [expansion.value],
+                    "foil": parse_foil_array_from_name(ach.name),
+                }
+                achievements_json.append(entry)
+    return achievements_json
 
-    return achievements
-
-#These are duplicated for Destiny
-generic_grading_achievements: List[TCGAchievement] = [
-    TCGAchievement("Get a 10 Grade Card", Difficulty.Medium),
-    TCGAchievement("Get a 9 Grade Card", Difficulty.Medium),
-    TCGAchievement("Get a 8 Grade Card", Difficulty.Medium),
-    TCGAchievement("Get a 7 Grade Card", Difficulty.Medium),
-    TCGAchievement("Get a 6 Grade Card", Difficulty.Medium),
-    TCGAchievement("Get a 5 Grade Card", Difficulty.Easy),
-    TCGAchievement("Get a 4 Grade Card", Difficulty.Easy),
-    TCGAchievement("Get a 3 Grade Card", Difficulty.Easy),
-    TCGAchievement("Get a 2 Grade Card", Difficulty.Easy),
-    TCGAchievement("Get a 1 Grade Card", Difficulty.Easy),
-]
-
-def get_generic_grading_achievement(descriptor: str, rar: Rarity, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    achievements: List[TCGAchievement] = []
-
-    achievements.append(
-        TCGAchievement(f"Grade {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy)),
-    achievements.append(
-        TCGAchievement(f"Grade {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium)),
-    achievements.append(
-        TCGAchievement(f"Grade {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard)),
-    achievements.append(
-        TCGAchievement(f"Grade {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible)),
-    return achievements
-
-def get_generic_grading_achievement_enum(descriptor: Enum, rar: Rarity, expansion:Expansion, easy_num: int, med_num: int, hard_num: int, imp_num: int):
-    return get_generic_grading_achievement(f"{descriptor.name} {expansion.name}", rar, easy_num, med_num, hard_num, imp_num)
-
-
-def get_region_grading_achievements(rar:Rarity, expansion: Expansion):
-    achievements: List[TCGAchievement] = []
-    achievements.extend(get_generic_grading_achievement(expansion.name, rar, 50, 100, 500, 1000))
-    achievements.extend(get_generic_grading_achievement_enum(Foil.Foil, rar, expansion, 20, 50, 200, 500))
-
-    achievements.extend(get_generic_grading_achievement_enum(Border.Base, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_grading_achievement_enum(Border.FirstEdition, rar, expansion, 20, 50, 200, 500))
-    achievements.extend(get_generic_grading_achievement_enum(Border.Silver, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_grading_achievement_enum(Border.Gold, rar, expansion, 10, 25, 100, 250))
-    achievements.extend(get_generic_grading_achievement_enum(Border.EX, rar, expansion, 4, 10, 40, 100))
-    achievements.extend(get_generic_grading_achievement_enum(Border.FullArt, rar, expansion, 2, 5, 20, 50))
-
-    return achievements
+def get_achievement_names_for_region(prefix: AchievementPrefix, rar: Rarity, expansion: Expansion) -> List[tuple[str, Difficulty]]:
+    """Returns only the names for a given rarity/expansion group."""
+    achievements = get_region_action_achievements(prefix, rar, expansion)
+    return [(a.name, a.difficulty) for a in achievements]
