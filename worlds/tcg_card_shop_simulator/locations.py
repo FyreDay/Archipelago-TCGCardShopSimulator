@@ -176,9 +176,9 @@ def get_all_locations():
 
     for l in range(0, 105, 5):
         if l == 0:
-            all_locations.update(get_level_checks_internal(True, 1))
+            all_locations.update(get_level_checks_internal(1))
             continue
-        all_locations.update(get_level_checks_internal(True, l))
+        all_locations.update(get_level_checks_internal(l))
 
     all_locations.update(get_play_table_checks_internal(10, Format.Standard))
     all_locations.update(get_play_table_checks_internal(10, Format.Pauper))

@@ -304,7 +304,6 @@ format_dict: Dict[str, ItemData] = {
     "FormatFoil": ItemData(218, ItemClassification.progression)
 }
 not_sellable_dict: Dict[str, ItemData] = {
-    #219
     "Progressive Card Table": ItemData(200, ItemClassification.progression, 2),
     "Progressive Card Display": ItemData(201, ItemClassification.useful, 3),
     "Progressive Personal Shelf": ItemData(202, ItemClassification.useful, 3),
@@ -331,6 +330,7 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Checkout Counter": ItemData(235, ItemClassification.progression),
     # "Progressive Openable Border": ItemData(236, ItemClassification.progression),
     # "Openable Foils": ItemData(237, ItemClassification.progression),
+    "Scanner" : ItemData(238, ItemClassification.useful),
 }
 
 # unused 0x1F2800D7

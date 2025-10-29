@@ -111,6 +111,7 @@ class TCGSimulatorWorld(World):
 
         self.open_achievements = build_achievement_objects(AchievementPrefix.Open, self.options.checks_opening_difficulty.value)
         self.sell_achievements = build_achievement_objects(AchievementPrefix.Sell, self.options.checks_selling_difficulty.value)
+        print(self.sell_achievements)
         self.grade_achievements = build_achievement_objects(AchievementPrefix.Grade, self.options.checks_grading_difficulty.value)
 
 
