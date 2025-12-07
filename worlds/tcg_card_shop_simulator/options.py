@@ -43,13 +43,13 @@ class RequiredLicensesForProgress(Range):
 class Goal(Choice):
     """
     The victory condition for your run.
-    Collection Builder is about getting your card collection to a collected percentage
+    (Not Implemented) Collection Builder is about getting your card collection to a collected percentage
     Sell Ghost Cards hides ghost cards in locations to be found
     """
 
     display_name = "Goal"
     option_reach_max_level = 0
-    option_collection_builder = 1
+    #option_collection_builder = 1
     option_sell_ghost_cards = 2
     default = 0
 
