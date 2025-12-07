@@ -58,7 +58,7 @@ def create_items(world):
     if world.options.start_with_worker.value > 0:
         starting_items.append(
             Item(world.item_id_to_name[218 + world.options.start_with_worker.value], ItemClassification.progression, (218 + world.options.start_with_worker.value), world.player))
-    starting_items.append(Item("FormatStandard", ItemClassification.useful, not_sellable_dict["FormatStandard"].code ,world.player))
+    starting_items.append(Item("FormatStandard", ItemClassification.useful, format_dict["FormatStandard"].code ,world.player))
     starting_items.append(Item("Progressive Shelf", ItemClassification.useful, not_sellable_dict["Progressive Shelf"].code ,world.player))
     #create all items except ghosts and junk
     num = 0
@@ -69,6 +69,10 @@ def create_items(world):
         item_data.code in world.tt_licenses) and item_data.code not in world.starting_item_ids:
             create_item(world, item_name, item_data.classification, item_data.amount)
 
+    if world.options.play_table_checks.value > 0:
+        for item_name, item_data in format_dict.items():
+            create_item(world, item_name, item_data.classification, item_data.amount)
+
     if total_location_count > 140:
         for item_name, item_data in not_sellable_dict.items():
             amount = item_data.amount
@@ -77,6 +81,8 @@ def create_items(world):
             create_item(world, item_name, item_data.classification, amount)
     else:
         remaining_items = copy.deepcopy(not_sellable_dict)
+        remaining_items["Warehouse Expansion"].amount = 6
+        remaining_items["Shop Expansion"].amount = 15
 
         for item in starting_items:
             if item.name in remaining_items:
@@ -142,17 +148,6 @@ def create_items(world):
         "Decrease Card Luck":world.options.decrease_card_luck_trap,
         "Currency Trap":world.options.currency_trap
     }
-
-    junk_weights["Small Xp"] =  world.options.xp_boosts * 0.5
-    junk_weights["Medium Xp"] = world.options.xp_boosts * 0.3
-    junk_weights["Large Xp"] = world.options.xp_boosts * 0.2
-    junk_weights["Small Money"] = world.options.money_bags * 0.5
-    junk_weights["Medium Money"] = world.options.money_bags * 0.3
-    junk_weights["Large Money"] = world.options.money_bags * 0.2
-    junk_weights["Random Card"] = world.options.random_card
-    junk_weights["Random New Card"] = world.options.random_new_card
-    junk_weights["Progressive Customer Money"] = world.options.customer_wealth
-    junk_weights["Increase Card Luck"] = world.options.card_luck
 
     junk = get_junk_item_names(world.multiworld.random, junk_count)
 
@@ -294,20 +289,21 @@ item_dict: Dict[str, ItemData] = {
     "Progressive Cleanser": ItemData(23, ItemClassification.progression,2),
 }
 
+format_dict: Dict[str, ItemData] = {
+    "FormatStandard": ItemData(207, ItemClassification.progression),
+    "FormatPauper": ItemData(208, ItemClassification.progression),
+    "FormatFireCup": ItemData(209, ItemClassification.progression),
+    "FormatEarthCup": ItemData(210, ItemClassification.progression),
+    "FormatWaterCup": ItemData(211, ItemClassification.progression),
+    "FormatWindCup": ItemData(212, ItemClassification.progression),
+    "FormatFirstEditionVintage": ItemData(213, ItemClassification.progression),
+    "FormatSilverBorder": ItemData(214, ItemClassification.progression),
+    "FormatGoldBorder": ItemData(215, ItemClassification.progression),
+    "FormatExBorder": ItemData(216, ItemClassification.progression),
+    "FormatFullArtBorder": ItemData(217, ItemClassification.progression),
+    "FormatFoil": ItemData(218, ItemClassification.progression)
+}
 not_sellable_dict: Dict[str, ItemData] = {
-    "FormatStandard": ItemData(207, ItemClassification.useful),
-    "FormatPauper": ItemData(208, ItemClassification.useful),
-    "FormatFireCup": ItemData(209, ItemClassification.useful),
-    "FormatEarthCup": ItemData(210, ItemClassification.useful),
-    "FormatWaterCup": ItemData(211, ItemClassification.useful),
-    "FormatWindCup": ItemData(212, ItemClassification.useful),
-    "FormatFirstEditionVintage": ItemData(213, ItemClassification.useful),
-    "FormatSilverBorder": ItemData(214, ItemClassification.useful),
-    "FormatGoldBorder": ItemData(215, ItemClassification.useful),
-    "FormatExBorder": ItemData(216, ItemClassification.useful),
-    "FormatFullArtBorder": ItemData(217, ItemClassification.useful),
-    "FormatFoil": ItemData(218, ItemClassification.useful),
-
     "Progressive Card Table": ItemData(200, ItemClassification.progression, 2),
     "Progressive Card Display": ItemData(201, ItemClassification.useful, 3),
     "Progressive Personal Shelf": ItemData(202, ItemClassification.useful, 3),
@@ -332,6 +328,9 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Workbench": ItemData(233, ItemClassification.progression),
     "Trash Bin": ItemData(234, ItemClassification.useful),
     "Checkout Counter": ItemData(235, ItemClassification.progression),
+    # "Progressive Openable Border": ItemData(236, ItemClassification.progression),
+    # "Openable Foils": ItemData(237, ItemClassification.progression),
+    "Scanner" : ItemData(238, ItemClassification.useful),
 }
 
 # unused 0x1F2800D7
@@ -433,7 +432,7 @@ junk_dict: Dict[str, ItemData] = {
     "Large Xp": ItemData(304, ItemClassification.filler),
     "Large Money": ItemData(305, ItemClassification.filler),
     "Random Card": ItemData(306, ItemClassification.filler),
-    "Random New Card": ItemData(307, ItemClassification.filler),
+    # "Random New Card": ItemData(307, ItemClassification.filler),
     "Progressive Customer Money": ItemData(308, ItemClassification.filler),
     "Increase Card Luck": ItemData(309, ItemClassification.filler),
 }
@@ -455,11 +454,10 @@ junk_weights = {
     "Large Money": 10,
     "Large Xp": 10,
     "Random Card": 50,
-    "Random New Card": 50,
     "Progressive Customer Money": 50,
     "Increase Card Luck": 0
 }
 
-full_item_dict: Dict[str, ItemData] = {**item_dict, **not_sellable_dict, **random_ghost_dict, **ghost_dict, **junk_dict, **trap_dict}
+full_item_dict: Dict[str, ItemData] = {**item_dict, **not_sellable_dict, **random_ghost_dict, **ghost_dict, **junk_dict, **trap_dict, **format_dict}
 
 

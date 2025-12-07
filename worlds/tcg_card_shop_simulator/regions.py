@@ -1,7 +1,7 @@
 import re
 from enum import IntEnum
 
-from BaseClasses import Region, Entrance
+from BaseClasses import Region, Entrance, LocationProgressType
 from . import locations
 from .locations import *
 
@@ -34,16 +34,13 @@ def create_location(world, region, name: str, code: int, excluded: bool = False)
 
 def add_locations(world, region, locations_dict):
     for (key, code) in locations_dict.items():
-        create_location(world, region, key, code, check_card_exclude(world,code) or is_sell_excluded(key, code))
+        create_location(world, region, key, code, False)
 
 def create_card_locations(world, card_locs, region):
     for (key, data) in card_locs.items():
         if data.region != region.name:
             continue
-        excluded = False
-        if world.random.random() > 0.6:
-            excluded = False
-        create_location(world, region, key, data.code, excluded)
+        create_location(world, region, key, data.code, False)
 
 def create_region(world, name: str, hint: str, locations_dict):
     region = Region(name, world.player, world.multiworld)
@@ -119,9 +116,14 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
     world.multiworld.regions.append(region)
     return region
 
-def create_pack_region(world, card_region: CardRegion, hint: str, level):
+def create_pack_regions(world, card_region: CardRegion, hint: str, level, is_destiny: bool):
     if level is not None:
         create_region(world, card_region_names[card_region], hint, get_card_checks(world, card_region))
+        if world.options.checks_selling_difficulty.value > 0:
+            create_region(world, f"Sell {card_region_names[card_region]}" , f"Sell {card_region_names[card_region]}", locations.get_sell_card_checks(world.options.checks_selling_difficulty.value, card_region.value))
+        if world.options.checks_grading_difficulty.value > 0:
+            create_region(world, f"Grade {card_region_names[card_region]}" , f"Grade {card_region_names[card_region]}", locations.get_grading_card_checks(world.options.checks_grading_difficulty.value, card_region.value))
+
 
 def create_regions(world):
     shop_locs: list[dict[str, ShopLocation]] = locations.get_shop_locations(world)
@@ -141,20 +143,37 @@ def create_regions(world):
         create_level_region(world, f"Level {l}-{l+4}", f"Level {l}-{l+4}", shop_locs, level_grouped_locs)
 
 
-    create_pack_region(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC], min([level_grouped_locs[0][item_id] for item_id in [190,1] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.RARE, card_region_names[CardRegion.RARE], min([level_grouped_locs[0][item_id] for item_id in [2,3] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC], min([level_grouped_locs[0][item_id] for item_id in [4,5] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [6,7] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC], min([level_grouped_locs[0][item_id] for item_id in [8,9] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE], min([level_grouped_locs[0][item_id] for item_id in [10,11] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC], min([level_grouped_locs[0][item_id] for item_id in [12,13] if item_id in level_grouped_locs[0]], default=None))
-    create_pack_region(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [14,15] if item_id in level_grouped_locs[0]], default=None))
+    create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC], min([level_grouped_locs[0][item_id] for item_id in [190, 1] if item_id in level_grouped_locs[0]], default=None), False)
+    create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE], min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]], default=None), False)
+    create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC], min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]], default=None), False)
+    create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]], default=None), False)
+    create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC], min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]], default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE], min([level_grouped_locs[0][item_id] for item_id in [10, 11] if item_id in level_grouped_locs[0]], default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC], min([level_grouped_locs[0][item_id] for item_id in [12, 13] if item_id in level_grouped_locs[0]], default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [14, 15] if item_id in level_grouped_locs[0]], default=None), True)
+    if world.options.checks_selling_difficulty.value > 0:
+        create_region(world, "Sell Cards", f"Sell Any Card",
+                      locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))
+    if world.options.checks_grading_difficulty.value > 0:
+        create_region(world, "Grade Cards", f"Grade Any Card",
+                     locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
 
+    #todo: refactor to do formats
     if world.options.play_table_checks.value > 0:
-        create_region(world, "Play Tables", "Play Tables", locations.get_play_table_checks(world))
-    if world.options.sell_card_check_count.value > 0:
-        create_region(world, "Sell Tetramon", "Sell Tetramon", locations.get_sell_card_checks(world, False))
-        create_region(world, "Sell Destiny", "Sell Destiny", locations.get_sell_card_checks(world, True))
+        create_region(world, "Play Tables", "Play Tables", {})
+        create_region(world, "Standard Games", "Need Standard format", locations.get_play_table_checks(world, Format.Standard))
+        create_region(world, "Pauper Games", "Need Pauper format", locations.get_play_table_checks(world, Format.Pauper))
+        create_region(world, "FireCup Games", "Need FireCup format", locations.get_play_table_checks(world, Format.FireCup))
+        create_region(world, "EarthCup Games", "Need EarthCup format", locations.get_play_table_checks(world, Format.EarthCup))
+        create_region(world, "WaterCup Games", "Need WaterCup format", locations.get_play_table_checks(world, Format.WaterCup))
+        create_region(world, "WindCup Games", "Need WindCup format", locations.get_play_table_checks(world, Format.WindCup))
+        create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format", locations.get_play_table_checks(world, Format.FirstEditionVintage))
+        create_region(world, "Silver Border Games", "Need Silver Border format", locations.get_play_table_checks(world, Format.SilverBorder))
+        create_region(world, "Gold Border Games", "Need Gold Border format", locations.get_play_table_checks(world, Format.GoldBorder))
+        create_region(world, "Ex Border Games", "Need Ex Border format", locations.get_play_table_checks(world, Format.ExBorder))
+        create_region(world, "Full Art Border Games", "Need Full Art Border format", locations.get_play_table_checks(world, Format.FullArtBorder))
+        create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
+
 
     return level_grouped_locs
 
@@ -169,12 +188,18 @@ def connect_pack_region(world, card_region, itemids):
     if len(itemids) == 0:
         return
 
-    for id in itemids:
-        level = world.pg1_licenses[id]
+    for itemid in itemids:
+        level = world.pg1_licenses[itemid]
         end_level = level+4 if level != 1 else 4
-        item_name = world.item_id_to_name[id]
+        item_name = world.item_id_to_name[itemid]
         entrance_name = item_name.replace("Progressive ", "")
         connect_regions(world, f"Level {level}-{end_level}", card_region_names[card_region], entrance_name)
+    if world.options.checks_selling_difficulty.value > 0:
+        connect_regions(world,  card_region_names[card_region], f"Sell {card_region_names[card_region]}",f"Sell {card_region_names[card_region]}")
+        connect_regions(world, card_region_names[card_region],"Sell Cards",  f"Generic Sell {card_region_names[card_region]}")
+    if world.options.checks_grading_difficulty.value > 0:
+        connect_regions(world, card_region_names[card_region], f"Grade {card_region_names[card_region]}",f"Grade {card_region_names[card_region]}")
+        connect_regions(world, card_region_names[card_region], "Grade Cards",f"Generic Grade {card_region_names[card_region]}")
 
 def connect_sell_region(world, region_name, level):
     if level is None:
@@ -195,9 +220,18 @@ def connect_entrances(world):
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     if world.options.play_table_checks.value > 0:
         connect_regions(world, "Level 1-4", "Play Tables", "Play Table Found")
-    if world.options.sell_card_check_count.value > 0:
-        connect_sell_region(world,  "Sell Tetramon", min([world.pg1_licenses[item_id] for item_id in [190, 1, 2, 3, 4, 5, 6, 7] if item_id in world.pg1_licenses], default=None))
-        connect_sell_region(world, "Sell Destiny", min([world.pg1_licenses[item_id] for item_id in [8,9,10,11,12,13,14,15] if item_id in world.pg1_licenses], default=None))
+        connect_regions(world, "Play Tables", "Standard Games", "Standard Games")
+        connect_regions(world, "Play Tables", "Pauper Games", "Pauper Games")
+        connect_regions(world, "Play Tables", "FireCup Games", "FireCup Games")
+        connect_regions(world, "Play Tables", "EarthCup Games", "EarthCup Games")
+        connect_regions(world, "Play Tables", "WaterCup Games", "WaterCup Games")
+        connect_regions(world, "Play Tables", "WindCup Games", "WindCup Games")
+        connect_regions(world, "Play Tables", "First Edition Vintage Games", "First Edition Vintage Games")
+        connect_regions(world, "Play Tables", "Silver Border Games", "Silver Border Games")
+        connect_regions(world, "Play Tables", "Gold Border Games", "Gold Border Games")
+        connect_regions(world, "Play Tables", "Ex Border Games", "Ex Border Games")
+        connect_regions(world, "Play Tables", "Full Art Border Games", "Full Art Border Games")
+        connect_regions(world, "Play Tables", "Foil Games", "Foil Games")
 
     for l in range(0,world.options.max_level.value, 5):
         if l == 0:

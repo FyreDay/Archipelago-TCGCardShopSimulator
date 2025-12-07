@@ -10,6 +10,7 @@ from .regions import *
 from .locations import *
 from .items import *
 from .rules import *
+from .data.LocationData import *
 
 
 class TCGSimulatorWeb(WebWorld):
@@ -27,12 +28,12 @@ class TCGSimulatorWeb(WebWorld):
     tutorials = [setup_en]
 
 class TCGSimulatorSettings(settings.Group):
-    class LimitChecksForSyncs(settings.Bool):
-        """This limits goals to a reasonable number and sets all excessive settings to local_fill or Excluded for better sync experiences."""
+    class LimitChecksDifficultyToHard(settings.Bool):
+        """This removes the Impossible level checks from your multiworlds."""
     class AllowCardSanity(settings.Bool):
-        """Card Sanity adds pure randomness to card checks. This option disables this sanity in your multiworlds"""
+        """Card Sanity adds thousands of pure randomness checks. This option disables this sanity in your multiworlds"""
 
-    limit_checks_for_syncs: Union[LimitChecksForSyncs, bool] = False
+    limit_impossible_checks: Union[LimitChecksDifficultyToHard, bool] = False
     allow_card_sanity: Union[AllowCardSanity, bool] = True
 
 
@@ -76,31 +77,40 @@ class TCGSimulatorWorld(World):
 
         self.hints = {}
 
+        self.open_achievements: ClassVar[List[Dict[str, Any]]] = []
+        self.sell_achievements: ClassVar[List[Dict[str, Any]]] = []
+        self.grade_achievements: ClassVar[List[Dict[str, Any]]] = []
+
         super().__init__(multiworld, player)
 
     def generate_early(self) -> None:
-        self.required_licenses = int(
-            self.options.licenses_per_region.value * (self.options.required_licenses.value/100)
-        )
-        if self.required_licenses < 3:
-            self.required_licenses = 3
-        if self.required_licenses > 10:
-            self.required_licenses = 10
+        if self.options.required_licenses.value >  self.options.licenses_per_region:
+            raise OptionError("License requirement is larger than the amount of licenses")
+        self.required_licenses = self.options.required_licenses.value
+
 
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
-        if self.settings.limit_checks_for_syncs:
-            if self.options.max_level.value > 50:
-                print(f"The Max Level {self.options.max_level.value} is too high for sync mode. Lowering to 50.")
-                self.options.max_level.value = 50
 
-        if self.options.money_bags.value == 0 and self.options.xp_boosts.value == 0 and self.options.random_card.value == 0 and self.options.random_new_card.value == 0:
-            raise OptionError("All Junk Weights are Zero")
+        if self.settings.limit_impossible_checks:
+            if self.options.checks_opening_difficulty.value > 3:
+                self.options.checks_opening_difficulty = CardOpeningCheckDifficulty.option_hard
+            if self.options.checks_selling_difficulty.value > 3:
+                self.options.checks_selling_difficulty_difficulty = CardSellingCheckDifficulty.option_hard
+            if self.options.checks_grading_difficulty.value > 3:
+                self.options.checks_grading_difficulty = CardGradingCheckDifficulty.option_hard
+            print("limiting checks to hard")
+
         if self.options.trap_fill.value != 0 and self.options.stink_trap.value == 0 and self.options.poltergeist_trap.value == 0 and self.options.decrease_card_luck_trap == 0 and self.options.market_change_trap == 0 and self.options.currency_trap == 0:
             raise OptionError("All Trap Weights are Zero")
 
         if self.options.max_level.value % 5 != 0:
             self.options.max_level.value += 5 - (self.options.max_level.value % 5)
+
+        self.open_achievements = build_achievement_objects(AchievementPrefix.Open, self.options.checks_opening_difficulty.value)
+        self.sell_achievements = build_achievement_objects(AchievementPrefix.Sell, self.options.checks_selling_difficulty.value)
+        print(self.sell_achievements)
+        self.grade_achievements = build_achievement_objects(AchievementPrefix.Grade, self.options.checks_grading_difficulty.value)
 
 
     def create_regions(self):
@@ -137,34 +147,32 @@ class TCGSimulatorWorld(World):
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.5.13",
+            "ModVersion": "0.6.0",
             "StartingIds": self.starting_item_ids,
             "ShopPg1Mapping": self.pg1_licenses,
             "ShopPg2Mapping": self.pg2_licenses,
             "ShopPg3Mapping": self.pg3_licenses,
             "ShopTTMapping": self.tt_licenses,
+            "OpenAchievements": self.open_achievements,
+            "SellAchievements": self.sell_achievements,
+            "GradeAchievements": self.grade_achievements,
 
             "MaxLevel": self.options.max_level.value,
             "LicensesPerRegion": self.options.licenses_per_region.value,
             "RequiredLicenses": self.required_licenses,
             "Goal": self.options.goal.value,
-            # "CollectionGoalPercent": self.options.collection_goal_percentage.value,
+            "CollectionGoalPercent": self.options.collection_goal_percentage.value,
             "GhostGoalAmount": self.options.ghost_goal_amount.value,
 
             "AutoRenovate": self.options.auto_renovate.value,
-            "BetterTrades": self.options.better_trades.value,
             "ExtraStartingItemChecks": self.options.extra_starting_item_checks.value,
             "SellCheckAmount": self.options.sell_check_amount.value,
-            "ChecksPerPack": self.options.checks_per_pack.value,
-            "CardCollectPercentage": self.options.card_collect_percent.value,
+            "CardOpeningCheckDifficulty": self.options.checks_opening_difficulty.value,
+            "CardSellingCheckDifficulty": self.options.checks_selling_difficulty.value,
+            "CardGradingCheckDifficulty": self.options.checks_grading_difficulty.value,
             "PlayTableChecks": self.options.play_table_checks.value,
-            "GamesPerCheck": self.options.games_per_check.value,
-            "NumberOfSellCardChecks": self.options.sell_card_check_count.value,
-            "SellCardsPerCheck": self.options.sell_cards_per_check.value,
 
             "CardSanity": self.options.card_sanity.value,
-            "FoilInSanity": self.options.foil_sanity.value,
-            "BorderInSanity": self.options.border_sanity.value,
 
             "TrapFill": self.options.trap_fill.value,
             "Deathlink": self.options.deathlink.value,
