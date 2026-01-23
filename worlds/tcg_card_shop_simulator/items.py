@@ -331,6 +331,9 @@ not_sellable_dict: Dict[str, ItemData] = {
     # "Progressive Openable Border": ItemData(236, ItemClassification.progression),
     # "Openable Foils": ItemData(237, ItemClassification.progression),
     "Scanner" : ItemData(238, ItemClassification.useful),
+    "Empty Box Storage": ItemData(239, ItemClassification.useful),
+    "Bulk Donation Box": ItemData(240, ItemClassification.useful),
+    "Card Storage Shelf": ItemData(241, ItemClassification.useful),
 }
 
 # unused 0x1F2800D7
