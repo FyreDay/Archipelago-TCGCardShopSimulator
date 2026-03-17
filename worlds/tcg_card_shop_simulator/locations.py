@@ -83,21 +83,14 @@ def decode_card(num):
 
     return expansion, border, foil, index
 
-def get_in_difficulty_achievements(achievement_list: List[tuple[str, Difficulty]], counter, difficulty: int):
-    achievement_card_locs = {}
-    for achievement in achievement_list:
-        if achievement[1].value <= difficulty:
-            name = achievement[0]
-            achievement_card_locs[name] = counter
-        counter = counter + 1
-    return achievement_card_locs
-
 def generate_card(name, index, border, foil, expansion, rarity):
     return f"{name} {border.name} {'Foil' if foil else 'NonFoil'} {expansion.name}", 0x10000 | (expansion.value << 12) | (border.value << 8) | (foil << 7) | (index + 1)
 
 def get_card_checks(world, card_region: int):
-    return get_card_checks_internal(world.options.card_sanity.value,
+    ach, locations = get_card_checks_internal(world.options.card_sanity.value,
                                     world.options.checks_opening_difficulty.value, card_region, True, world)
+    world.open_achievements = ach
+    return locations
 
 def get_card_checks_internal(card_sanity, difficulty: int, card_region: int, create_hints:bool = False, world = None):
     card_locs = {}
@@ -131,45 +124,69 @@ def get_card_checks_internal(card_sanity, difficulty: int, card_region: int, cre
                         world.hints[code] = f"Card is in {expansion.name} {rarity.name} Packs"
 
     counter = CARD_OPEN_START_ID + rarity.value * 50 + expansion.value * 250
-    card_locs = card_locs | get_in_difficulty_achievements(get_achievement_names_for_region(AchievementPrefix.Open, rarity, expansion), counter, difficulty)
 
-    return card_locs
+    ach_list: List[AchievementEntryJSON] = get_achievements_for_region(AchievementPrefix.Open, rarity, expansion, difficulty, counter)
+
+    achievement_card_locs = {}
+    for achievement in ach_list:
+
+        achievement_card_locs[achievement["name"]] = achievement["id"]
+
+    card_locs = card_locs | achievement_card_locs
+
+    return ach_list, card_locs
 
 def get_generic_open_card_checks(difficulty: int):
     return {}
-#     return get_in_difficulty_achievements(generic_open_achievements, CARD_SELL_START_ID + 500, difficulty)
 
-def get_sell_card_checks(difficulty: int, card_region: int):
+def get_sell_card_checks(world, card_region: int):
+    ach, locations = get_sell_card_checks_internal(world.options.checks_selling_difficulty.value, card_region)
+    world.sell_achievements = ach
+    return locations
+
+def get_sell_card_checks_internal(difficulty:int, card_region: int):
     expansion = Expansion(1 if card_region >= 4 else 0)
     rarity = Rarity((card_region % 4) + 1)
 
     counter = CARD_SELL_START_ID + rarity.value * 50 + expansion.value * 250
-    return get_in_difficulty_achievements(get_achievement_names_for_region(AchievementPrefix.Sell, rarity, expansion), counter,
-                                          difficulty)
+    ach_list: List[AchievementEntryJSON] = get_achievements_for_region(AchievementPrefix.Sell, rarity, expansion, difficulty, counter)
+    achievement_card_locs = {}
+    for achievement in ach_list:
+        achievement_card_locs[achievement["name"]] = achievement["id"]
+    return ach_list, achievement_card_locs
 
 def get_generic_sell_card_checks(difficulty: int):
     return {}
-#     return get_in_difficulty_achievements(generic_sell_achievements, CARD_SELL_START_ID, difficulty)
 
-def get_grading_card_checks(difficulty: int, card_region: int):
+def get_grading_card_checks(world, card_region: int):
+    ach, locations = get_grading_card_checks_internal(world.options.checks_grading_difficulty.value, card_region)
+    world.grade_achievements = ach
+    return locations
+
+def get_grading_card_checks_internal(difficulty:int, card_region: int):
     expansion = Expansion(1 if card_region >= 4 else 0)
     rarity = Rarity((card_region % 4) + 1)
 
     counter = CARD_GRADE_START_ID + rarity.value * 50 + expansion.value * 250
-    return get_in_difficulty_achievements(get_achievement_names_for_region(AchievementPrefix.Grade, rarity, expansion), counter,
-                                          difficulty)
+    ach_list: List[AchievementEntryJSON] = get_achievements_for_region(AchievementPrefix.Grade, rarity, expansion, difficulty, counter)
+    achievement_card_locs = {}
+    for achievement in ach_list:
+        achievement_card_locs[achievement["name"]] = achievement["id"]
+    return ach_list, achievement_card_locs
 
 def get_generic_grading_card_checks(difficulty: int):
     return {}
-    #return get_in_difficulty_achievements(generic_grading_achievements, CARD_GRADE_START_ID, difficulty)
 
 def get_all_locations():
     all_locations = {}
 
     for card_region_id in range(8):
-        all_locations.update(get_card_checks_internal(2, 4,  card_region_id, True))
-        all_locations.update(get_sell_card_checks(4, card_region_id))
-        all_locations.update(get_grading_card_checks(4, card_region_id))
+        ach, open_ach_locs = get_card_checks_internal(2, 4, card_region_id, True)
+        all_locations.update(open_ach_locs)
+        ach, sell_ach_locs = get_sell_card_checks_internal(4, card_region_id)
+        all_locations.update(sell_ach_locs)
+        ach, grade_ach_locs = get_grading_card_checks_internal(4, card_region_id)
+        all_locations.update(grade_ach_locs)
 
     all_locations.update(get_generic_sell_card_checks(4))
     all_locations.update(get_generic_grading_card_checks(4))

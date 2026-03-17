@@ -118,11 +118,11 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
 
 def create_pack_regions(world, card_region: CardRegion, hint: str, level, is_destiny: bool):
     if level is not None:
-        create_region(world, card_region_names[card_region], hint, get_card_checks(world, card_region))
+        create_region(world, card_region_names[card_region], hint, get_card_checks(world, card_region.value))
         if world.options.checks_selling_difficulty.value > 0:
-            create_region(world, f"Sell {card_region_names[card_region]}" , f"Sell {card_region_names[card_region]}", locations.get_sell_card_checks(world.options.checks_selling_difficulty.value, card_region.value))
+            create_region(world, f"Sell {card_region_names[card_region]}" , f"Sell {card_region_names[card_region]}", locations.get_sell_card_checks(world, card_region.value))
         if world.options.checks_grading_difficulty.value > 0:
-            create_region(world, f"Grade {card_region_names[card_region]}" , f"Grade {card_region_names[card_region]}", locations.get_grading_card_checks(world.options.checks_grading_difficulty.value, card_region.value))
+            create_region(world, f"Grade {card_region_names[card_region]}" , f"Grade {card_region_names[card_region]}", locations.get_grading_card_checks(world, card_region.value))
 
 
 def create_regions(world):
