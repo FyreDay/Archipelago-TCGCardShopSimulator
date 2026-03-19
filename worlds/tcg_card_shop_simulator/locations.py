@@ -89,7 +89,7 @@ def generate_card(name, index, border, foil, expansion, rarity):
 def get_card_checks(world, card_region: int):
     ach, locations = get_card_checks_internal(world.options.card_sanity.value,
                                     world.options.checks_opening_difficulty.value, card_region, True, world)
-    world.open_achievements = ach
+    world.open_achievements.extend(ach)
     return locations
 
 def get_card_checks_internal(card_sanity, difficulty: int, card_region: int, create_hints:bool = False, world = None):
@@ -141,7 +141,7 @@ def get_generic_open_card_checks(difficulty: int):
 
 def get_sell_card_checks(world, card_region: int):
     ach, locations = get_sell_card_checks_internal(world.options.checks_selling_difficulty.value, card_region)
-    world.sell_achievements = ach
+    world.sell_achievements.extend(ach)
     return locations
 
 def get_sell_card_checks_internal(difficulty:int, card_region: int):
@@ -160,7 +160,7 @@ def get_generic_sell_card_checks(difficulty: int):
 
 def get_grading_card_checks(world, card_region: int):
     ach, locations = get_grading_card_checks_internal(world.options.checks_grading_difficulty.value, card_region)
-    world.grade_achievements = ach
+    world.grade_achievements.extend(ach)
     return locations
 
 def get_grading_card_checks_internal(difficulty:int, card_region: int):
