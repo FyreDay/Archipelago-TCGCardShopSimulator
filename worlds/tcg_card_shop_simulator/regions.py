@@ -110,6 +110,21 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
             add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
             if is_starting:
                 world.starting_item_ids.append(loc.code)
+    elif world.options.goal.value == 1:
+        #If in collection goal, make sure any packs not in the world are at the final region
+        shop_id = 0
+        for name, loc in shop_locs[0].items():
+            if "Pack" not in name:
+                continue
+
+            box_name = name.replace("Pack", "Box")
+
+            # Check if the pair is complete
+            if box_name in shop_locs[0]:
+                if loc.code not in level_grouped_locs[shop_id]:
+                    shop_locs[shop_id].pop(name)
+                    level_grouped_locs[shop_id][loc.code] = level_number
+                    add_locations(world, region, locations.get_license_checks(world, name, loc))
 
     add_locations(world, region, locations.get_level_checks(world, level_number, final_region))
 

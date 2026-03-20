@@ -29,9 +29,7 @@ class RequiredLicensesForProgress(Range):
     """
     How many More Product Licenses are required to unlock the next 5 levels? low numbers are easier.
 
-    Every 5 levels, you will stop leveling up until you have a certain number of licenses unlocked for items that you can sell.
-    Every 5 levels how many more product licenses do you need to be sent in order to progress?
-
+    Every 5 levels, you will stop leveling up until you have found this many more sellable licenses unlocked
     """
 
     display_name = "Required licenses Per Level Group"
@@ -43,13 +41,13 @@ class RequiredLicensesForProgress(Range):
 class Goal(Choice):
     """
     The victory condition for your run.
-    (Not Implemented) Collection Builder is about getting your card collection to a collected percentage
+    Collection Builder is about getting your card collection to a collected percentage. Minimum Max Level of 20.
     Sell Ghost Cards hides ghost cards in locations to be found
     """
 
     display_name = "Goal"
     option_reach_max_level = 0
-    #option_collection_builder = 1
+    option_collection_builder = 1
     option_sell_ghost_cards = 2
     default = 0
 
@@ -73,7 +71,7 @@ class CollectionGoalPercentage(Range):
     display_name = "Collection Goal Percentage"
     range_start = 10
     range_end = 100
-    default = 20
+    default = 40
 
 class StartWithWorker(Choice):
     """

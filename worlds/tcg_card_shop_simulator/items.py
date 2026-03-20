@@ -83,6 +83,9 @@ def create_items(world):
         remaining_items = copy.deepcopy(not_sellable_dict)
         remaining_items["Warehouse Expansion"].amount = 6
         remaining_items["Shop Expansion"].amount = 15
+        remaining_items["Progressive Wall Display Case"].amount = 1
+        remaining_items["Progressive Card Projector"].amount = 0
+        remaining_items["Progressive Personal Shelf"].amount = 1
 
         for item in starting_items:
             if item.name in remaining_items:
@@ -329,7 +332,7 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Trash Bin": ItemData(234, ItemClassification.useful),
     "Checkout Counter": ItemData(235, ItemClassification.progression),
     "progressive Large Shelf": ItemData(236, ItemClassification.useful, 4),
-    # "Openable Foils": ItemData(237, ItemClassification.progression),
+    "Tournament Prize Shelf": ItemData(237, ItemClassification.progression),
     "Scanner" : ItemData(238, ItemClassification.useful),
     "Empty Box Storage": ItemData(239, ItemClassification.useful),
     "Bulk Donation Box": ItemData(240, ItemClassification.useful),

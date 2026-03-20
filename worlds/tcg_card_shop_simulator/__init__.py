@@ -88,6 +88,8 @@ class TCGSimulatorWorld(World):
             raise OptionError("License requirement is larger than the amount of licenses")
         self.required_licenses = self.options.required_licenses.value
 
+        if self.options.goal.value == 1 and self.options.max_level.value < 20:
+            self.options.max_level.value = 20
 
         if self.options.extra_starting_item_checks.value + self.options.sell_check_amount.value > 16:
             self.options.extra_starting_item_checks.value = 16-self.options.sell_check_amount.value
