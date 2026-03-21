@@ -169,10 +169,6 @@ class Difficulty(Enum):
     Impossible = 4
 
 
-class TCGAchievement(NamedTuple):
-    name: str
-    difficulty: Difficulty
-    id: int
 
 
 class Expansion(Enum):
@@ -206,6 +202,13 @@ class Format(Enum):
     ExBorder = 9
     FullArtBorder = 10
     Foil = 11
+
+class TCGAchievement(NamedTuple):
+    name: str
+    difficulty: Difficulty
+    id: int
+    borders: List[Border]
+    foils: List[Foil]
 
 
 card_rarity: List[MonsterData] = [
@@ -347,51 +350,37 @@ class AchievementPrefix(Enum):
     Sell = 1,
     Grade = 2
 
-def get_generic_action_achievement(startingid: int, prefix: AchievementPrefix, descriptor: str, rar: Rarity,
+def get_generic_action_achievement(startingid: int, prefix: AchievementPrefix, descriptor: str, rar: Rarity, borders: List[Border], foils: List[Foil],
                                    easy_num: int, med_num: int, hard_num: int, imp_num: int):
     """Generalized version for open/sell/grade actions."""
     return [
-        TCGAchievement(f"{prefix.name} {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy, startingid),
-        TCGAchievement(f"{prefix.name} {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium, startingid+1),
-        TCGAchievement(f"{prefix.name} {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard, startingid+2),
-        TCGAchievement(f"{prefix.name} {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible, startingid+3),
+        TCGAchievement(f"{prefix.name} {easy_num} {descriptor} {rar.name} Cards", Difficulty.Easy, startingid, borders, foils),
+        TCGAchievement(f"{prefix.name} {med_num} {descriptor} {rar.name} Cards", Difficulty.Medium, startingid+1, borders, foils),
+        TCGAchievement(f"{prefix.name} {hard_num} {descriptor} {rar.name} Cards", Difficulty.Hard, startingid+2, borders, foils),
+        TCGAchievement(f"{prefix.name} {imp_num} {descriptor} {rar.name} Cards", Difficulty.Impossible, startingid+3, borders, foils),
     ]
 
 def get_region_action_achievements(prefix: AchievementPrefix, rar: Rarity, expansion: Expansion, startingid) -> List[TCGAchievement]:
     """Generalized for open/sell/grade types — avoids duplication."""
     achievements: List[TCGAchievement] = []
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, expansion.name, rar, 50, 100, 500, 1000))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, expansion.name, rar,list(Border), list(Foil),  50, 100, 500, 1000, ))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Foil.Foil.name} {expansion.name}", rar, 20, 50, 200, 500))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Foil.Foil.name} {expansion.name}", rar, list(Border), [Foil.Foil], 20, 50, 200, 500))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Base.name} {expansion.name}", rar, 20, 50, 200, 500))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Base.name} {expansion.name}", rar,[Border.Base], list(Foil), 20, 50, 200, 500))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.FirstEdition.name} {expansion.name}", rar, 20, 50, 200, 500))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.FirstEdition.name} {expansion.name}", rar,[Border.FirstEdition], list(Foil), 20, 50, 200, 500))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Silver.name} {expansion.name}", rar, 10, 25, 100, 250))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Silver.name} {expansion.name}", rar,[Border.Silver], list(Foil), 10, 25, 100, 250))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Gold.name} {expansion.name}", rar, 10, 25, 100, 250))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.Gold.name} {expansion.name}", rar,[Border.Gold], list(Foil), 10, 25, 100, 250))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.EX.name} {expansion.name}", rar, 4, 10, 40, 100))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.EX.name} {expansion.name}", rar,[Border.EX], list(Foil), 4, 10, 40, 100))
     startingid = startingid + 4
-    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.FullArt.name} {expansion.name}", rar, 2, 5, 20, 50))
+    achievements.extend(get_generic_action_achievement(startingid, prefix, f"{Border.FullArt.name} {expansion.name}", rar,[Border.FullArt], list(Foil), 2, 5, 20, 50))
 
     return achievements
-
-def parse_foil_array_from_name(name: str) -> List[int]:
-    """
-    If the name contains 'NonFoil' (or common variants) -> [0]
-    If the name contains 'Foil' (and not 'NonFoil') -> [1]
-    Otherwise -> [0,1]
-    """
-    lower = name.lower()
-    if "nonfoil" in lower or "non-foil" in lower or "non foil" in lower:
-        return [0]
-    # "foil" should be matched only if it's not the 'nonfoil' case above
-    if "foil" in lower:
-        return [1]
-    return [0, 1]
 
 def extract_threshold(name: str) -> int:
     parts = name.split(" ")
@@ -419,9 +408,9 @@ def build_achievement_objects(prefix: AchievementPrefix, difficulty: int, starti
                     "difficulty": ach.difficulty.value,
                     "threshold": extract_threshold(ach.name),
                     "rarity": [rar.value],
-                    "border": list(range(len(Border))),  # all borders valid by default
+                    "border": [b.value for b in ach.borders],
                     "expansion": [expansion.value],
-                    "foil": parse_foil_array_from_name(ach.name),
+                    "foil": [f.value for f in ach.foils],
                     "id": ach.id
                 }
                 achievements_json.append(entry)
@@ -439,9 +428,9 @@ def get_achievements_for_region(prefix: AchievementPrefix, rar: Rarity, expansio
             "difficulty": ach.difficulty.value,
             "threshold": extract_threshold(ach.name),
             "rarity": [rar.value],
-            "border": list(range(len(Border))),  # all borders valid by default
+            "border": [b.value for b in ach.borders],
             "expansion": [expansion.value],
-            "foil": parse_foil_array_from_name(ach.name),
+            "foil": [f.value for f in ach.foils],
             "id": ach.id
         }
         achievements_json.append(entry)
