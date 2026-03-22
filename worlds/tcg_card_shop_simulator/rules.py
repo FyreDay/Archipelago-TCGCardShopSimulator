@@ -594,22 +594,22 @@ def get_rules(world):
                 state.has("FormatWindCup", world.player),
             "First Edition Vintage Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatFirstEditionVintage", world.player),
             "Silver Border Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatSilverBorder", world.player),
             "Gold Border Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatGoldBorder", world.player),
             "Ex Border Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatExBorder", world.player),
             "Full Art Border Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatFullArtBorder", world.player),
             "Foil Games":
                 lambda state:
-                state.has("FormatStandard", world.player),
+                state.has("FormatFoil", world.player),
         }
     }
     return rules

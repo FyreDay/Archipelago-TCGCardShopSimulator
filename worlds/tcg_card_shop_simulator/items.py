@@ -331,7 +331,7 @@ not_sellable_dict: Dict[str, ItemData] = {
     "Workbench": ItemData(233, ItemClassification.progression),
     "Trash Bin": ItemData(234, ItemClassification.useful),
     "Checkout Counter": ItemData(235, ItemClassification.progression),
-    "progressive Large Shelf": ItemData(236, ItemClassification.useful, 4),
+    "Progressive Large Shelf": ItemData(236, ItemClassification.useful, 4),
     "Tournament Prize Shelf": ItemData(237, ItemClassification.progression),
     "Scanner" : ItemData(238, ItemClassification.useful),
     "Empty Box Storage": ItemData(239, ItemClassification.useful),
