@@ -157,9 +157,10 @@ def create_items(world):
     for name in junk:
         create_item(world, name, ItemClassification.filler)
 
-    trap = get_trap_item_names(world.multiworld.random, trap_count, trap_weights)
-    for name in trap:
-        create_item(world, name, ItemClassification.trap)
+    if trap_count != 0:
+        trap = get_trap_item_names(world.multiworld.random, trap_count, trap_weights)
+        for name in trap:
+            create_item(world, name, ItemClassification.trap)
     world.multiworld.itempool += world.itempool
     if len(world.itempool) > total_location_count:
         print(f"WARNING: Overfilled pool by {len(world.itempool) - total_location_count} items!")
