@@ -177,7 +177,13 @@ class CardGradingCheckDifficulty(Choice):
     """
     Grade Cards to complete goals for checks. How hard do you want these goals to be?
 
+    WARNING THESE TAKE A LONG TIME TO DO. WAYYYYYY BETTER FOR ASYNCS
+
     examples of checks:
+        "Grade 20 commons" is an easy check.
+        "Grade 100 foils" is medium
+        "Grade 1000 cards" is hard
+        "Grade 50 foil full arts" is impossible
     """
     display_name = "Card Grading Check Difficulty"
     option_disabled = 0
@@ -196,11 +202,11 @@ class PlayTableChecks(Range):
     range_end = 15
     default = 10
 
-class DecoShop(Toggle):
-    """
-    Turns the Deco Screen into a shop you can buy AP items in
-    """
-    display_name = "Decoration Shop"
+# class DecoShop(Toggle):
+#     """
+#     Turns the Deco Screen into a shop you can buy AP items in
+#     """
+#     display_name = "Decoration Shop"
 
 
 class TrapFill(Range):
@@ -292,11 +298,13 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         AutoRenovate,
         ExtraStartingItemChecks,
         SellCheckAmount,
+        PlayTableChecks,
+        DecoShop,
+    ]),
+    OptionGroup("Card Checks", [
         CardOpeningCheckDifficulty,
         CardSellingCheckDifficulty,
         CardGradingCheckDifficulty,
-        PlayTableChecks,
-        DecoShop,
     ]),
     OptionGroup("Sanity", [
         CardSanity,
