@@ -299,7 +299,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         ExtraStartingItemChecks,
         SellCheckAmount,
         PlayTableChecks,
-        DecoShop,
+        # DecoShop,
     ]),
     OptionGroup("Card Checks", [
         CardOpeningCheckDifficulty,
@@ -338,7 +338,7 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     checks_selling_difficulty: CardSellingCheckDifficulty
     checks_grading_difficulty: CardGradingCheckDifficulty
     play_table_checks: PlayTableChecks
-    deco_shop: DecoShop
+    # deco_shop: DecoShop
     deathlink: DeathLink
     card_sanity: CardSanity
     trap_fill: TrapFill
