@@ -27,7 +27,7 @@ card_region_names = {
 
 
 def has_card_pack(world, state, card_region):
-    card_level = world.pg1_licenses.get((card_region.value * 2), None)
+    card_level = world.pg1_licenses.get((190 if card_region.value == 0 else card_region.value * 2), None)
     box_level = world.pg1_licenses.get((card_region.value * 2) + 1, None)
 
     return (card_level is not None and state.has(f"Progressive {card_region_rarity[card_region]} Pack", world.player) and (card_level == 1 or state.can_reach_location(f"Level {card_level}", world.player)))  \

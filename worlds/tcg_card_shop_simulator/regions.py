@@ -106,7 +106,8 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
         starting_assigned = []
         for idx, (key, loc, shop_id) in enumerate(assigned_locations):
             is_starting = starting_region and shop_id in [0, 1, 2] and len(world.starting_item_ids) < 3 and shop_id not in starting_assigned
-            starting_assigned.append(shop_id)
+            if is_starting:
+                starting_assigned.append(shop_id)
             add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
             if is_starting:
                 world.starting_item_ids.append(loc.code)
@@ -192,8 +193,6 @@ def create_regions(world):
 
     return level_grouped_locs
 
-
-
 def connect_regions(world, from_name: str, to_name: str, entrance_name: str) -> Entrance:
     entrance_region = world.get_region(from_name)
     exit_region = world.get_region(to_name)
@@ -257,3 +256,116 @@ def connect_entrances(world):
             continue
         connect_regions(world, f"Level {l}-{l+4}", f"Level {l+5}-{l+5+4}", f"Level {l+5}")
 
+
+def ut_recreate_regions(world, pg1_licenses, pg2_licenses, pg3_licenses, tt_licenses):
+    shop_locs: list[dict[str, ShopLocation]] = locations.get_shop_locations(world)
+    level_grouped_locs: [list[dict[int, int]]] = [{}, {}, {}, {}]
+    level_grouped_locs[0] = pg1_licenses
+    level_grouped_locs[1] = pg2_licenses
+    level_grouped_locs[2] = pg3_licenses
+    level_grouped_locs[3] = tt_licenses
+
+    create_region(world, "Menu", "Menu Region", {})
+    for l in range(0, world.options.max_level.value + 5, 5):
+        if l == 0:
+            ut_recreate_level_region(world, "Level 1-4", "Level 1-4", shop_locs, level_grouped_locs, True)
+            continue
+        if world.options.max_level.value == l:
+            if l == 100:
+                ut_recreate_level_region(world, "Level 100", "Level 100", shop_locs, level_grouped_locs, final_region=True)
+            else:
+                ut_recreate_level_region(world, f"Level {l}-{l + 4}", f"Level {l}-{l + 4}",shop_locs, level_grouped_locs,
+                                    final_region=True)
+            continue
+        ut_recreate_level_region(world, f"Level {l}-{l + 4}", f"Level {l}-{l + 4}", shop_locs, level_grouped_locs)
+
+    create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC],
+                        min([level_grouped_locs[0][item_id] for item_id in [190, 1] if
+                             item_id in level_grouped_locs[0]], default=None), False)
+    create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE],
+                        min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]],
+                            default=None), False)
+    create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC],
+                        min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]],
+                            default=None), False)
+    create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY],
+                        min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]],
+                            default=None), False)
+    create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC],
+                        min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]],
+                            default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE],
+                        min([level_grouped_locs[0][item_id] for item_id in [10, 11] if
+                             item_id in level_grouped_locs[0]], default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC],
+                        min([level_grouped_locs[0][item_id] for item_id in [12, 13] if
+                             item_id in level_grouped_locs[0]], default=None), True)
+    create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY],
+                        min([level_grouped_locs[0][item_id] for item_id in [14, 15] if
+                             item_id in level_grouped_locs[0]], default=None), True)
+    if world.options.checks_selling_difficulty.value > 0:
+        create_region(world, "Sell Cards", f"Sell Any Card",
+                      locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))
+    if world.options.checks_grading_difficulty.value > 0:
+        create_region(world, "Grade Cards", f"Grade Any Card",
+                      locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
+
+    # todo: refactor to do formats
+    if world.options.play_table_checks.value > 0:
+        create_region(world, "Play Tables", "Play Tables", {})
+        create_region(world, "Standard Games", "Need Standard format",
+                      locations.get_play_table_checks(world, Format.Standard))
+        create_region(world, "Pauper Games", "Need Pauper format",
+                      locations.get_play_table_checks(world, Format.Pauper))
+        create_region(world, "FireCup Games", "Need FireCup format",
+                      locations.get_play_table_checks(world, Format.FireCup))
+        create_region(world, "EarthCup Games", "Need EarthCup format",
+                      locations.get_play_table_checks(world, Format.EarthCup))
+        create_region(world, "WaterCup Games", "Need WaterCup format",
+                      locations.get_play_table_checks(world, Format.WaterCup))
+        create_region(world, "WindCup Games", "Need WindCup format",
+                      locations.get_play_table_checks(world, Format.WindCup))
+        create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format",
+                      locations.get_play_table_checks(world, Format.FirstEditionVintage))
+        create_region(world, "Silver Border Games", "Need Silver Border format",
+                      locations.get_play_table_checks(world, Format.SilverBorder))
+        create_region(world, "Gold Border Games", "Need Gold Border format",
+                      locations.get_play_table_checks(world, Format.GoldBorder))
+        create_region(world, "Ex Border Games", "Need Ex Border format",
+                      locations.get_play_table_checks(world, Format.ExBorder))
+        create_region(world, "Full Art Border Games", "Need Full Art Border format",
+                      locations.get_play_table_checks(world, Format.FullArtBorder))
+        create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
+
+
+def ut_recreate_level_region(world, name: str, hint: str, shop_locs: list[dict[str, ShopLocation]],level_grouped_locs, starting_region:bool = False, final_region:bool = False):
+    region = Region(name, world.player, world.multiworld)
+    match = re.search(r'\d+', name)
+    level_number = int(match.group(0))
+
+    shop_order = [0, 1, 2, 3]  # shop 3 is TT
+
+    if not final_region:
+        starting_assigned = []
+        for shop_id in shop_order:
+            for code, level in level_grouped_locs[shop_id].items():
+                if level != level_number:
+                    continue
+                loc = ShopLocation(code)
+                key = next(
+                    (k for k, v in shop_locs[shop_id].items() if v.code == code),
+                    None
+                )
+
+                is_starting = starting_region and shop_id in [0, 1, 2] and len(
+                    world.starting_item_ids) < 3 and shop_id not in starting_assigned
+                if is_starting:
+                    starting_assigned.append(shop_id)
+
+                add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
+                if is_starting:
+                    world.starting_item_ids.append(loc.code)
+    add_locations(world, region, locations.get_level_checks(world, level_number, final_region))
+
+    world.multiworld.regions.append(region)
+    return region

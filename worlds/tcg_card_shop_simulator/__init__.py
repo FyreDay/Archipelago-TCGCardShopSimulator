@@ -61,6 +61,13 @@ class TCGSimulatorWorld(World):
         "licenses": set(item_dict.keys()),
     }
 
+    # UT Stuff Here
+    ut_can_gen_without_yaml = True
+
+    @staticmethod
+    def interpret_slot_data(slot_data: Dict[str, Any]) -> Dict[str, Any]:
+        return slot_data
+
     def __init__(self, multiworld, player):
         self.itempool = []
 
@@ -109,18 +116,20 @@ class TCGSimulatorWorld(World):
         if self.options.max_level.value % 5 != 0:
             self.options.max_level.value += 5 - (self.options.max_level.value % 5)
 
-        # self.open_achievements = build_achievement_objects(AchievementPrefix.Open, self.options.checks_opening_difficulty.value)
-        # self.sell_achievements = build_achievement_objects(AchievementPrefix.Sell, self.options.checks_selling_difficulty.value)
-        # self.grade_achievements = build_achievement_objects(AchievementPrefix.Grade, self.options.checks_grading_difficulty.value)
+        # UT Stuff Here
+        self.handle_ut_yamless(None)
 
 
     def create_regions(self):
-        level_grouped_locs = create_regions(self)
+        if hasattr(self.multiworld, "generation_is_fake"):
+            ut_recreate_regions(self, self.pg1_licenses, self.pg2_licenses, self.pg3_licenses, self.tt_licenses)
+        else:
+            level_grouped_locs = create_regions(self)
 
-        self.pg1_licenses = level_grouped_locs[0]
-        self.pg2_licenses = level_grouped_locs[1]
-        self.pg3_licenses = level_grouped_locs[2]
-        self.tt_licenses = level_grouped_locs[3]
+            self.pg1_licenses = level_grouped_locs[0]
+            self.pg2_licenses = level_grouped_locs[1]
+            self.pg3_licenses = level_grouped_locs[2]
+            self.tt_licenses = level_grouped_locs[3]
 
         connect_entrances(self)
 
@@ -140,15 +149,15 @@ class TCGSimulatorWorld(World):
     def set_rules(self):
         set_rules(self)
 
-    def generate_output(self, output_directory: str):
-        visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
-                          show_entrance_names=True,
-                          regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
-                              self.player])
+    # def generate_output(self, output_directory: str):
+    #     visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}.puml",
+    #                       show_entrance_names=True,
+    #                       regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
+    #                           self.player])
 
     def fill_slot_data(self) -> id:
         return {
-            "ModVersion": "0.6.0",
+            "ModVersion": "0.9.0",
             "StartingIds": self.starting_item_ids,
             "ShopPg1Mapping": self.pg1_licenses,
             "ShopPg2Mapping": self.pg2_licenses,
@@ -181,3 +190,60 @@ class TCGSimulatorWorld(World):
 
     def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
         hint_data[self.player] = self.hints
+
+    def handle_ut_yamless(self, slot_data: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+
+        if not slot_data \
+                and hasattr(self.multiworld, "re_gen_passthrough") \
+                and isinstance(self.multiworld.re_gen_passthrough, dict) \
+                and self.game in self.multiworld.re_gen_passthrough:
+            slot_data = self.multiworld.re_gen_passthrough[self.game]
+
+        if not slot_data:
+            return None
+
+        # fill in options
+        self.starting_item_ids = [int(x) for x in slot_data["StartingIds"]]
+        self.pg1_licenses = {
+            int(k): int(v)
+            for k, v in slot_data["ShopPg1Mapping"].items()
+        }
+
+        self.pg2_licenses = {
+            int(k): int(v)
+            for k, v in slot_data["ShopPg2Mapping"].items()
+        }
+
+        self.pg3_licenses = {
+            int(k): int(v)
+            for k, v in slot_data["ShopPg3Mapping"].items()
+        }
+
+        self.tt_licenses = {
+            int(k): int(v)
+            for k, v in slot_data["ShopTTMapping"].items()
+        }
+        self.open_achievements = slot_data["OpenAchievements"]
+        self.sell_achievements = slot_data["SellAchievements"]
+        self.grade_achievements = slot_data["GradeAchievements"]
+
+        self.options.max_level.value = slot_data["MaxLevel"]
+        self.options.licenses_per_region.value = slot_data["LicensesPerRegion"]
+        self.required_licenses = slot_data["RequiredLicenses"]
+        self.options.goal.value = slot_data["Goal"]
+        self.options.collection_goal_percentage.value = slot_data["CollectionGoalPercent"]
+        self.options.ghost_goal_amount.value = slot_data["GhostGoalAmount"]
+
+        self.options.auto_renovate.value = slot_data["AutoRenovate"]
+        self.options.extra_starting_item_checks.value = slot_data["ExtraStartingItemChecks"]
+        self.options.sell_check_amount.value = slot_data["SellCheckAmount"]
+        self.options.checks_opening_difficulty.value = slot_data["CardOpeningCheckDifficulty"]
+        self.options.checks_selling_difficulty.value = slot_data["CardSellingCheckDifficulty"]
+        self.options.checks_grading_difficulty.value = slot_data["CardGradingCheckDifficulty"]
+        self.options.play_table_checks.value = slot_data["PlayTableChecks"]
+
+        self.options.card_sanity.value = slot_data["CardSanity"]
+
+        self.options.trap_fill.value = slot_data["TrapFill"]
+
+        return slot_data
