@@ -1,6 +1,6 @@
 {
     "game": "TCG Card Shop Simulator",
     "minimum_ap_version": "0.6.6",
-    "world_version": "0.9.0",
+    "world_version": "1.0.0",
     "authors": ["FyreDay"]
 }
