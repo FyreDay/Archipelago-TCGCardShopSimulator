@@ -202,6 +202,7 @@ class Format(Enum):
     ExBorder = 9
     FullArtBorder = 10
     Foil = 11
+    NoFormat = 12
 
 class TCGAchievement(NamedTuple):
     name: str

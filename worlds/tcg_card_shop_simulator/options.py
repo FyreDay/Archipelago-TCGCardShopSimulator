@@ -41,7 +41,7 @@ class RequiredLicensesForProgress(Range):
 class Goal(Choice):
     """
     The victory condition for your run.
-    Collection Builder is about getting your card collection to a collected percentage. Minimum Max Level of 20.
+    Collection Builder is about getting access to all card packs and collecting a percentage of cards. Minimum Max Level of 20.
     Sell Ghost Cards hides ghost cards in locations to be found
     """
 
@@ -193,9 +193,15 @@ class CardGradingCheckDifficulty(Choice):
     option_impossible = 4
     default = 1
 
+class NoFormats(Toggle):
+    """
+    Have any format count towards a single play table check pool
+    """
+    display_name = "No Formats"
+
 class PlayTableChecks(Range):
     """
-    How many checks are there for each format on playtables?
+    How many checks are there for each format on play tables?
     """
     display_name = "Number of PlayTable Checks"
     range_start = 0
@@ -299,6 +305,7 @@ class tcg_cardshop_simulator_option_groups(PerGameCommonOptions):
         ExtraStartingItemChecks,
         SellCheckAmount,
         PlayTableChecks,
+        NoFormats,
         # DecoShop,
     ]),
     OptionGroup("Card Checks", [
@@ -338,6 +345,7 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     checks_selling_difficulty: CardSellingCheckDifficulty
     checks_grading_difficulty: CardGradingCheckDifficulty
     play_table_checks: PlayTableChecks
+    no_formats: NoFormats
     # deco_shop: DecoShop
     deathlink: DeathLink
     card_sanity: CardSanity

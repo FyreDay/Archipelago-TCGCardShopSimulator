@@ -59,6 +59,17 @@ class TCGSimulatorWorld(World):
 
     item_name_groups = {
         "licenses": set(item_dict.keys()),
+        "workers": {
+            "Worker - Zachery",
+            "Worker - Terence",
+            "Worker - Dennis",
+            "Worker - Clark",
+            "Worker - Angus",
+            "Worker - Benji",
+            "Worker - Lauren",
+            "Worker - Axel",
+            "Worker - Alexander"
+        }
     }
 
     # UT Stuff Here
@@ -186,6 +197,7 @@ class TCGSimulatorWorld(World):
 
             "TrapFill": self.options.trap_fill.value,
             "Deathlink": self.options.deathlink.value,
+            "NoFormat": self.options.no_formats.value,
         }
 
     def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
@@ -243,6 +255,7 @@ class TCGSimulatorWorld(World):
         self.options.play_table_checks.value = slot_data["PlayTableChecks"]
 
         self.options.card_sanity.value = slot_data["CardSanity"]
+        self.options.no_formats.value = slot_data["NoFormat"]
 
         self.options.trap_fill.value = slot_data["TrapFill"]
 

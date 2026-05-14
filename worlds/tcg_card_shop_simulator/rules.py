@@ -642,7 +642,12 @@ def set_rules(world):
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
 
     if world.options.goal.value == 1:
-        raise OptionError("Goal 1 Not Implemented")
+        world.multiworld.completion_condition[world.player] = (
+            lambda state: all(
+                has_card_pack(world, state, region)
+                for region in CardRegion
+            )
+        )
 
     if world.options.goal.value == 2:
         lambdas = {}

@@ -174,22 +174,23 @@ def create_regions(world):
         create_region(world, "Grade Cards", f"Grade Any Card",
                      locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
 
-    #todo: refactor to do formats
     if world.options.play_table_checks.value > 0:
-        create_region(world, "Play Tables", "Play Tables", {})
-        create_region(world, "Standard Games", "Need Standard format", locations.get_play_table_checks(world, Format.Standard))
-        create_region(world, "Pauper Games", "Need Pauper format", locations.get_play_table_checks(world, Format.Pauper))
-        create_region(world, "FireCup Games", "Need FireCup format", locations.get_play_table_checks(world, Format.FireCup))
-        create_region(world, "EarthCup Games", "Need EarthCup format", locations.get_play_table_checks(world, Format.EarthCup))
-        create_region(world, "WaterCup Games", "Need WaterCup format", locations.get_play_table_checks(world, Format.WaterCup))
-        create_region(world, "WindCup Games", "Need WindCup format", locations.get_play_table_checks(world, Format.WindCup))
-        create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format", locations.get_play_table_checks(world, Format.FirstEditionVintage))
-        create_region(world, "Silver Border Games", "Need Silver Border format", locations.get_play_table_checks(world, Format.SilverBorder))
-        create_region(world, "Gold Border Games", "Need Gold Border format", locations.get_play_table_checks(world, Format.GoldBorder))
-        create_region(world, "Ex Border Games", "Need Ex Border format", locations.get_play_table_checks(world, Format.ExBorder))
-        create_region(world, "Full Art Border Games", "Need Full Art Border format", locations.get_play_table_checks(world, Format.FullArtBorder))
-        create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
-
+        if world.options.no_formats:
+            create_region(world, "Play Tables", "Play Tables", locations.get_play_table_checks(world, Format.NoFormat))
+        else:
+            create_region(world, "Play Tables", "Play Tables", {})
+            create_region(world, "Standard Games", "Need Standard format", locations.get_play_table_checks(world, Format.Standard))
+            create_region(world, "Pauper Games", "Need Pauper format", locations.get_play_table_checks(world, Format.Pauper))
+            create_region(world, "FireCup Games", "Need FireCup format", locations.get_play_table_checks(world, Format.FireCup))
+            create_region(world, "EarthCup Games", "Need EarthCup format", locations.get_play_table_checks(world, Format.EarthCup))
+            create_region(world, "WaterCup Games", "Need WaterCup format", locations.get_play_table_checks(world, Format.WaterCup))
+            create_region(world, "WindCup Games", "Need WindCup format", locations.get_play_table_checks(world, Format.WindCup))
+            create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format", locations.get_play_table_checks(world, Format.FirstEditionVintage))
+            create_region(world, "Silver Border Games", "Need Silver Border format", locations.get_play_table_checks(world, Format.SilverBorder))
+            create_region(world, "Gold Border Games", "Need Gold Border format", locations.get_play_table_checks(world, Format.GoldBorder))
+            create_region(world, "Ex Border Games", "Need Ex Border format", locations.get_play_table_checks(world, Format.ExBorder))
+            create_region(world, "Full Art Border Games", "Need Full Art Border format", locations.get_play_table_checks(world, Format.FullArtBorder))
+            create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
 
     return level_grouped_locs
 
@@ -234,18 +235,19 @@ def connect_entrances(world):
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     if world.options.play_table_checks.value > 0:
         connect_regions(world, "Level 1-4", "Play Tables", "Play Table Found")
-        connect_regions(world, "Play Tables", "Standard Games", "Standard Games")
-        connect_regions(world, "Play Tables", "Pauper Games", "Pauper Games")
-        connect_regions(world, "Play Tables", "FireCup Games", "FireCup Games")
-        connect_regions(world, "Play Tables", "EarthCup Games", "EarthCup Games")
-        connect_regions(world, "Play Tables", "WaterCup Games", "WaterCup Games")
-        connect_regions(world, "Play Tables", "WindCup Games", "WindCup Games")
-        connect_regions(world, "Play Tables", "First Edition Vintage Games", "First Edition Vintage Games")
-        connect_regions(world, "Play Tables", "Silver Border Games", "Silver Border Games")
-        connect_regions(world, "Play Tables", "Gold Border Games", "Gold Border Games")
-        connect_regions(world, "Play Tables", "Ex Border Games", "Ex Border Games")
-        connect_regions(world, "Play Tables", "Full Art Border Games", "Full Art Border Games")
-        connect_regions(world, "Play Tables", "Foil Games", "Foil Games")
+        if not world.options.no_formats:
+            connect_regions(world, "Play Tables", "Standard Games", "Standard Games")
+            connect_regions(world, "Play Tables", "Pauper Games", "Pauper Games")
+            connect_regions(world, "Play Tables", "FireCup Games", "FireCup Games")
+            connect_regions(world, "Play Tables", "EarthCup Games", "EarthCup Games")
+            connect_regions(world, "Play Tables", "WaterCup Games", "WaterCup Games")
+            connect_regions(world, "Play Tables", "WindCup Games", "WindCup Games")
+            connect_regions(world, "Play Tables", "First Edition Vintage Games", "First Edition Vintage Games")
+            connect_regions(world, "Play Tables", "Silver Border Games", "Silver Border Games")
+            connect_regions(world, "Play Tables", "Gold Border Games", "Gold Border Games")
+            connect_regions(world, "Play Tables", "Ex Border Games", "Ex Border Games")
+            connect_regions(world, "Play Tables", "Full Art Border Games", "Full Art Border Games")
+            connect_regions(world, "Play Tables", "Foil Games", "Foil Games")
 
     for l in range(0,world.options.max_level.value, 5):
         if l == 0:
@@ -310,32 +312,34 @@ def ut_recreate_regions(world, pg1_licenses, pg2_licenses, pg3_licenses, tt_lice
         create_region(world, "Grade Cards", f"Grade Any Card",
                       locations.get_generic_grading_card_checks(world.options.checks_grading_difficulty.value))
 
-    # todo: refactor to do formats
     if world.options.play_table_checks.value > 0:
-        create_region(world, "Play Tables", "Play Tables", {})
-        create_region(world, "Standard Games", "Need Standard format",
-                      locations.get_play_table_checks(world, Format.Standard))
-        create_region(world, "Pauper Games", "Need Pauper format",
-                      locations.get_play_table_checks(world, Format.Pauper))
-        create_region(world, "FireCup Games", "Need FireCup format",
-                      locations.get_play_table_checks(world, Format.FireCup))
-        create_region(world, "EarthCup Games", "Need EarthCup format",
-                      locations.get_play_table_checks(world, Format.EarthCup))
-        create_region(world, "WaterCup Games", "Need WaterCup format",
-                      locations.get_play_table_checks(world, Format.WaterCup))
-        create_region(world, "WindCup Games", "Need WindCup format",
-                      locations.get_play_table_checks(world, Format.WindCup))
-        create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format",
-                      locations.get_play_table_checks(world, Format.FirstEditionVintage))
-        create_region(world, "Silver Border Games", "Need Silver Border format",
-                      locations.get_play_table_checks(world, Format.SilverBorder))
-        create_region(world, "Gold Border Games", "Need Gold Border format",
-                      locations.get_play_table_checks(world, Format.GoldBorder))
-        create_region(world, "Ex Border Games", "Need Ex Border format",
-                      locations.get_play_table_checks(world, Format.ExBorder))
-        create_region(world, "Full Art Border Games", "Need Full Art Border format",
-                      locations.get_play_table_checks(world, Format.FullArtBorder))
-        create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
+        if world.options.no_formats:
+            create_region(world, "Play Tables", "Play Tables", locations.get_play_table_checks(world, Format.NoFormat))
+        else:
+            create_region(world, "Play Tables", "Play Tables", {})
+            create_region(world, "Standard Games", "Need Standard format",
+                          locations.get_play_table_checks(world, Format.Standard))
+            create_region(world, "Pauper Games", "Need Pauper format",
+                          locations.get_play_table_checks(world, Format.Pauper))
+            create_region(world, "FireCup Games", "Need FireCup format",
+                          locations.get_play_table_checks(world, Format.FireCup))
+            create_region(world, "EarthCup Games", "Need EarthCup format",
+                          locations.get_play_table_checks(world, Format.EarthCup))
+            create_region(world, "WaterCup Games", "Need WaterCup format",
+                          locations.get_play_table_checks(world, Format.WaterCup))
+            create_region(world, "WindCup Games", "Need WindCup format",
+                          locations.get_play_table_checks(world, Format.WindCup))
+            create_region(world, "First Edition Vintage Games", "Need First Edition Vintage format",
+                          locations.get_play_table_checks(world, Format.FirstEditionVintage))
+            create_region(world, "Silver Border Games", "Need Silver Border format",
+                          locations.get_play_table_checks(world, Format.SilverBorder))
+            create_region(world, "Gold Border Games", "Need Gold Border format",
+                          locations.get_play_table_checks(world, Format.GoldBorder))
+            create_region(world, "Ex Border Games", "Need Ex Border format",
+                          locations.get_play_table_checks(world, Format.ExBorder))
+            create_region(world, "Full Art Border Games", "Need Full Art Border format",
+                          locations.get_play_table_checks(world, Format.FullArtBorder))
+            create_region(world, "Foil Games", "Need Foil format", locations.get_play_table_checks(world, Format.Foil))
 
 
 def ut_recreate_level_region(world, name: str, hint: str, shop_locs: list[dict[str, ShopLocation]],level_grouped_locs, starting_region:bool = False, final_region:bool = False):

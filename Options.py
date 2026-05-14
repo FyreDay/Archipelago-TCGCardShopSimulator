@@ -1455,7 +1455,7 @@ class PriorityLocations(LocationSet):
 
 
 class DeathLink(Toggle):
-    """When you die, everyone who enabled death link dies. Of course, the reverse is true too."""
+    """When a customer leaves due to stink, send a death die, everyone who enabled death link dies. Of course, the reverse is true too."""
     display_name = "Death Link"
     rich_text_doc = True
 

@@ -37,6 +37,14 @@ def get_play_table_checks(world, game_format: Format):
 def get_play_table_checks_internal(game_check_count: int, gameformat: Format):
     play_table_locs = {}
     if game_check_count > 0:
+        if gameformat == Format.NoFormat:
+            for i in range(game_check_count):
+                name = f"Play {i + 1} Event Games"
+                hex_id = PLAY_TABLE_START_ID + gameformat.value * 15 + i
+                play_table_locs[name] = hex_id
+
+            return play_table_locs
+
         for i in range(game_check_count):
             name = f"Play {i + 1} Format {gameformat.name}"
             hex_id = PLAY_TABLE_START_ID + gameformat.value * 15 + i
