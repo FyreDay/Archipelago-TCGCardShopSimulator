@@ -217,6 +217,7 @@ def get_all_locations():
     all_locations.update(get_play_table_checks_internal(10, Format.ExBorder))
     all_locations.update(get_play_table_checks_internal(10, Format.FullArtBorder))
     all_locations.update(get_play_table_checks_internal(10, Format.Foil))
+    all_locations.update(get_play_table_checks_internal(10, Format.NoFormat))
 
     for item_key, item_data in pg1_locations.items():
         license_checks = get_license_checks_internal(16, 2, item_key, item_data)

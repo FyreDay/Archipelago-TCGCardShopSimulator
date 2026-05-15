@@ -360,15 +360,9 @@ def ut_recreate_level_region(world, name: str, hint: str, shop_locs: list[dict[s
                     (k for k, v in shop_locs[shop_id].items() if v.code == code),
                     None
                 )
+                print(world.starting_item_ids)
+                add_locations(world, region, locations.get_license_checks(world, key, loc, loc.code in world.starting_item_ids))
 
-                is_starting = starting_region and shop_id in [0, 1, 2] and len(
-                    world.starting_item_ids) < 3 and shop_id not in starting_assigned
-                if is_starting:
-                    starting_assigned.append(shop_id)
-
-                add_locations(world, region, locations.get_license_checks(world, key, loc, is_starting))
-                if is_starting:
-                    world.starting_item_ids.append(loc.code)
     add_locations(world, region, locations.get_level_checks(world, level_number, final_region))
 
     world.multiworld.regions.append(region)

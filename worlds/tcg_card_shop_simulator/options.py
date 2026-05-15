@@ -138,14 +138,17 @@ class CardOpeningCheckDifficulty(Choice):
 
 class CardSanity(Choice):
     """
-    Enables each card to be a unique check. This follows your card opening difficulty set above. Each version adds 242 checks
-
-    Easy : Basic cards are checks
-    medium: Basic, 1st Edition, and Silver Edition cards are checks
-    hard: basic, 1st Edition, Silver Edition, gold edition are checks
-    impossible: All cards are checks
-
+    Enables each card to be a unique check.
     Normally foils will count the same as the non-foil card. "Unique foils" will cause the foil version to be a unique check
+
+
+    This follows your card opening difficulty set above. Below is what happens depending on that option.
+    Each version adds 242 checks
+
+    Card Opening "Easy": Basic cards are checks
+    Card Opening "Medium": Basic, 1st Edition, and Silver Edition cards are checks
+    Card Opening "Hard": basic, 1st Edition, Silver Edition, gold edition are checks
+    Card Opening "Impossible": All cards are checks
 
     At Card Opening Difficulty "Impossible" this adds 1452 checks. doubled to 2904 if on foil setting
     """
