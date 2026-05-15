@@ -58,8 +58,10 @@ def create_items(world):
     if world.options.start_with_worker.value > 0:
         starting_items.append(
             Item(world.item_id_to_name[218 + world.options.start_with_worker.value], ItemClassification.progression, (218 + world.options.start_with_worker.value), world.player))
-    starting_items.append(Item("FormatStandard", ItemClassification.useful, format_dict["FormatStandard"].code ,world.player))
+
     starting_items.append(Item("Progressive Shelf", ItemClassification.useful, not_sellable_dict["Progressive Shelf"].code ,world.player))
+    starting_items.append(
+        Item("FormatStandard", ItemClassification.useful, format_dict["FormatStandard"].code, world.player))
     #create all items except ghosts and junk
     num = 0
     for item_name, item_data in item_dict.items():
@@ -69,9 +71,10 @@ def create_items(world):
         item_data.code in world.tt_licenses) and item_data.code not in world.starting_item_ids:
             create_item(world, item_name, item_data.classification, item_data.amount)
 
-    if world.options.play_table_checks.value > 0:
+    if world.options.play_table_checks.value > 0 and not world.options.no_formats:
         for item_name, item_data in format_dict.items():
-            create_item(world, item_name, item_data.classification, item_data.amount)
+            if item_name != "FormatStandard":
+                create_item(world, item_name, item_data.classification, item_data.amount)
 
     if total_location_count > 140:
         for item_name, item_data in not_sellable_dict.items():

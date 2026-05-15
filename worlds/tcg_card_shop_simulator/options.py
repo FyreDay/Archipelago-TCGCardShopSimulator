@@ -64,7 +64,7 @@ class GhostGoalAmount(Range):
 
 class CollectionGoalPercentage(Range):
     """
-    If on Collection Goal, What percentage of the collection do you need to collect?
+    If on Collection Goal, What percentage of the collection do you need to collect after you get all the packs?
     the host can limit this setting to 50%
     """
 

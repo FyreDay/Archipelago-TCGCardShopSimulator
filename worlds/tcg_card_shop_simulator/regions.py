@@ -114,7 +114,7 @@ def create_level_region(world, name: str, hint: str, shop_locs: list[dict[str, S
     elif world.options.goal.value == 1:
         #If in collection goal, make sure any packs not in the world are at the final region
         shop_id = 0
-        for name, loc in shop_locs[0].items():
+        for name, loc in list(shop_locs[0].items()):
             if "Pack" not in name:
                 continue
 
@@ -158,15 +158,15 @@ def create_regions(world):
             continue
         create_level_region(world, f"Level {l}-{l+4}", f"Level {l}-{l+4}", shop_locs, level_grouped_locs)
 
-
-    create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC], min([level_grouped_locs[0][item_id] for item_id in [190, 1] if item_id in level_grouped_locs[0]], default=None), False)
-    create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE], min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]], default=None), False)
-    create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC], min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]], default=None), False)
-    create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]], default=None), False)
-    create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC], min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]], default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE], min([level_grouped_locs[0][item_id] for item_id in [10, 11] if item_id in level_grouped_locs[0]], default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC], min([level_grouped_locs[0][item_id] for item_id in [12, 13] if item_id in level_grouped_locs[0]], default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [14, 15] if item_id in level_grouped_locs[0]], default=None), True)
+    if world.options.checks_opening_difficulty > 0:
+        create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC], min([level_grouped_locs[0][item_id] for item_id in [190, 1] if item_id in level_grouped_locs[0]], default=None), False)
+        create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE], min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]], default=None), False)
+        create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC], min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]], default=None), False)
+        create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]], default=None), False)
+        create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC], min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]], default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE], min([level_grouped_locs[0][item_id] for item_id in [10, 11] if item_id in level_grouped_locs[0]], default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC], min([level_grouped_locs[0][item_id] for item_id in [12, 13] if item_id in level_grouped_locs[0]], default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY], min([level_grouped_locs[0][item_id] for item_id in [14, 15] if item_id in level_grouped_locs[0]], default=None), True)
     if world.options.checks_selling_difficulty.value > 0:
         create_region(world, "Sell Cards", f"Sell Any Card",
                       locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))
@@ -223,14 +223,15 @@ def connect_sell_region(world, region_name, level):
     connect_regions(world, f"Level {level}-{end_level}", region_name, region_name)
 
 def connect_entrances(world):
-    connect_pack_region(world, CardRegion.BASIC, [item_id for item_id in [190,1] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.RARE, [item_id for item_id in [2,3] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.EPIC, [item_id for item_id in [4,5] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.LEGENDARY, [item_id for item_id in [6,7] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.DESTINY_BASIC, [item_id for item_id in [8,9] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.DESTINY_RARE, [item_id for item_id in [10,11] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.DESTINY_EPIC, [item_id for item_id in [12,13] if item_id in world.pg1_licenses])
-    connect_pack_region(world, CardRegion.DESTINY_LEGENDARY, [item_id for item_id in [14,15] if item_id in world.pg1_licenses])
+    if world.options.checks_opening_difficulty > 0:
+        connect_pack_region(world, CardRegion.BASIC, [item_id for item_id in [190,1] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.RARE, [item_id for item_id in [2,3] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.EPIC, [item_id for item_id in [4,5] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.LEGENDARY, [item_id for item_id in [6,7] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.DESTINY_BASIC, [item_id for item_id in [8,9] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.DESTINY_RARE, [item_id for item_id in [10,11] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.DESTINY_EPIC, [item_id for item_id in [12,13] if item_id in world.pg1_licenses])
+        connect_pack_region(world, CardRegion.DESTINY_LEGENDARY, [item_id for item_id in [14,15] if item_id in world.pg1_licenses])
 
     connect_regions(world, "Menu", "Level 1-4", "Level 1")
     if world.options.play_table_checks.value > 0:
@@ -280,31 +281,31 @@ def ut_recreate_regions(world, pg1_licenses, pg2_licenses, pg3_licenses, tt_lice
                                     final_region=True)
             continue
         ut_recreate_level_region(world, f"Level {l}-{l + 4}", f"Level {l}-{l + 4}", shop_locs, level_grouped_locs)
-
-    create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC],
-                        min([level_grouped_locs[0][item_id] for item_id in [190, 1] if
-                             item_id in level_grouped_locs[0]], default=None), False)
-    create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE],
-                        min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]],
-                            default=None), False)
-    create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC],
-                        min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]],
-                            default=None), False)
-    create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY],
-                        min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]],
-                            default=None), False)
-    create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC],
-                        min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]],
-                            default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE],
-                        min([level_grouped_locs[0][item_id] for item_id in [10, 11] if
-                             item_id in level_grouped_locs[0]], default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC],
-                        min([level_grouped_locs[0][item_id] for item_id in [12, 13] if
-                             item_id in level_grouped_locs[0]], default=None), True)
-    create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY],
-                        min([level_grouped_locs[0][item_id] for item_id in [14, 15] if
-                             item_id in level_grouped_locs[0]], default=None), True)
+    if world.options.checks_opening_difficulty > 0:
+        create_pack_regions(world, CardRegion.BASIC, card_region_names[CardRegion.BASIC],
+                            min([level_grouped_locs[0][item_id] for item_id in [190, 1] if
+                                 item_id in level_grouped_locs[0]], default=None), False)
+        create_pack_regions(world, CardRegion.RARE, card_region_names[CardRegion.RARE],
+                            min([level_grouped_locs[0][item_id] for item_id in [2, 3] if item_id in level_grouped_locs[0]],
+                                default=None), False)
+        create_pack_regions(world, CardRegion.EPIC, card_region_names[CardRegion.EPIC],
+                            min([level_grouped_locs[0][item_id] for item_id in [4, 5] if item_id in level_grouped_locs[0]],
+                                default=None), False)
+        create_pack_regions(world, CardRegion.LEGENDARY, card_region_names[CardRegion.LEGENDARY],
+                            min([level_grouped_locs[0][item_id] for item_id in [6, 7] if item_id in level_grouped_locs[0]],
+                                default=None), False)
+        create_pack_regions(world, CardRegion.DESTINY_BASIC, card_region_names[CardRegion.DESTINY_BASIC],
+                            min([level_grouped_locs[0][item_id] for item_id in [8, 9] if item_id in level_grouped_locs[0]],
+                                default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_RARE, card_region_names[CardRegion.DESTINY_RARE],
+                            min([level_grouped_locs[0][item_id] for item_id in [10, 11] if
+                                 item_id in level_grouped_locs[0]], default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_EPIC, card_region_names[CardRegion.DESTINY_EPIC],
+                            min([level_grouped_locs[0][item_id] for item_id in [12, 13] if
+                                 item_id in level_grouped_locs[0]], default=None), True)
+        create_pack_regions(world, CardRegion.DESTINY_LEGENDARY, card_region_names[CardRegion.DESTINY_LEGENDARY],
+                            min([level_grouped_locs[0][item_id] for item_id in [14, 15] if
+                                 item_id in level_grouped_locs[0]], default=None), True)
     if world.options.checks_selling_difficulty.value > 0:
         create_region(world, "Sell Cards", f"Sell Any Card",
                       locations.get_generic_sell_card_checks(world.options.checks_selling_difficulty.value))

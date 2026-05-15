@@ -55,7 +55,7 @@ def get_play_table_checks_internal(game_check_count: int, gameformat: Format):
 def get_level_checks(world, region_level, final_region: bool = False):
     return get_level_checks_internal(region_level, final_region, world.options.goal.value)
 
-def get_level_checks_internal( region_level, final_region: bool = False, goal = 3):
+def get_level_checks_internal( region_level, final_region: bool = False, goal = 1):
     level_locs = {}
     if final_region:
         if goal == 0:
