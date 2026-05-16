@@ -73,8 +73,7 @@ def create_items(world):
 
     if world.options.play_table_checks.value > 0 and not world.options.no_formats:
         for item_name, item_data in format_dict.items():
-            if item_name != "FormatStandard":
-                create_item(world, item_name, item_data.classification, item_data.amount)
+            create_item(world, item_name, item_data.classification, item_data.amount)
 
     if total_location_count > 140:
         for item_name, item_data in not_sellable_dict.items():
