@@ -4,8 +4,8 @@ from .data.LocationData import *
 
 PLAY_TABLE_START_ID = 300
 LEVEL_START_ID = 200
-BULK_BOX_TETRA = 4000
-BULK_BOX_DESTINY = 4020
+BULK_BOX_TETRA = 5000
+BULK_BOX_DESTINY = 5020
 CARD_OPEN_START_ID = 1000
 CARD_SELL_START_ID = 500
 CARD_GRADE_START_ID = 2000
@@ -187,13 +187,12 @@ def get_grading_card_checks_internal(difficulty:int, card_region: int):
 def get_generic_grading_card_checks(difficulty: int):
     return {}
 
-def get_bulk_box_checks(world, level_grouped_locs):
+def get_bulk_box_checks(world, level_grouped_locs):    
     has_tetramon = any(item_id in level_grouped_locs[0] for item_id in [190, 1, 2, 3, 4, 5, 6, 7])
     has_destiny = any(item_id in level_grouped_locs[0] for item_id in [8, 9, 10, 11, 12, 13, 14, 15])
     return get_bulk_box_checks_internal(world.options.bulk_box.value, world.options.sell_check_amount.value, has_tetramon, has_destiny)
 
 def get_bulk_box_checks_internal(bulk_box_option, sell_check_amount, has_tetramon, has_destiny):
-
     sell_bulk_locs = {}
     if bulk_box_option > 0:
         for n in range(1, sell_check_amount + 1):
