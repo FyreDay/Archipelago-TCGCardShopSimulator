@@ -1,4 +1,4 @@
-from BaseClasses import LocationProgressType, CollectionState
+import re
 from . import CardRegion
 from .items import *
 from .locations import *
