@@ -1,14 +1,11 @@
-name: Release
+name: Unit Tests And Build
 
 on:
   push:
-    tags:
-      - "v*"
+  pull_request:
 
 jobs:
-  release:
-    permissions:
-      contents: write
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,10 +41,14 @@ jobs:
           sed -i '0,/version: 0\.6\.8/s//version: 0.6.7/' \
             "Players/Templates/TCG-Card-Shop-Simulator.yaml"
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload APWorld
+        uses: actions/upload-artifact@v4
         with:
-          prerelease: true
-          files: |
-            build/apworlds/tcg_card_shop_simulator.apworld
-            Players/Templates/TCG-Card-Shop-Simulator.yaml
+          name: mina-the-hollower-apworld
+          path: build/apworlds/tcg_card_shop_simulator.apworld
+
+      - name: Upload Template
+        uses: actions/upload-artifact@v4
+        with:
+          name: mina-the-hollower-template
+          path: Players/Templates/TCG-Card-Shop-Simulator.yaml

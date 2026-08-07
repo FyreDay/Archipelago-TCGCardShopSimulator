@@ -197,12 +197,12 @@ class TCGSimulatorWorld(World):
     #def connect_entrances(self):
        # print("connecting entrances")
 
-    #def generate_output(self, output_directory: str):
-        #print("Generating Output")
-        # visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}_output.puml",
-        #                   show_entrance_names=True,
-        #                   regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
-        #                       self.player])
+    def generate_output(self, output_directory: str):
+        print("Generating Output")
+        visualize_regions(self.multiworld.get_region("Menu", self.player), f"Player{self.player}_output.puml",
+                          show_entrance_names=True,
+                          regions_to_highlight=self.multiworld.get_all_state(self.player).reachable_regions[
+                              self.player])
 
 
     def fill_slot_data(self) -> id:
