@@ -42,7 +42,7 @@ jobs:
       - name: Fix template AP version
         run: |
           sed -i '0,/version: 0\.6\.8/s//version: 0.6.7/' \
-            "Players/Templates/tcg_card_shop_simulator.yaml"
+            "Players/Templates/TCG Card Shop Simulator.yaml"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -50,4 +50,4 @@ jobs:
           prerelease: true
           files: |
             build/apworlds/tcg_card_shop_simulator.apworld
-            Players/Templates/tcg_card_shop_simulator.yaml
+            Players/Templates/TCG Card Shop Simulator.yaml
