@@ -39,7 +39,7 @@ jobs:
       - name: Fix template AP version
         run: |
           sed -i '0,/version: 0\.6\.8/s//version: 0.6.7/' \
-            "Players/Templates/TCG-Card-Shop-Simulator.yaml"
+            "Players/Templates/tcg_card_shop_simulator.yaml"
 
       - name: Upload APWorld
         uses: actions/upload-artifact@v4
@@ -51,4 +51,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tcg_card_shop_simulator-template
-          path: Players/Templates/TCG-Card-Shop-Simulator.yaml
+          path: Players/Templates/tcg_card_shop_simulator.yaml
