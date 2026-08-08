@@ -26,7 +26,7 @@ jobs:
 
       - uses: Eijebong/ap-actions/ap-tests@main
         with:
-          apworld-path: worlds/mina_the_hollower
+          apworld-path: worlds/tcg_card_shop_simulator
           ap-version: '0.6.7'
           python-version: '3.12'
 

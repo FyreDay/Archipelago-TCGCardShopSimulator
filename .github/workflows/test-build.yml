@@ -23,7 +23,7 @@ jobs:
 
       - uses: Eijebong/ap-actions/ap-tests@main
         with:
-          apworld-path: worlds/mina_the_hollower
+          apworld-path: worlds/tcg_card_shop_simulator
           ap-version: '0.6.7'
           python-version: '3.12'
 
@@ -44,11 +44,11 @@ jobs:
       - name: Upload APWorld
         uses: actions/upload-artifact@v4
         with:
-          name: mina-the-hollower-apworld
+          name: tcg_card_shop_simulator-apworld
           path: build/apworlds/tcg_card_shop_simulator.apworld
 
       - name: Upload Template
         uses: actions/upload-artifact@v4
         with:
-          name: mina-the-hollower-template
+          name: tcg_card_shop_simulator-template
           path: Players/Templates/TCG-Card-Shop-Simulator.yaml
