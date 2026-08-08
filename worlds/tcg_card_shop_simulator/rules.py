@@ -573,28 +573,28 @@ def get_rules(world):
                 state.has("Progressive Card Table", world.player) and has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY),
             f"Grade {card_region_names[CardRegion.BASIC]}":
                 lambda state:
-                has_card_pack(world, state, CardRegion.BASIC),
+                has_card_pack(world, state, CardRegion.BASIC) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.RARE]}":
                 lambda state:
-                has_card_pack(world, state, CardRegion.RARE),
+                has_card_pack(world, state, CardRegion.RARE) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.EPIC]}":
                 lambda state:
-                has_card_pack(world, state, CardRegion.EPIC),
+                has_card_pack(world, state, CardRegion.EPIC) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.LEGENDARY]}":
                 lambda state:
-                has_card_pack(world, state, CardRegion.LEGENDARY),
+                has_card_pack(world, state, CardRegion.LEGENDARY) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.DESTINY_BASIC]}":
                 lambda state:
-                has_card_pack(world, state,CardRegion.DESTINY_BASIC),
+                has_card_pack(world, state,CardRegion.DESTINY_BASIC) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.DESTINY_RARE]}":
                 lambda state:
-                has_card_pack(world, state,CardRegion.DESTINY_RARE),
+                has_card_pack(world, state,CardRegion.DESTINY_RARE) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.DESTINY_EPIC]}":
                 lambda state:
-                has_card_pack(world, state,CardRegion.DESTINY_EPIC),
+                has_card_pack(world, state,CardRegion.DESTINY_EPIC) and state.has("Grading Unlock", world.player),
             f"Grade {card_region_names[CardRegion.DESTINY_LEGENDARY]}":
                 lambda state:
-                has_card_pack(world, state,CardRegion.DESTINY_LEGENDARY),
+                has_card_pack(world, state,CardRegion.DESTINY_LEGENDARY) and state.has("Grading Unlock", world.player),
             "Standard Games":
                 lambda state:
                 state.has("FormatStandard", world.player),

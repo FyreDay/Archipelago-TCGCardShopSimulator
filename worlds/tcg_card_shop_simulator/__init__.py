@@ -240,6 +240,7 @@ class TCGSimulatorWorld(World):
             "TrapFill": self.options.trap_fill.value,
             "Deathlink": self.options.deathlink.value,
             "NoFormat": self.options.no_formats.value,
+            "grading_locked": True
         }
 
     def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
