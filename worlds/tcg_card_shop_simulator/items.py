@@ -6,7 +6,6 @@ from typing import Optional, Dict, List
 
 from BaseClasses import Item, ItemClassification
 from Options import OptionError
-from worlds.noita.locations import amount
 
 
 class TCGSimulatorItem(Item):
