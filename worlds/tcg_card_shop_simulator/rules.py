@@ -428,16 +428,18 @@ def get_rules(world):
         "bulk_boxes": {
             "Tetramon":
                 lambda state:
-                has_card_pack(world, state, CardRegion.BASIC) or
+                (has_card_pack(world, state, CardRegion.BASIC) or
                 has_card_pack(world, state, CardRegion.RARE) or
                 has_card_pack(world, state, CardRegion.EPIC) or
-                has_card_pack(world, state, CardRegion.LEGENDARY),
+                has_card_pack(world, state, CardRegion.LEGENDARY)) and
+                state.has("Workbench", world.player),
             "Destiny":
                 lambda state:
-                has_card_pack(world, state, CardRegion.DESTINY_BASIC) or
+                (has_card_pack(world, state, CardRegion.DESTINY_BASIC) or
                 has_card_pack(world, state, CardRegion.DESTINY_RARE) or
                 has_card_pack(world, state, CardRegion.DESTINY_EPIC) or
-                has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY),
+                has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY)) and
+                state.has("Workbench", world.player),
         },
         "entrances": {
             "Level 5":
@@ -503,29 +505,21 @@ def get_rules(world):
                 lambda state:
                     has_required_licenses(world, state, 100),
             "Basic Card Pack":
-                lambda state:
-                state.has("Progressive Basic Card Pack", world.player) or state.has("Progressive Basic Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.BASIC),
             "Rare Card Pack":
-                lambda state:
-                state.has("Progressive Rare Card Pack", world.player) or state.has("Progressive Rare Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.RARE),
             "Epic Card Pack":
-                lambda state:
-                state.has("Progressive Epic Card Pack", world.player) or state.has("Progressive Epic Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.EPIC),
             "Legendary Card Pack":
-                lambda state:
-                state.has("Progressive Legendary Card Pack", world.player) or state.has("Progressive Legendary Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.LEGENDARY),
             "Basic Destiny Pack":
-                lambda state:
-                state.has("Progressive Basic Destiny Pack", world.player) or state.has("Progressive Basic Destiny Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.DESTINY_BASIC),
             "Rare Destiny Pack":
-                lambda state:
-                state.has("Progressive Rare Destiny Pack", world.player)or state.has("Progressive Rare Destiny Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.DESTINY_RARE),
             "Epic Destiny Pack":
-                lambda state:
-                state.has("Progressive Epic Destiny Pack", world.player)or state.has("Progressive Epic Destiny Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.DESTINY_EPIC),
             "Legendary Destiny Pack":
-                lambda state:
-                state.has("Progressive Legendary Destiny Pack", world.player)or state.has("Progressive Legendary Destiny Card Box", world.player),
+                lambda state: has_card_pack(world, state, CardRegion.DESTINY_LEGENDARY),
             "Basic Card Box":
                 lambda state:
                 state.has("Progressive Basic Card Box", world.player),
