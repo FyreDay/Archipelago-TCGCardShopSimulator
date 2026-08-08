@@ -1,17 +1,13 @@
 import copy
-import re
 from collections import Counter
 from dataclasses import dataclass
 from typing import Optional, Dict, List
 
 from BaseClasses import Item, ItemClassification
 from Options import OptionError
-from worlds.noita.locations import amount
-
 
 class TCGSimulatorItem(Item):
     game: str = "TCG Card Shop Simulator"
-
 
 @dataclass
 class ItemData:
@@ -481,5 +477,3 @@ trap_dict: Dict[str, ItemData] = {
 
 
 full_item_dict: Dict[str, ItemData] = {**item_dict, **not_sellable_dict, **random_ghost_dict, **ghost_dict, **junk_dict, **trap_dict, **format_dict}
-
-
