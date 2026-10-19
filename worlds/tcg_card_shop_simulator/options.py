@@ -145,10 +145,10 @@ class CardOpeningCheckDifficulty(Choice):
     There are around 10 achievements for each difficulty. Harder options include easier achievements.
 
     Example achievements:
-    Easy: First common foil
-    Medium: Open 20 gold border foils from legendary packs
-    Hard: Collect all 12 versions of a card
-    Impossible: Collect 100 full arts from a pack
+    Easy: Open 5 foils
+    Medium: Open 10 foils
+    Hard: Open 20 foils
+    Impossible: open 100 foils
     """
     display_name = "Card Opening Check Difficulty"
     option_disabled = 0
@@ -165,10 +165,10 @@ class CardSellingCheckDifficulty(Choice):
     There are around 10 achievements for each difficulty. Harder options include easier achievements.
 
     Example goals:
-    Easy: Sell 20 commons
-    Medium: Sell 100 foils
-    Hard: Sell 1000 cards
-    Impossible: Sell 50 foil full arts
+    Easy: Sell a foil
+    Medium: Sell 4 foils
+    Hard: Sell 10 foils
+    Impossible: Sell 40 foils
     """
     display_name = "Card Selling Check Difficulty"
     option_disabled = 0
@@ -187,10 +187,10 @@ class CardGradingCheckDifficulty(Choice):
     Grading checks take much longer and are better for async games.
 
     Example goals:
-    Easy: Grade 10 commons
-    Medium: Grade 50 foils
-    Hard: Grade 100 cards
-    Impossible: Grade 20 foil full arts
+    Easy: Grade 1 card
+    Medium: Grade 1 card over a 5
+    Hard: Grade 1 card over an 8
+    Impossible: Grade 2 cards a 10
     """
     display_name = "Card Grading Check Difficulty"
     option_disabled = 0
@@ -212,6 +212,15 @@ class PlayTableChecks(Range):
     Number of checks available per play table format. Large values take a long time.
     """
     display_name = "Number of PlayTable Checks"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+class TournamentPrizeChecks(Range):
+    """
+    Number of checks available as a prize in an Archipelago Tournament. Play and win for checks!
+    """
+    display_name = "Number of Tournament Checks"
     range_start = 0
     range_end = 100
     default = 10
@@ -286,6 +295,7 @@ tcg_cardshop_simulator_option_groups= [
         BulkBoxChecks,
         PlayTableChecks,
         NoFormats,
+        TournamentPrizeChecks
         # DecoShop,
     ]),
     OptionGroup("Card Checks", [
@@ -322,6 +332,7 @@ class TCGSimulatorOptions(PerGameCommonOptions):
     bulk_box: BulkBoxChecks
     play_table_checks: PlayTableChecks
     no_formats: NoFormats
+    tournament_checks: TournamentPrizeChecks
     checks_opening_difficulty: CardOpeningCheckDifficulty
     card_sanity: CardSanity
     card_sanity_percentage: CardSanityCheckPercentage
