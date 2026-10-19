@@ -1,31 +1,47 @@
-import copy
+from __future__ import annotations
+
 from collections import Counter
-from dataclasses import dataclass
-from typing import Optional, Dict, List
+from typing import TYPE_CHECKING
 
-from BaseClasses import Item, ItemClassification
+from BaseClasses import Item, CollectionRule, Location, ItemClassification
 from Options import OptionError
+from rule_builder.rules import Rule, True_
 
-class TCGSimulatorItem(Item):
-    game: str = "TCG Card Shop Simulator"
+from .data.regions.regions import get_level_region
+from .data.items.events import Events
+from .constants import ITEMS_WORKER_OFFSET, ITEMS_GHOST_OFFSET
+from .data import ItemTypeEnum, ItemData
+from .data.items import Blockers, DIYItems, Expansions, event_items, get_shop_items, \
+    all_diy_items, all_expansion_items, minimal_diy_items, minimal_expansion_items, diy_items, \
+    expansion_items, all_worker_items
+from .data.items.ghost import GHOST_ITEM_BY_ID
+from .data.items.workers import WORKERS_ITEM_BY_ID
 
-@dataclass
-class ItemData:
-    code: int
-    classification: ItemClassification
-    amount: Optional[int] = 1
-
-def create_item(world, name: str, classification: ItemClassification, amount: Optional[int] = 1):
-    for i in range(amount):
-        world.itempool.append(Item(name, classification, world.item_name_to_id[name], world.player))
+if TYPE_CHECKING:
+    from . import TCGSimulatorWorld
+    from .world_base import TCGSimulatorBase
 
 
-def generate_ghost_card_items(world, ghost_goal_amount, locs_available):
-    if locs_available * 5 < ghost_goal_amount:
+def create_item(world: "TCGSimulatorWorld", item: ItemData):
+    for i in range(item.amount):
+        world.itempool.append(world.create_item(item.type.value))
+
+
+def create_single_item(world: "TCGSimulatorWorld", item_type: ItemTypeEnum):
+    world.itempool.append(world.create_item(item_type.value))
+
+def create_filler_item(world: "TCGSimulatorWorld", item_value: str):
+    world.filler_items.append(
+        world.create_item(item_value)
+    )
+
+
+def generate_ghost_card_items(world: "TCGSimulatorWorld", locs_available):
+    if locs_available * 5 < world.options.ghost_goal_amount.value:
         raise OptionError("Not enough locations for ghost goal")
 
     result = []
-    remaining = ghost_goal_amount
+    remaining = world.options.ghost_goal_amount.value
     remaining_slots = locs_available
 
     while remaining > 0 and remaining_slots > 0:
@@ -37,444 +53,165 @@ def generate_ghost_card_items(world, ghost_goal_amount, locs_available):
         remaining -= size
         remaining_slots -= 1
 
-    return result
+    for size in result:
+        create_single_item(world, GHOST_ITEM_BY_ID[ITEMS_GHOST_OFFSET + size])
+
+    return dict(Counter(
+        GHOST_ITEM_BY_ID[ITEMS_GHOST_OFFSET + size].value
+        for size in result
+    ))
 
 
-def create_items(world):
-
+def create_items(world: TCGSimulatorWorld):
     total_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    # print(f"total locs at start {total_location_count}")
-    # print(f"total Itempool at start {len(world.itempool)}")
 
-    #grab starting items for precollection
-    starting_items: List[Item] = []
+    starting_items: list[Item] = []
+    ghost_card_amounts = []
 
-    for item_id in world.starting_item_ids:
-        starting_items.append(Item(world.item_id_to_name[item_id], ItemClassification.progression, item_id, world.player))
+    for item_type in world.starting_license_items:
+        starting_items.append(world.create_item(item_type.value))
 
-    if world.options.start_with_worker.value > 0:
-        starting_items.append(
-            Item(world.item_id_to_name[218 + world.options.start_with_worker.value], ItemClassification.progression, (218 + world.options.start_with_worker.value), world.player))
+    starting_items.append(world.create_item(Events.STANDARD.value))
 
-    starting_items.append(Item("Progressive Shelf", ItemClassification.useful, not_sellable_dict["Progressive Shelf"].code ,world.player))
-    starting_items.append(
-        Item("FormatStandard", ItemClassification.progression, format_dict["FormatStandard"].code, world.player))
-    #create all items except ghosts and junk
-    num = 0
-    for item_name, item_data in item_dict.items():
-        if (item_data.code in world.pg1_licenses or
-        item_data.code in world.pg2_licenses or
-        item_data.code in world.pg3_licenses or
-        item_data.code in world.tt_licenses) and item_data.code not in world.starting_item_ids:
-            create_item(world, item_name, item_data.classification, item_data.amount)
+    if world.options.start_with_worker.value != 0:
+        starting_items.append(world.create_item(WORKERS_ITEM_BY_ID[ITEMS_WORKER_OFFSET + world.options.start_with_worker.value].value))
 
-    if world.options.play_table_checks.value > 0 and not world.options.no_formats:
-        remaining_formats = copy.deepcopy(format_dict)
-        for item_name, item_data in remaining_formats.items():
-            f_amount = item_data.amount
-            for item in starting_items:
-                if item_name == item.name:
-                    f_amount -= 1
-            if f_amount > 0:
-                create_item(world, item_name, item_data.classification, f_amount)
+    for item_data in get_shop_items(world.license_items):
+        create_item(world, item_data)
 
-    if total_location_count > 140:
-        remaining_items = copy.deepcopy(not_sellable_dict)
-        for item_name, item_data in remaining_items.items():
-            r_amount = item_data.amount
-            if item_name in (item.name for item in starting_items):
-                r_amount -= 1
-            if r_amount > 0:
-                create_item(world, item_name, item_data.classification, r_amount)
+    for item_type in Blockers:
+        create_single_item(world, item_type)
+
+    if not world.options.no_formats.value:
+        for item_type in event_items:
+            create_item(world, item_type)
+
+    _remaining = total_location_count - len(world.itempool)
+    _filler_space = 15
+
+    if world.options.goal.value == world.options.goal.option_grade_ghost_cards:
+        ghost_card_amounts = generate_ghost_card_items(world, _remaining)
+
+    minimum_ghost_slots = (
+        (world.options.ghost_goal_amount.value + 4) // 5
+        if world.options.goal.value == world.options.goal.option_grade_ghost_cards
+        else 0
+    )
+
+    if _remaining-(minimum_ghost_slots+15) < 100:
+        for item_data in minimal_diy_items:
+            create_item(world, item_data)
+
+        for item_data in minimal_expansion_items:
+            create_item(world, item_data)
+
+        _remaining = total_location_count - len(world.itempool)
+
+
+        excluded_items: set[str] = set()
+
+        if world.options.start_with_worker.value != 0:
+            starting_worker = WORKERS_ITEM_BY_ID[
+                ITEMS_WORKER_OFFSET + world.options.start_with_worker.value
+            ].value
+            excluded_items.add(starting_worker)
+
+        optional_items: list[ItemData] = [
+            *diy_items,
+            *expansion_items,
+            *all_worker_items,
+        ]
+
+        available_slots = max(0, _remaining - _filler_space)
+
+        possible_items: list[ItemTypeEnum] = [
+            item_data.type
+            for item_data in optional_items
+            if item_data.type.value not in excluded_items
+            for _ in range(item_data.amount)
+        ]
+
+        world.random.shuffle(possible_items)
+
+        for item_type in possible_items[:available_slots]:
+            create_single_item(world, item_type)
+
     else:
-        remaining_items = copy.deepcopy(not_sellable_dict)
-        remaining_items["Warehouse Expansion"].amount = 6
-        remaining_items["Shop Expansion"].amount = 15
-        remaining_items["Progressive Wall Display Case"].amount = 1
-        remaining_items["Progressive Card Projector"].amount = 0
-        remaining_items["Progressive Personal Shelf"].amount = 1
+        for item_data in all_diy_items:
+            create_item(world, item_data)
 
-        for item in starting_items:
-            if item.name in remaining_items:
-                remaining_items[item.name].amount -= 1
-        # Add one of each progression item
-        for item_name, item_data in remaining_items.items():
-            if item_data.classification == ItemClassification.progression and item_data.amount > 0:
-                if item_name not in (item.name for item in starting_items):
-                    create_item(world, item_name, item_data.classification, 1)
-                    item_data.amount -= 1
+        for item_data in all_expansion_items:
+            create_item(world, item_data)
 
-        worker_items = [name for name, data in remaining_items.items()
-                        if name.startswith("Worker - ") and data.amount > 0]
-        if worker_items:
-            worker_name = world.random.choice(worker_items)
-            worker_data = remaining_items[worker_name]
-            create_item(world, worker_name, worker_data.classification, 1)
-            worker_data.amount -= 1
+        for item_data in all_worker_items:
+            create_item(world, item_data)
 
-        while len(world.itempool) < total_location_count * 0.9:
-            eligible_items = [name for name, data in remaining_items.items() if data.amount > 0]
-            if not eligible_items:
-                break  # Nothing left to add
-            item_name = world.random.choice(eligible_items)
-            item_data = remaining_items[item_name]
-            if item_data.amount > 0:
-                create_item(world, item_name, item_data.classification, 1)
-                item_data.amount -= 1
-                if item_data.amount == 0:
-                    del remaining_items[item_name]
+    _remaining = total_location_count - len(world.itempool)
 
+    trap_count = round(
+        _remaining * world.options.trap_fill.value / 100) if world.options.trap_fill.value > 0 else 0
 
-    #create Ghost if in goal
-    remaining_locations: int = total_location_count - len(world.itempool)
-    ghost_counts = 0
-    if world.options.goal.value == 2:
-        ghost_items = generate_ghost_card_items(world, world.options.ghost_goal_amount.value, remaining_locations)
+    junk_count = _remaining - trap_count
 
-        ghost_counts = Counter(ghost_items)
-        # print(f"ghost counts: {ghost_counts} from {ghost_items}")
-        for bagsize, amount in ghost_counts.items():
-            plural = "s" if bagsize > 1 else ""
-            item_name = f"{bagsize} Ghost Card{plural}"
-            create_item(world, item_name, ItemClassification.progression, amount)
+    if trap_count > 0 == sum(world.options.trap_weights.value.values()):
+        junk_count += trap_count
+        trap_count = 0
 
-        remaining_locations = remaining_locations - len(ghost_items)
+    if junk_count > 0:
+        junk: list[str] = world.random.choices(
+            list(world.options.filler_weights.value.keys()),
+            weights=list(world.options.filler_weights.value.values()),
+            k=junk_count
+        )
+        for junk_name in junk:
+            create_filler_item(world, junk_name)
 
-    # print(f"Remaining locations here: {remaining_locations}")
+    if trap_count > 0:
+        traps: list[str] = world.random.choices(
+            list(world.options.trap_weights.value.keys()),
+            weights=list(world.options.trap_weights.value.values()),
+            k=trap_count
+        )
+        for trap_name in traps:
+            create_filler_item(world, trap_name)
 
-    #traps and junk
-    trap_count = round(remaining_locations * world.options.trap_fill.value / 100)
+    if world.multiworld.players > 1 and world.options.card_sanity.value > 0:
+        capacity = (
+                len(world.sanity_fill_locations)
+                + len(world.backup_sanity_fill_locations)
+        )
 
-    # -1 on LevelGoal because I place a victory item at the goal level
-    junk_count = remaining_locations - trap_count - (1 if world.options.goal == 0 else 0)
+        world.random.shuffle(world.filler_items)
 
-    #print(f"junk count {junk_count + trap_count}")
+        reserved_count = min(len(world.filler_items), capacity)
 
-    junk_weights = {
-        "Small Xp": world.options.xp_filler.value * .5,
-        "Small Money": world.options.money_filler.value * .5,
-        "Medium Money": world.options.money_filler.value * .3,
-        "Medium Xp": world.options.xp_filler.value * .3,
-        "Large Money": world.options.money_filler.value * .2,
-        "Large Xp": world.options.xp_filler.value * .2,
-        "Random Card": world.options.card_filler.value,
-        "Progressive Customer Money": world.options.wallet_filler.value,
-        "Increase Card Luck": world.options.luck_filler.value
-    }
+        reserved_fillers = world.filler_items[:reserved_count]
+        normal_fillers = world.filler_items[reserved_count:]
 
-    trap_weights = {
-        "Stink Trap": world.options.stink_trap.value,
-        "Poltergeist Trap": world.options.poltergeist_trap.value,
-        "Credit Card Failure Trap": world.options.credit_card_failure_trap.value,
-        # "Market Change Trap":world.options.market_change_trap.value,
-        "Decrease Card Luck":world.options.decrease_card_luck_trap.value,
-        # "Currency Trap":world.options.currency_trap.value
-    }
+        world.filler_items = reserved_fillers
+    else:
+        normal_fillers = world.filler_items
+        world.filler_items = []
 
-    junk = get_junk_item_names(junk_weights,world.multiworld.random, junk_count)
+    world.multiworld.itempool.extend(world.itempool)
+    world.multiworld.itempool.extend(normal_fillers)
 
-    for name in junk:
-        create_item(world, name, ItemClassification.filler)
-
-    if trap_count != 0:
-        trap = get_trap_item_names(world.multiworld.random, trap_count, trap_weights)
-        for name in trap:
-            create_item(world, name, ItemClassification.trap)
-    world.multiworld.itempool += world.itempool
-    #if len(world.itempool) > total_location_count:
-       # print(f"WARNING: Overfilled pool by {len(world.itempool) - total_location_count} items!")
-    return starting_items, ghost_counts
-
-def get_junk_item_names(junk_weights,rand, k: int) -> str:
-    junk = rand.choices(
-        list(junk_weights.keys()),
-        weights=list(junk_weights.values()),
-        k=k)
-    return junk
-
-
-def get_trap_item_names(rand, k: int, trap_weights) -> str:
-    trap = rand.choices(
-        list(trap_weights.keys()),
-        weights=list(trap_weights.values()),
-        k=k)
-    return trap
-
-
-item_dict: Dict[str, ItemData] = {
-    "Fire Battle Deck": ItemData(55, ItemClassification.progression),
-    "Earth Battle Deck": ItemData(56, ItemClassification.progression),
-    "Water Battle Deck": ItemData(57, ItemClassification.progression),
-    "Wind Battle Deck": ItemData(58, ItemClassification.progression),
-    "Fire Destiny Deck": ItemData(59, ItemClassification.progression),
-    "Earth Destiny Deck": ItemData(60, ItemClassification.progression),
-    "Water Destiny Deck": ItemData(61, ItemClassification.progression),
-    "Wind Destiny Deck": ItemData(62, ItemClassification.progression),
-    "Card Sleeves (Clear)": ItemData(63, ItemClassification.progression),
-    "Card Sleeves (Tetramon)": ItemData(64, ItemClassification.progression),
-    "D20 Dice Red": ItemData(29, ItemClassification.progression),
-    "D20 Dice Blue": ItemData(30, ItemClassification.progression),
-    "D20 Dice Black": ItemData(31, ItemClassification.progression),
-    "D20 Dice White": ItemData(32, ItemClassification.progression),
-    "Card Sleeves (Fire)": ItemData(65, ItemClassification.progression),
-    "Card Sleeves (Earth)": ItemData(66, ItemClassification.progression),
-    "Card Sleeves (Water)": ItemData(67, ItemClassification.progression),
-    "Card Sleeves (Wind)": ItemData(68, ItemClassification.progression),
-    "Progressive Deck Box Red": ItemData(24, ItemClassification.progression,2),
-    "Progressive Deck Box Green": ItemData(25, ItemClassification.progression,2),
-    "Progressive Deck Box Blue": ItemData(26, ItemClassification.progression,2),
-    "Progressive Deck Box Yellow": ItemData(27, ItemClassification.progression,2),
-    "Collection Book": ItemData(28, ItemClassification.progression),
-    "Premium Collection Book": ItemData(54, ItemClassification.progression),
-    "Playmat (Drilceros)": ItemData(71, ItemClassification.progression),
-    "Playmat (Clamigo)": ItemData(69, ItemClassification.progression),
-    "Playmat (Wispo)": ItemData(75, ItemClassification.progression),
-    "Playmat (Lunight)": ItemData(83, ItemClassification.progression),
-    "Playmat (Kyrone)": ItemData(78, ItemClassification.progression),
-    "Playmat (Duel)": ItemData(70, ItemClassification.progression),
-    "Playmat (Dracunix1)": ItemData(74, ItemClassification.progression),
-    "Playmat (The Four Dragons)": ItemData(73, ItemClassification.progression),
-    "Playmat (Drakon)": ItemData(72, ItemClassification.progression),
-    "Playmat (GigatronX Evo)": ItemData(76, ItemClassification.progression),
-    "Playmat (Fire)": ItemData(79, ItemClassification.progression),
-    "Playmat (Earth)": ItemData(80, ItemClassification.progression),
-    "Playmat (Water)": ItemData(82, ItemClassification.progression),
-    "Playmat (Wind)": ItemData(81, ItemClassification.progression),
-    "Playmat (Tetramon)": ItemData(77, ItemClassification.progression),
-    "Playmat (Dracunix2)": ItemData(109, ItemClassification.progression),
-    "Playmat (GigatronX)": ItemData(110, ItemClassification.progression),
-    "Playmat (Katengu Black)": ItemData(111, ItemClassification.progression),
-    "Playmat (Katengu White)": ItemData(112, ItemClassification.progression),
-    "Manga 1": ItemData(95, ItemClassification.progression),
-    "Manga 2": ItemData(96, ItemClassification.progression),
-    "Manga 3": ItemData(97, ItemClassification.progression),
-    "Manga 4": ItemData(98, ItemClassification.progression),
-    "Manga 5": ItemData(99, ItemClassification.progression),
-    "Manga 6": ItemData(100, ItemClassification.progression),
-    "Manga 7": ItemData(101, ItemClassification.progression),
-    "Manga 8": ItemData(102, ItemClassification.progression),
-    "Manga 9": ItemData(103, ItemClassification.progression),
-    "Manga 10": ItemData(104, ItemClassification.progression),
-    "Manga 11": ItemData(105, ItemClassification.progression),
-    "Manga 12": ItemData(106, ItemClassification.progression),
-    "Pigni Plushie": ItemData(33, ItemClassification.progression),
-    "Nanomite Plushie": ItemData(34, ItemClassification.progression),
-    "Minstar Plushie": ItemData(35, ItemClassification.progression),
-    "Nocti Plushie": ItemData(36, ItemClassification.progression),
-    "Burpig Figurine": ItemData(39, ItemClassification.progression),
-    "Decimite Figurine": ItemData(42, ItemClassification.progression),
-    "Trickstar Figurine": ItemData(45, ItemClassification.progression),
-    "Lunight Figurine": ItemData(48, ItemClassification.progression),
-    "Inferhog Figurine": ItemData(40, ItemClassification.progression),
-    "Meganite Figurine": ItemData(43, ItemClassification.progression),
-    "Princestar Figurine": ItemData(46, ItemClassification.progression),
-    "Vampicant Figurine": ItemData(49, ItemClassification.progression),
-    "Blazoar Plushie": ItemData(41, ItemClassification.progression),
-    "Giganite Statue": ItemData(44, ItemClassification.progression),
-    "Kingstar Plushie": ItemData(47, ItemClassification.progression),
-    "Dracunix Figurine": ItemData(50, ItemClassification.progression),
-    "Bonfiox Plushie": ItemData(52, ItemClassification.progression),
-    "Drilceros Action Figure": ItemData(51, ItemClassification.progression),
-    "ToonZ Plushie": ItemData(53, ItemClassification.progression),
-    "Penny Sleeves": ItemData(118, ItemClassification.progression),
-    "Tower Deckbox": ItemData(124, ItemClassification.progression),
-    "Magnetic Holder": ItemData(113, ItemClassification.progression),
-    "Toploader": ItemData(117, ItemClassification.progression),
-    "Card Preserver": ItemData(114, ItemClassification.progression),
-    "Playmat Gray": ItemData(119, ItemClassification.progression),
-    "Playmat Green": ItemData(120, ItemClassification.progression),
-    "Playmat Purple": ItemData(121, ItemClassification.progression),
-    "Playmat Yellow": ItemData(122, ItemClassification.progression),
-    "Pocket Pages": ItemData(115, ItemClassification.progression),
-    "Card Holder": ItemData(116, ItemClassification.progression),
-    "Collectors Album": ItemData(123, ItemClassification.progression),
-    "System Gate #1": ItemData(87, ItemClassification.progression),
-    "System Gate #2": ItemData(88, ItemClassification.progression),
-    "Mafia Works": ItemData(86, ItemClassification.progression),
-    "Necromonsters": ItemData(84, ItemClassification.progression),
-    "Claim!": ItemData(85, ItemClassification.progression),
-    "Progressive Basic Card Pack": ItemData(190, ItemClassification.progression,2), #game id 0
-    "Progressive Basic Card Box": ItemData(1, ItemClassification.progression,2),
-    "Progressive Rare Card Pack": ItemData(2, ItemClassification.progression,2),
-    "Progressive Rare Card Box": ItemData(3, ItemClassification.progression,2),
-    "Progressive Epic Card Pack": ItemData(4, ItemClassification.progression,2),
-    "Progressive Epic Card Box": ItemData(5, ItemClassification.progression,2),
-    "Progressive Legendary Card Pack": ItemData(6, ItemClassification.progression,2),
-    "Progressive Legendary Card Box": ItemData(7, ItemClassification.progression,2),
-    "Progressive Basic Destiny Pack": ItemData(8, ItemClassification.progression,2),
-    "Progressive Basic Destiny Box": ItemData(9, ItemClassification.progression,2),
-    "Progressive Rare Destiny Pack": ItemData(10, ItemClassification.progression,2),
-    "Progressive Rare Destiny Box": ItemData(11, ItemClassification.progression,2),
-    "Progressive Epic Destiny Pack": ItemData(12, ItemClassification.progression,2),
-    "Progressive Epic Destiny Box": ItemData(13, ItemClassification.progression,2),
-    "Progressive Legendary Destiny Pack": ItemData(14, ItemClassification.progression,2),
-    "Progressive Legendary Destiny Box": ItemData(15, ItemClassification.progression,2),
-    "Progressive Cleanser": ItemData(23, ItemClassification.progression,2),
-    "EVO Blazoar": ItemData(125, ItemClassification.progression,2),
-    "EVO Starfish": ItemData(126, ItemClassification.progression,2),
-}
-
-format_dict: Dict[str, ItemData] = {
-    "FormatStandard": ItemData(207, ItemClassification.progression),
-    "FormatPauper": ItemData(208, ItemClassification.progression),
-    "FormatFireCup": ItemData(209, ItemClassification.progression),
-    "FormatEarthCup": ItemData(210, ItemClassification.progression),
-    "FormatWaterCup": ItemData(211, ItemClassification.progression),
-    "FormatWindCup": ItemData(212, ItemClassification.progression),
-    "FormatFirstEditionVintage": ItemData(213, ItemClassification.progression),
-    "FormatSilverBorder": ItemData(214, ItemClassification.progression),
-    "FormatGoldBorder": ItemData(215, ItemClassification.progression),
-    "FormatExBorder": ItemData(216, ItemClassification.progression),
-    "FormatFullArtBorder": ItemData(217, ItemClassification.progression),
-    "FormatFoil": ItemData(218, ItemClassification.progression)
-}
-not_sellable_dict: Dict[str, ItemData] = {
-    "Progressive Card Table": ItemData(200, ItemClassification.progression, 2),
-    "Progressive Card Display": ItemData(201, ItemClassification.useful, 3),
-    "Progressive Personal Shelf": ItemData(202, ItemClassification.useful, 3),
-    "Progressive Auto Scent": ItemData(203, ItemClassification.progression, 3),
-    "Progressive Warehouse Shelf": ItemData(204, ItemClassification.progression, 2),
-    "Shop Expansion": ItemData(205, ItemClassification.progression, 30),
-    "Warehouse Expansion": ItemData(206, ItemClassification.progression, 15),
-    "Worker - Zachery": ItemData(219, ItemClassification.progression),
-    "Worker - Terence": ItemData(220, ItemClassification.useful),
-    "Worker - Dennis": ItemData(221, ItemClassification.useful),
-    "Worker - Clark": ItemData(222, ItemClassification.useful),
-    "Worker - Angus": ItemData(223, ItemClassification.useful),
-    "Worker - Benji": ItemData(224, ItemClassification.useful),
-    "Worker - Lauren": ItemData(225, ItemClassification.useful),
-    "Worker - Axel": ItemData(226, ItemClassification.useful),
-    "Worker - Alexander": ItemData(227, ItemClassification.useful),
-    "Progressive Wall Display Case": ItemData(228, ItemClassification.useful, 5),
-    "Progressive Card Projector": ItemData(229, ItemClassification.progression, 3),
-    "Progressive Pack Opener": ItemData(230, ItemClassification.useful, 3),
-    "Progressive Shelf": ItemData(231, ItemClassification.progression, 5),
-    "Progressive Play Table": ItemData(232, ItemClassification.progression, 3),
-    "Workbench": ItemData(233, ItemClassification.progression),
-    "Trash Bin": ItemData(234, ItemClassification.useful),
-    "Checkout Counter": ItemData(235, ItemClassification.progression),
-    "Progressive Large Shelf": ItemData(236, ItemClassification.useful, 4),
-    "Tournament Prize Shelf": ItemData(237, ItemClassification.progression),
-    "Scanner" : ItemData(238, ItemClassification.progression),
-    "Empty Box Storage": ItemData(239, ItemClassification.useful),
-    "Bulk Donation Box": ItemData(240, ItemClassification.useful),
-    "Card Storage Shelf": ItemData(241, ItemClassification.useful),
-    "Grading Unlock": ItemData(340, ItemClassification.progression),
-}
-
-# unused 0x1F2800D7
-random_ghost_dict: Dict[str, ItemData] = {
-    "1 Ghost Card": ItemData(326, ItemClassification.progression, 0),
-    "2 Ghost Cards": ItemData(327, ItemClassification.progression, 0),
-    "3 Ghost Cards": ItemData(328, ItemClassification.progression, 0),
-    "4 Ghost Cards": ItemData(329, ItemClassification.progression, 0),
-    "5 Ghost Cards": ItemData(330, ItemClassification.progression, 0),
-}
-ghost_dict: Dict[str, ItemData] = {
-    "Ghost Blazoar (white)": ItemData(0x1F280062, ItemClassification.progression_skip_balancing),
-    "Ghost Blazoar (Black)": ItemData(0x1F280063, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Blazoar (white)": ItemData(0x1F280064, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Blazoar (Black)": ItemData(0x1F280065, ItemClassification.progression_skip_balancing),
-    "Ghost Kyuenbi (white)": ItemData(0x1F280066, ItemClassification.progression_skip_balancing),
-    "Ghost Kyuenbi (Black)": ItemData(0x1F280067, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Kyuenbi (white)": ItemData(0x1F280068, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Kyuenbi (Black)": ItemData(0x1F280069, ItemClassification.progression_skip_balancing),
-    "Ghost Giganite (white)": ItemData(0x1F28006A, ItemClassification.progression_skip_balancing),
-    "Ghost Giganite (Black)": ItemData(0x1F28006B, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Giganite (white)": ItemData(0x1F28006C, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Giganite (Black)": ItemData(0x1F28006D, ItemClassification.progression_skip_balancing),
-    "Ghost Mammotree (white)": ItemData(0x1F28006E, ItemClassification.progression_skip_balancing),
-    "Ghost Mammotree (Black)": ItemData(0x1F28006F, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Mammotree (white)": ItemData(0x1F280070, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Mammotree (Black)": ItemData(0x1F280071, ItemClassification.progression_skip_balancing),
-    "Ghost Kingstar (white)": ItemData(0x1F280072, ItemClassification.progression_skip_balancing),
-    "Ghost Kingstar (Black)": ItemData(0x1F280073, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Kingstar (white)": ItemData(0x1F280074, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Kingstar (Black)": ItemData(0x1F280075, ItemClassification.progression_skip_balancing),
-    "Ghost Fistronk (white)": ItemData(0x1F280076, ItemClassification.progression_skip_balancing),
-    "Ghost Fistronk (Black)": ItemData(0x1F280077, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Fistronk (white)": ItemData(0x1F280078, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Fistronk (Black)": ItemData(0x1F280079, ItemClassification.progression_skip_balancing),
-    "Ghost Royalama (white)": ItemData(0x1F28007A, ItemClassification.progression_skip_balancing),
-    "Ghost Royalama (Black)": ItemData(0x1F28007B, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Royalama (white)": ItemData(0x1F28007C, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Royalama (Black)": ItemData(0x1F28007D, ItemClassification.progression_skip_balancing),
-    "Ghost Dracunix (white)": ItemData(0x1F28007E, ItemClassification.progression_skip_balancing),
-    "Ghost Dracunix (Black)": ItemData(0x1F28007F, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Dracunix (white)": ItemData(0x1F280080, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Dracunix (Black)": ItemData(0x1F280081, ItemClassification.progression_skip_balancing),
-    "Ghost Magnoria (white)": ItemData(0x1F280082, ItemClassification.progression_skip_balancing),
-    "Ghost Magnoria (Black)": ItemData(0x1F280083, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Magnoria (white)": ItemData(0x1F280084, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Magnoria (Black)": ItemData(0x1F280085, ItemClassification.progression_skip_balancing),
-    "Ghost Hydroid (white)": ItemData(0x1F280086, ItemClassification.progression_skip_balancing),
-    "Ghost Hydroid (Black)": ItemData(0x1F280087, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Hydroid (white)": ItemData(0x1F280088, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Hydroid (Black)": ItemData(0x1F280089, ItemClassification.progression_skip_balancing),
-    "Ghost Drakon (white)": ItemData(0x1F28008A, ItemClassification.progression_skip_balancing),
-    "Ghost Drakon (Black)": ItemData(0x1F28008B, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Drakon (white)": ItemData(0x1F28008C, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Drakon (Black)": ItemData(0x1F28008D, ItemClassification.progression_skip_balancing),
-    "Ghost Bogon (white)": ItemData(0x1F28008E, ItemClassification.progression_skip_balancing),
-    "Ghost Bogon (Black)": ItemData(0x1F28008F, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Bogon (white)": ItemData(0x1F280090, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Bogon (Black)": ItemData(0x1F280091, ItemClassification.progression_skip_balancing),
-    "Ghost Hydron (white)": ItemData(0x1F280092, ItemClassification.progression_skip_balancing),
-    "Ghost Hydron (Black)": ItemData(0x1F280093, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Hydron (white)": ItemData(0x1F280094, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Hydron (Black)": ItemData(0x1F280095, ItemClassification.progression_skip_balancing),
-    "Ghost Raizon (white)": ItemData(0x1F280096, ItemClassification.progression_skip_balancing),
-    "Ghost Raizon (Black)": ItemData(0x1F280097, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Raizon (white)": ItemData(0x1F280098, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Raizon (Black)": ItemData(0x1F280099, ItemClassification.progression_skip_balancing),
-    "Ghost Lucadence (white)": ItemData(0x1F28009A, ItemClassification.progression_skip_balancing),
-    "Ghost Lucadence (Black)": ItemData(0x1F28009B, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Lucadence (white)": ItemData(0x1F28009C, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Lucadence (Black)": ItemData(0x1F28009D, ItemClassification.progression_skip_balancing),
-    "Ghost Jigajawr (white)": ItemData(0x1F28009E, ItemClassification.progression_skip_balancing),
-    "Ghost Jigajawr (Black)": ItemData(0x1F28009F, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Jigajawr (white)": ItemData(0x1F2800A0, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Jigajawr (Black)": ItemData(0x1F2800A1, ItemClassification.progression_skip_balancing),
-    "Ghost Jacktern (white)": ItemData(0x1F2800A2, ItemClassification.progression_skip_balancing),
-    "Ghost Jacktern (Black)": ItemData(0x1F2800A3, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Jacktern (white)": ItemData(0x1F2800A4, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Jacktern (Black)": ItemData(0x1F2800A5, ItemClassification.progression_skip_balancing),
-    "Ghost GigatronX (white)": ItemData(0x1F2800A6, ItemClassification.progression_skip_balancing),
-    "Ghost GigatronX (Black)": ItemData(0x1F2800A7, ItemClassification.progression_skip_balancing),
-    "Foil Ghost GigatronX (white)": ItemData(0x1F2800A8, ItemClassification.progression_skip_balancing),
-    "Foil Ghost GigatronX (Black)": ItemData(0x1F2800A9, ItemClassification.progression_skip_balancing),
-    "Ghost Clawcifear (white)": ItemData(0x1F2800AA, ItemClassification.progression_skip_balancing),
-    "Ghost Clawcifear (Black)": ItemData(0x1F2800AB, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Clawcifear (white)": ItemData(0x1F2800AC, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Clawcifear (Black)": ItemData(0x1F2800AD, ItemClassification.progression_skip_balancing),
-    "Ghost Katengu (white)": ItemData(0x1F2800AE, ItemClassification.progression_skip_balancing),
-    "Ghost Katengu (Black)": ItemData(0x1F2800AF, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Katengu (white)": ItemData(0x1F2800B0, ItemClassification.progression_skip_balancing),
-    "Foil Ghost Katengu (Black)": ItemData(0x1F2800B1, ItemClassification.progression_skip_balancing),
-}
-
-junk_dict: Dict[str, ItemData] = {
-    "Small Xp": ItemData(300, ItemClassification.filler),
-    "Small Money": ItemData(301, ItemClassification.filler),
-    "Medium Xp": ItemData(302, ItemClassification.filler),
-    "Medium Money": ItemData(303, ItemClassification.filler),
-    "Large Xp": ItemData(304, ItemClassification.filler),
-    "Large Money": ItemData(305, ItemClassification.filler),
-    "Random Card": ItemData(306, ItemClassification.filler),
-    # "Random New Card": ItemData(307, ItemClassification.filler),
-    "Progressive Customer Money": ItemData(308, ItemClassification.filler),
-    "Increase Card Luck": ItemData(309, ItemClassification.filler),
-}
-
-trap_dict: Dict[str, ItemData] = {
-    "Stink Trap": ItemData(320, ItemClassification.trap),
-    "Poltergeist Trap": ItemData(321, ItemClassification.trap),
-    "Credit Card Failure Trap": ItemData(322, ItemClassification.trap),
-    "Decrease Card Luck": ItemData(323, ItemClassification.trap),
-    "Market Change Trap": ItemData(324, ItemClassification.trap),
-    "Currency Trap": ItemData(325, ItemClassification.trap),
-}
+    return starting_items, ghost_card_amounts
 
 
 
-full_item_dict: Dict[str, ItemData] = {**item_dict, **not_sellable_dict, **random_ghost_dict, **ghost_dict, **junk_dict, **trap_dict, **format_dict}
+def create_event(world: "TCGSimulatorWorld", region_name: str, item_name: str, loc_name: str | None = None,
+                 rule: CollectionRule | Rule[TCGSimulatorBase] = True_()) -> None:
+    if loc_name is None:
+        loc_name = "Event " + item_name
+    region = world.get_region(region_name)
+    event_loc = Location(world.player, loc_name, None, region)
+    world.set_rule(event_loc, rule)
+    event_loc.place_locked_item(
+        Item(item_name, ItemClassification.progression, None, world.player))
+    region.locations.append(event_loc)
+
+def create_events(world: "TCGSimulatorWorld"):
+    if world.options.goal.value == world.options.goal.option_reach_max_level:
+        create_event(world, region_name=get_level_region(world.options.max_level.value).value,
+                     item_name="Victory", loc_name="Reach Max Level")
